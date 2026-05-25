@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Feedback - Интерактивті оқу модулі</title>
+
+    <link rel="icon" type="image/x-icon" href="logo/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/chat.css">
+    <link rel="stylesheet" href="../css/theory.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="../logo/logo.png" alt="Logo" onerror="this.style.display='none'">
+                <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button id="themeToggle" class="btn-icon" aria-label="Түнгі/күндізгі режимді ауыстыру">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                <div class="user-actions">
+                    <div class="auth-buttons" id="authButtons">
+                        <a href="" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Кіру</a>
+                        <a href="" class="btn-register"><i class="fa-solid fa-user-plus"></i> Тіркелу</a>
+                    </div>
+                    <div class="user-profile" id="userProfile" style="display: none;">
+                        <a href="" class="btn-profile"><i class="fa-solid fa-user"></i> Профиль</a>
+                        <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Навигация -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li>
+                    <a href="../index.html">
+                        <i class="fa-solid fa-house"></i> Басты бет
+                    </a>
+                </li>
+
+                <li>
+                    <a href="theory.html" class="active">
+                        <i class="fa-solid fa-book-open"></i>
+                        Интерактивті оқу модулі
+                    </a>
+                </li>
+
+                <li>
+                    <a href="practice.html">
+                        <i class="fa-solid fa-code"></i>
+                        ЖИ-тьютормен біріктірілген Практикум
+                    </a>
+                </li>
+
+                <li>
+                    <a href="reference.html">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Анықтамалық
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="practice-main">
+        <div class="container">
+            <div class="theory-header">
+                <h1 class="theory-title">Интерактивті оқу модулі</h1>
+                <p class="theory-subtitle">
+                    Теорияны мұқият оқып шық, интерактивті код мысалдарымен таныс және ЖИ-көмекшіден кеңес ал!
+                </p>
+            </div>
+
+            <div class="theory-layout">
+                <aside class="theory-sidebar">
+                    <div class="sidebar-title">Курс мазмұны</div>
+                    <ul class="module-nav-list">
+                        <li class="module-nav-item"><a href="#mod1">1. Python тілінің негізгі элементтері</a></li>
+                        <li class="sub-nav-item"><a href="#mod1-1">1.1 Экранға шығару және түсініктеме</a></li>
+                        <li class="sub-nav-item"><a href="#mod1-2">1.2 Айнымалылар және типтер</a></li>
+                        <li class="sub-nav-item"><a href="#mod1-3">1.3 input() функциясы</a></li>
+
+                        <li class="module-nav-item"><a href="#mod2">2. Шарттар мен Тармақталу</a></li>
+                        <li class="sub-nav-item"><a href="#mod2-1">2.1 if, elif, else</a></li>
+                        <li class="sub-nav-item"><a href="#mod2-2">2.2 Салыстыру операторлары</a></li>
+                        <li class="sub-nav-item"><a href="#mod2-3">2.3 Логикалық операторлар</a></li>
+                        <li class="sub-nav-item"><a href="#mod2-4">2.4 Тернарлық оператор</a></li>
+
+                        <li class="module-nav-item"><a href="#mod3">3. Қайталанулар (Циклдер)</a></li>
+                        <li class="sub-nav-item"><a href="#mod3-1">3.1 while циклі</a></li>
+                        <li class="sub-nav-item"><a href="#mod3-2">3.2 for және range()</a></li>
+                        <li class="sub-nav-item"><a href="#mod3-3">3.3 break және continue</a></li>
+
+                        <li class="module-nav-item"><a href="#mod4">4. Деректер құрылымы</a></li>
+                        <li class="sub-nav-item"><a href="#mod4-1">4.1 Тізімдер (Lists)</a></li>
+                        <li class="sub-nav-item"><a href="#mod4-2">4.2 Кортеждер (Tuples)</a></li>
+                        <li class="sub-nav-item"><a href="#mod4-3">4.3 Жиындар (Sets)</a></li>
+                        <li class="sub-nav-item"><a href="#mod4-4">4.4 Сөздіктер (Dictionaries)</a></li>
+
+                        <li class="module-nav-item"><a href="#mod5">5. Функциялар мен Жоба</a></li>
+                        <li class="sub-nav-item"><a href="#mod5-1">5.1 Функция құрылымы</a></li>
+                        <li class="sub-nav-item"><a href="#mod5-2">5.2 Қорытынды жоба(RPG)</a></li>
+                    </ul>
+                </aside>
+
+                <div class="theory-content">
+                    
+                    <section id="mod1" class="lecture-section">
+                        <h2><span>Модуль 1</span> Python тілінің негізгі элементтері</h2>
+                        <p><strong>Python</strong> — бұл жоғары деңгейлі, интерпретацияланатын бағдарламалау тілі. Оның синтаксисі адам тіліне (ағылшын тіліне) өте жақын, сондықтан оны үйрену оңай әрі қызықты. Бүгінде Python көмегімен жасанды интеллект (AI), веб-сайттар, Telegram боттар және күрделі деректер талдауы жасалады.</p>
+                        
+                        <h3 id="mod1-1">1.1 Экранға мәлімет шығару және түсініктемелер</h3>
+                        <p>Кез келген бағдарламалау тіліндегі алғашқы қадам — экранға мәлімет шығару. Бұл үшін Python-да <code>print()</code> функциясы қолданылады. Егер біз экранға мәтін шығарғымыз келсе, ол мәтінді міндетті түрде <strong>тырнақшаға</strong> (жалқы <code>' '</code> немесе қосарланған <code>" "</code>) алуымыз керек. Сондай-ақ, кодтың ішіне түсініктеме қалдыру үшін <code>#</code> (хэштег) белгісі пайдаланылады — оны компьютер оқымайды, ол тек программистің өзіне көмекші жазба.</p>
+                        
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+<span class="function">print</span>(<span class="string">"Hello, World!"</span>)
+<span class="function">print</span>(<span class="string">"Python тілін үйренуді бастадым!"</span>)
+<span class="function">print</span>(<span class="keyword">2026</span>)</div>
+                        </div>
+
+                        <div class="info-note">
+                            <p><strong>ЖИ Кеңесі:</strong> Егер сіз <code>print("Сәлем)</code> деп тырнақшаның бірін жабуды ұмытып кетсеңіз, бағдарлама жұмыс істемейді. Компьютер сізге <code>SyntaxError: unterminated string literal</code> деген қателік туралы хабарлама береді. Әрқашан жақшалар мен тырнақшалардың жұп болуын қадағалаңыз!</p>
+                        </div>
+
+                        <hr> 
+                        
+                        <h3 id="mod1-2">1.2 Айнымалылар және Мәліметтер типтері</h3>
+                        <p><strong>Айнымалы (Variable)</strong> — бұл мәліметтерді сақтауға арналған компьютер жадындағы арнайы қорапша (контейнер) іспеттес. Біз оған ат беріп, ішіне кез келген ақпаратты сақтап қоя аламыз. Python-да айнымалыны жасау үшін теңдік <code>=</code> белгісі (меншіктеу операторы) қолданылады.</p>
+                        
+                        <p>Python тілінде мәліметтердің бірнеше негізгі типі бар:</p>
+                        <ul>
+                            <li><code>str</code> (String) — Текстік мәтіндер (әрдайым тырнақшада жазылады).</li>
+                            <li><code>int</code> (Integer) — Бүтін сандар (оң, теріс немесе нөл).</li>
+                            <li><code>float</code> — Нақты (бөлшек) сандар (үтірдің орнына нүкте қойылады).</li>
+                            <li><code>bool</code> (Boolean) — Логикалық тип, тек екі мән қабылдайды: <code>True</code> (Ақиқат) немесе <code>False</code> (Жалған).</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+user_name = <span class="string">"Әлихан"</span>
+user_age = <span class="keyword">18</span>
+user_height = <span class="keyword">1.75</span>
+is_student = <span class="keyword">True</span>
+
+<span class="function">print</span>(user_name)
+<span class="function">print</span>(user_age)</div>
+                        </div>
+
+                        <div class="warning-note" style="border-left: 4px solid #ffcc00; background-color: #fff9e6; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0;">
+                            <p style="color: #333333; margin: 0; font-family: sans-serif; line-height: 1.5;">
+                                <strong style="color: #d9a300;">Маңызды ереже:</strong> 
+                                Айнымалының атын саннан бастауға болмайды (мысалы: <code style="background-color: #ffe6cc; color: #cc0000; padding: 2px 6px; border-radius: 4px;">1name = "Асан"</code> — қате). 
+                                Сондай-ақ, аттардың арасында пробел болмауы тиіс. Егер аты бірнеше сөзден тұрса, төменгі сызықшаны қолданыңыз: 
+                                <code style="background-color: #e6f4ea; color: #137333; padding: 2px 6px; border-radius: 4px;">user_score = 100</code>.
+                            </p>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod1-3">1.3 Пайдаланушымен байланыс: <code>input()</code> функциясы</h3>
+                        <p>Бағдарлама түрі тек экранға ақпарат шығарып қана қоймай, пайдаланушыдан мәліметтерді қабылдай алуы керек. Ол үшін біз <code>input()</code> функциясын қолданамыз. Бұл функция экранға сұрақ шығарып, пайдаланушы пернетақтадан жауап беріп, Enter пернесін басқанша күтіп тұрады.</p>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+аты = <span class="function">input</span>(<span class="string">"Есіміңіз кім? "</span>)
+
+<span class="function">print</span>(<span class="string">"Сәлем, "</span> + аты + <span class="string">"!"</span>)</div>
+                        </div>
+
+                        <div class="info-note">
+                            <p><strong>Есіңізде сақтаңыз:</strong> <code>input()</code> функциясы пайдаланушы сан енгізсе де, оны әрдайым <strong>мәтін (str)</strong> ретінде қабылдайды. Егер сізге ол санмен математикалық амал орындау керек болса, оны <code>int()</code> немесе <code>float()</code> функциялары арқылы санға айналдырып алуыңыз қажет. Мысалы: <code>жас = int(input("Жасыңыз нешеде? "))</code></p>
+                        </div>
+                    </section>
+
+                    <section id="mod2" class="lecture-section">
+                        <h2><span>Модуль 2</span> Шарттар мен Тармақталу (Логикалық ойлау)</h2>
+                        <p>Өмірдегі сияқты, бағдарламалар да белгілі бір жағдайларға байланысты шешім қабылдауы керек. Мысалы: <em>"Егер сыртта жаңбыр жауса — қолшатыр ал, әйтпесе — күннен қорғайтын көзілдірік ал"</em>. Осы логиканы іске асыру үшін <strong>Логикалық деректер типі (Boolean)</strong> қолданылады. Оның тек екі ғана мәні бар: <code>True</code> (Ақиқат) және <code>False</code> (Жалған).</p>
+                        
+                        <h3 id="mod2-1">2.1 Шартты операторлар: <code>if</code>, <code>elif</code>, <code>else</code></h3>
+                        <p>Тармақталу процесі Python-да үш негізгі оператор арқылы жазылады:</p>
+                        <ul>
+                            <li><code>if</code> (егер) — ең алғашқы негізгі шартты тексереді;</li>
+                            <li><code>elif</code> (әйтпесе, егер) — бірінші шарт орындалмаса, қосымша басқа шарттарды кезекпен тексереді (бірнеше рет жазуға болады);</li>
+                            <li><code>else</code> (әйтпесе) — жоғарыдағы шарттардың ешқайсысы орындалмаған жағдайда ең соңында автоматты түрде іске асады.</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+жас = <span class="keyword">16</span>
+
+<span class="keyword">if</span> жас &gt;= <span class="keyword">18</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сізге жүргізуші куәлігін алуға болады."</span>)
+<span class="keyword">elif</span> жас == <span class="keyword">16</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Тағы 2 жыл күту керек, бірақ теорияны оқи берсеңіз болады!"</span>)
+<span class="keyword">else</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сізге куәлік алуға әлі ерте."</span>)</div>
+                        </div>
+                        
+                        <div class="info-note">
+                            <p><strong>Маңызды ереже:</strong> Python-да шарттардан кейін міндетті түрде қос нүкте <code>:</code> қойылады, ал оның астындағы орындалатын код <strong>4 бос орын шегініспен (Indent)</strong> жазылуы тиіс. Шегініс — бұл кодтың қай шартқа тиесілі екенін көрсететін Python-ның ең басты ерекшелігі. Егер шегініс дұрыс жасалмаса, бағдарлама <code>IndentationError</code> қатесін көрсетеді.</p>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod2-2">2.2 Салыстыру операторлары</h3>
+                        <p><code>if</code> операторының ішінде шарт құрастыру үшін біз математикалық салыстыру белгілерін қолданамыз. Олардың нәтижесі әрдайым <code>True</code> немесе <code>False</code> болады:</p>
+                        <ul>
+                            <li><code>&gt;</code> және <code>&lt;</code> — үлкен және кіші</li>
+                            <li><code>&gt;=</code> және <code>&lt;=</code> — үлкен немесе тең, кіші немесе тең</li>
+                            <li><code>==</code> — тең бе? (Назар аударыңыз: жалғыз <code>=</code> белгісі мән беру үшін, ал қос <code>==</code> салыстыру үшін қолданылады)</li>
+                            <li><code>!=</code> — тең емес пе? (мәндердің тең еместігін тексереді)</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+ұпай = <span class="keyword">85</span>
+<span class="keyword">if</span> ұпай == <span class="keyword">100</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Керемет! Максималды нәтиже!"</span>)
+<span class="keyword">if</span> ұпай != <span class="keyword">0</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сіз нөлден көп ұпай жинадыңыз."</span>)</div>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod2-3">2.3 Күрделі шарттар: Логикалық операторлар (<code>and</code>, <code>or</code>, <code>not</code>)</h3>
+                        <p>Егер бізге бір уақытта бірнеше шартты тексеру керек болса, логикалық операторларды қолданамыз:</p>
+                        <ul>
+                            <li><code>and</code> (ЖӘНЕ) — барлық шарттар бір уақытта <strong>бірдей орындалғанда</strong> ғана іске асады.</li>
+                            <li><code>or</code> (НЕМЕСЕ) — берілген шарттардың <strong>кем дегенде біреуі</strong> орындалса жеткілікті.</li>
+                            <li><code>not</code> (ЕМЕС) — шарттың мәнін керісінше өзгертеді (True-ды False қылады, False-ты True қылады).</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+жас = <span class="keyword">20</span>
+студент = <span class="keyword">True</span>
+
+<span class="keyword">if</span> жас &gt;= <span class="keyword">18</span> <span class="keyword">and</span> студент == <span class="keyword">True</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Студенттік жеңілдік қолжетімді."</span>)
+
+күн = <span class="string">"Жексенбі"</span>
+<span class="keyword">if</span> күн == <span class="string">"Сенбі"</span> <span class="keyword">or</span> күн == <span class="string">"Жексенбі"</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Бүгін демалыс күні!"</span>)</div>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod2-4">2.4 Қысқаша шарт жазу (Тернарлық оператор)</h3>
+                        <p>Егер сізде өте қарапайым <code>if...else</code> құрылымы болса, кодты үнемдеу үшін оны бір жолға сыйдырып жазуға болады. Бұл бағдарламалауда <strong>Тернарлық оператор</strong> деп аталады.</p>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+сан = <span class="keyword">7</span>
+
+нәтиже = <span class="string">"Жұп"</span> <span class="keyword">if</span> san % <span class="keyword">2</span> == <span class="keyword">0</span> <span class="keyword">else</span> <span class="string">"Тақ"</span>
+<span class="function">print</span>(нәтиже)</div>
+                        </div>
+                    </section>
+
+                    <section id="mod3" class="lecture-section">
+                        <h2><span>Модуль 3</span> Қайталанулар (Циклдер)</h2>
+                        <p>Егер сізге экранға "Сәлем" сөзін 100 рет шығару керек болса, <code>print()</i> функциясын 100 рет көшіріп жазу тиімсіз. Мұндай бірсарынды, қайталанатын жұмыстарды автоматтандыру үшін <strong>циклдер (loops)</strong> қолданылады.</p>
+                        
+                        <h3 id="mod3-1">3.1 <code>while</code> циклі (Шартты цикл)</h3>
+                        <p>Python-дағы негізгі циклдердің бірі — <code>while</code> циклі. Ол «әзірше» немесе «шарт орындалып тұрғанша» деген мағынаны білдіреді. Түсінікті болу үшін ойын кейіпкерін елестетіңіз: кейіпкердің өмір саны (hp) 0-ден үлкен болып тұрған уақыт бойы ол картада жүгіріп, алға жылжи береді. Өмірі таусылған сәтте шарт <code>False</code>-қа айналады да, цикл тоқтап, "Ойын аяқталды" деген жазу шығады.</p>
+                        
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+hp = <span class="keyword">3</span>
+
+<span class="keyword">while</span> hp &gt; <span class="keyword">0</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Кейіпкер алға жүгіруде! Қалған өмір:"</span>, hp)
+&nbsp;&nbsp;&nbsp;&nbsp;hp = hp - <span class="keyword">1</span>
+
+<span class="function">print</span>(<span class="string">"Шарт бұзылды (hp=0). Game Over!"</span>)</div>
+                        </div>
+
+                        <div class="info-note">
+                            <p><strong>Сақ болыңыз:</strong> Егер сіз цикл ішінде шартты өзгертуді (мысалы, жоғарыдағы <code>hp = hp - 1</code> кодын) ұмытып кетсеңіз, шарт әрдайым <code>True</code> болып қалады. Бұл <em>"Шексіз циклге" (Infinite loop)</em> әкеліп соғады және бағдарламаңыз қатып қалады. Мұндай жағдайда бағдарламаны тоқтату үшін терминалда <code>Ctrl + C</code> пернелерін басу керек.</p>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod3-2">3.2 <code>for</code> циклі және <code>range()</code> функциясы</h3>
+                        <p>Егер <code>while</code> циклі шартқа бағынса, <code>for</code> циклі қайталану саны <strong>алдын ала белгілі болғанда</strong> қолданылады. Ол белгілі бір сандар тізбегін немесе элементтер жиынтығын басынан аяғына дейін аралап шығады.</p>
+                        <p><code>for</code> циклімен бірге сандар тізбегін автоматты түрде жасау үшін <code>range()</code> функциясы жиі пайдаланылады:</p>
+                        
+                        <ul>
+                            <li><code>range(5)</code> — 0-ден 4-ке дейінгі сандар (0, 1, 2, 3, 4). Соңғы сан шекараға кірмейді!</li>
+                            <li><code>range(1, 6)</code> — 1-ден бастап 5-ке дейінгі сандар (басталуы және аяқталуы).</li>
+                            <li><code>range(0, 10, 2)</code> — 0-ден 9-ға дейінгі сандарды 2 қадаммен шығарады (0, 2, 4, 6, 8).</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="keyword">5</span>):
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сәлем!"</span>)</div>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod3-3">3.3 Циклді басқару: <code>break</code> және <code>continue</code></h3>
+                        <p>Кейде циклдің жұмысын сырттай бақылап, оны мәжбүрлі түрде тоқтату немесе белгілі бір тұсын аттап өту қажет болады. Бұл үшін екі арнайы команда бар:</p>
+                        <ul>
+                            <li><code>break</code> — циклдің шарты әлі орындалып тұрса да, оны **толықтай тоқтатып**, циклден шығып кетеді.</li>
+                            <li><code>continue</code> — ағымдағы айналымды осы жерден үзеді де, астындағы кодтарды орындамай, бірден **циклдің келесі айналымына** көшеді.</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+<span class="keyword">for</span> сан <span class="keyword">in</span> <span class="function">range</span>(<span class="keyword">1</span>, <span class="keyword">6</span>):
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> сан == <span class="keyword">3</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">break</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сан:"</span>, сан)
+
+<span class="keyword">for</span> x <span class="keyword">in</span> <span class="function">range</span>(<span class="keyword">1</span>, <span class="keyword">6</span>):
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> x % <span class="keyword">2</span> == <span class="keyword">0</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">continue</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Тақ сан:"</span>, x)</div>
+                        </div>
+
+                        <div class="warning-note" style="border-left: 4px solid #e74c3c; background-color: #fdf2f2; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0;">
+                            <p style="color: #2c3e50; margin: 0; font-family: sans-serif; line-height: 1.6; font-size: 15px;">
+                                <strong style="color: #e74c3c;">Есіңізде сақтаңыз:</strong> 
+                                <code style="background-color: #fce4e4; color: #c0392b; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 14px; font-weight: bold;">break</code> 
+                                циклді біржолата жабады, ал 
+                                <code style="background-color: #eaf2f8; color: #2980b9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 14px; font-weight: bold;">continue</code> 
+                                тек сол сәттегі итерацияны өткізіп жіберіп, циклді әрі қарай жалғастырады.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section id="mod4" class="lecture-section">
+                        <h2><span>Модуль 4</span> Деректер құрылымы (Мәліметтерді сақтау)</h2>
+                        <p>Осы уақытқа дейін біз бір айнымалыда тек бір ғана мәнді сақтап келдік (мысалы, <code>жас = 16</code>). Ал егер бізге сыныптағы 20 оқушының атын немесе дүкендегі тауарлар тізімін сақтау керек болса не істейміз? Әрқайсысына жеке айнымалы ашу ыңғайсыз. Осындай жағдайда бізге арнайы деректер құрылымдары көмекке келеді.</p>
+                        
+                        <h3 id="mod4-1">4.1 Тізімдер (Lists) — Өзгермелі контейнерлер</h3>
+                        <p>Тізім — бұл бірнеше элементті бір жерге жинақтап сақтауға арналған контейнер. Ол төртбұрышты жақшалармен <code>[]</code> белгіленіп, ішіндеғы мәліметтер үтір арқылы бөлінеді. Тізімнің ішіндегі мәліметтерді бағдарлама барысында өзгертуге, өшіруге немесе жаңадан қосуға болады.</p>
+                        <ul>
+                            <li><code>.append(мәні)</code> — тізімнің ең соңына жаңадан элемент қосады;</li>
+                            <li><code>.remove(мәні)</code> — тізім ішінен нақты көрсетілген элементті тауып, өшіреді;</li>
+                            <li>Тізімдегі элементтерді рет-ретімен шақыру үшін <strong>индекстер</strong> қолданылады. Ең маңыздысы: бағдарламалауда санау әрқашан <strong>0-ден басталады</strong>. Кері бағытта санау үшін теріс индекстер қолданылады (<code>-1</code> — ең соңғы элемент).</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+инвентарь = [<span class="string">"Қылыш"</span>, <span class="string">"Қалқан"</span>, <span class="string">"Емдік сусын"</span>]
+
+инвентарь.<span class="function">append</span>(<span class="string">"Алтын кілт"</span>)
+инвентарь.<span class="function">remove</span>(<span class="string">"Емдік сусын"</span>)
+
+<span class="function">print</span>(инвентарь)
+<span class="function">print</span>(инвентарь[<span class="keyword">0</span>])
+<span class="function">print</span>(инвентарь[-<span class="keyword">1</span>])</div>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod4-2">4.2 Кортеждер (Tuples) — Өзгермейтін тұрақтылар</h3>
+                        <p>Кортеж — бұл тізімге өте ұқсас, бірақ <strong>өзгертуге мүлдем болмайтын</strong> деректер жиынтығы. Ол дөңгелек жақшалармен <code>()</code> жазылады. Егер сіз кортеж жасасаңыз, оған жаңа мән қоса алмайсыз немесе ішіндегіні өшіре алмайсыз. Ол деректерді кездейсоқ өзгеруден қорғау үшін және бағдарлама жылдам жұмыс істеуі үшін керек.</p>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+апта_күндері = (<span class="string">"Дүйсенбі"</span>, <span class="string">"Сейсенбі"</span>, <span class="string">"Сәрсенбі"</span>)
+
+<span class="function">print</span>(апта_күндері[<span class="keyword">0</span>])</div>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod4-3">4.3 Жиындар (Sets) — Тек қана бірегей мәндер</h3>
+                        <p>Жиын — бұл элементтерінің орны реттелмеген (индексі жоқ) және ең бастысы — <strong>ішіндегі элементтері қайталанбайтын</strong> құрылым. Фигуралық жақшамен <code>{}</code> жазылады. Егер жиынға бірдей бірнеше элемент қоссаңыз да, ол тек біреуін ғана алып қалады. Тізімнен қайталанатын элементтерді тазарту үшін өте ыңғайлы.</p>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+сандар_тізімі = [<span class="keyword">1</span>, <span class="keyword">2</span>, <span class="keyword">2</span>, <span class="keyword">3</span>, <span class="keyword">3</span>, <span class="keyword">3</span>, <span class="keyword">4</span>]
+
+бірегей_жиын = <span class="function">set</span>(сандар_тізімі)
+
+<span class="function">print</span>(бірегей_жиын)</div>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod4-4">4.4 Сөздіктер (Dictionaries) — «Кілт — Мән» жұбы</h3>
+                        <p>Сөздік — деректерді индекс бойынша емес, арнайы <strong>Кілт (Key) арқылы сақтайтын</strong> ең қуатты құрылымдардың бірі. Ол да фигуралық жақшамен <code>{}</code> жазылады, бірақ ішінде <code>кілт: мән</code> жұптары тұрады. Нақты өмірдегі телефон кітапшасы сияқты: адамның аты — кілт, телефоны — мән.</p>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+оқушы = {
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"аты"</span>: <span class="string">"Аружан"</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"жасы"</span>: <span class="keyword">17</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"сыныбы"</span>: <span class="string">"11-А"</span>
+}
+
+<span class="function">print</span>(оқушы[<span class="string">"аты"</span>])
+
+оқушы[<span class="string">"ұпай"</span>] = <span class="keyword">95</span>
+<span class="function">print</span>(оқушы)</div>
+                        </div>
+
+                        <div class="info-note">
+                            <p><strong>Қорытынды естелік:</strong> Тізім <code>[]</code> — өзгертуге келеді (реттелген), Кортеж <code>()</code> — өзгертуге келмейді, Жиын <code>{}</code> — қайталанбайтын элементтер, Сөздік <code>{кілт: мән}</code> — мәліметтерді атаулы кілтпен сақтауға арналған.</p>
+                        </div>
+                    </section>
+
+                    <section id="mod5" class="lecture-section">
+                        <h2><span>Модуль 5</span> Функциялар және Жобалық жұмыс (Қорытынды деңгей)</h2>
+                        <p>Үлкен жобалар жазған кезде бір код фрагментін әртүрлі жерде бірнеше рет қайталап жазуға тура келеді. Кодты қайта-қайта көшірмеу үшін (DRY принципі — Don't Repeat Yourself) біз оны арнайы блокқа жинақтап, атын қоямыз. Бұл блокты <strong>Функция</strong> деп атайды.</p>
+                        
+                        <h3 id="mod5-1">5.1 Функция құрылымы және мән қайтару</h3>
+                        <p>Функцияны біз бір рет құрамыз да, кейін бағдарламаның кез келген жерінде тек атын атау арқылы шақыра береміз. Оның негізгі компоненттері:</p>
+                        <ul>
+                            <li><code>def</code> (define) — функция құруды бастайтын кілттік сөз;</li>
+                            <li><strong>Параметрлер мен Аргументтер</strong> — функция жұмыс істеуі үшін оған сырттан берілетін кіріс мәліметтері (жақшаның ішінде жазылады);</li>
+                            <li><code>return</code> — функцияның атқарған жұмысының соңғы нәтижесін сыртқа (негізгі бағдарламаға) қайтару командасы. <code>return</code> орындалған сәтте функция өз жұмысын бірден тоқтатады.</li>
+                        </ul>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+<span class="keyword">def</span> <span class="function">есептеу_бонус</span>(ұпай, коэффициент=<span class="keyword">1.0</span>):
+&nbsp;&nbsp;&nbsp;&nbsp;қорытынды = ұпай * коэффициент
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> қорытынды
+
+ойыншы1 = <span class="function">есептеу_бонус</span>(<span class="keyword">100</span>, <span class="keyword">1.5</span>)
+ойыншы2 = <span class="function">есептеу_бонус</span>(<span class="keyword">250</span>)
+
+<span class="function">print</span>(<span class="string">"1-Ойыншы bonuses:"</span>, ойыншы1)
+<span class="function">print</span>(<span class="string">"2-Ойыншы bonuses:"</span>, ойыншы2)</div>
+                        </div>
+
+                        <div class="warning-note" style="border-left: 4px solid #9b59b6; background-color: #faf4fc; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0;">
+                            <p style="color: #2c3e50; margin: 0; font-family: sans-serif; line-height: 1.6; font-size: 15px;">
+                                <strong style="color: #8e44ad;">Лямбда (Lambda) функциялары:</strong> 
+                                Егер сізге тек бір жолдан тұратын шағын функция керек болса, анонимді лямбда функциясын қолдануға болады. 
+                                Мысалы: <code style="background-color: #f3e5f5; color: #6a1b9a; padding: 3px 6px; border-radius: 4px; font-family: monospace; font-size: 14px; font-weight: bold;">шаршы = lambda x: x * x</code>. 
+                                Бұл кодты барынша қысқартуға көмектеседі.
+                            </p>
+                        </div>
+
+                        <hr>
+
+                        <h3 id="mod5-2">5.2 Қорытынды Жоба: "Батырдың шытырман оқиғасы" RPG Симуляторы</h3>
+                        <p>Енді осы уақытқа дейін өткен барлық тақырыптарды (айнымалылар, шарттар, циклдер, тізімдер және функциялар) бір жүйеге біріктіріп, нақты шағын жоба жасап көрейік. Төмендегі кодты көшіріп, іске қосып көріңіз:</p>
+
+                        <div class="code-container">
+                            <button class="btn-copy" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Көшіру</button>
+                            <div class="code-block">
+<span class="keyword">def</span> <span class="function">жағдайды_тексеру</span>(hp, инвентарь):
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"\n--- СІЗДІҢ СТАТУСЫҢЫЗ ---"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Өмір саны (HP):"</span>, hp)
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сөмкеңіздегі заттар:"</span>, инвентарь)
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"------------------------"</span>)
+
+<span class="keyword">def</span> <span class="function">бастау_ойын</span>():
+&nbsp;&nbsp;&nbsp;&nbsp;hp = <span class="keyword">100</span>
+&nbsp;&nbsp;&nbsp;&nbsp;инвентарь = [<span class="string">"Қылыш"</span>, <span class="string">"Нан"</span>]
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Ойынға қош келдіңіз, жас Батыр!"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">while</span> hp &gt; <span class="keyword">0</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">жағдайды_тексеру</span>(hp, инвентарь)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Алдыңызда екі жол тұр: 1 - Үңгірге кіру, 2 - Жол жиегінде демалу, 3 - Ойыннан шығу"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;таңдау = <span class="function">input</span>(<span class="string">"Қайсысын таңдайсыз? (1/2/3): "</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> таңдау == <span class="string">"1"</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Үңгірде айдаһар тап берді! Сіз жарақат алдыңыз (-40 HP)."</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hp = hp - <span class="keyword">40</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> <span class="string">"Алтын"</span> <span class="keyword">not</span> <span class="keyword">in</span> инвентарь:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;инвентарь.<span class="function">append</span>(<span class="string">"Алтын"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Бірақ сіз үңгірден 'Алтын' тауып алдыңыз!"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">elif</span> таңдау == <span class="string">"2"</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> <span class="string">"Нан"</span> <span class="keyword">in</span> инвентарь:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сіз нан жеп, күш жинадыңыз (+20 HP)."</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hp = hp + <span class="keyword">20</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;инвентарь.<span class="function">remove</span>(<span class="string">"Нан"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Сізде жейтін ештеңе қалмады."</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">elif</span> таңдау == <span class="string">"3"</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Ойын тоқтатылды. Сау болыңыз!"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">break</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Қате пәрмен! Қайта таңдаңыз."</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> hp &lt;= <span class="keyword">0</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"\nСіздің өміріңіз таусылды. Ойын аяқталды! Game Over."</span>)
+
+<span class="function">бастау_ойын</span>()</div>
+                        </div>
+
+                        <div class="info-note">
+                            <p><strong>Құттықтаймыз!</strong> Сіз Python тілінің негізгі базалық деңгейін толық меңгеріп шықтыңыз. Бұл кішігірім RPG жобасы — үлкен бағдарламалардың қалай жұмыс істейтінін көрсететін нақты мысал. Енді өз бетіңізше жаңа таңдаулар мен жаңа заттар қосып, ойынды байытып көріңіз!</p>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <div class="chatbot-container">
+        <div class="chatbot-window glass" id="chatWindow" role="dialog" aria-labelledby="chatHeaderTitle" aria-hidden="true">
+            <div class="chat-header">
+                <h3 id="chatHeaderTitle">
+                    <i class="fa-solid fa-robot" aria-hidden="true"></i> AI-Driven Feedback
+                </h3>
+                <button type="button" class="chat-close-btn" onclick="toggleChat()" aria-label="Чатты жабу">&times;</button>
+            </div>
+
+            <div class="chat-body" id="chatBody" aria-live="polite">
+                <div class="msg-wrapper bot-wrapper">
+                    <p class="chat-msg bot-msg">Сәлем, жас программист! 👋 Бағдарламалау бойынша қандай сұрағың бар? Маған жаз!</p>
+                </div>
+            </div>
+
+            <form class="chat-footer" id="chatForm" onsubmit="sendMessage(event)">
+                <input type="text" id="chatInput" placeholder="Сұрағыңды жаз..." required autocomplete="off" aria-label="Сұрақ енгізу өрісі">
+                <button type="submit" aria-label="Жіберу">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+
+        <button class="chatbot-toggle-btn" id="chatToggleBtn" onclick="toggleChat()" aria-label="Чатты ашу" aria-controls="chatWindow" aria-expanded="false">
+            <i class="fa-solid fa-comments" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Құпиялылық саясаты</a>
+                <a href="terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Функция открытия/закрытия чата с обновлением ARIA-атрибутов
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatToggleBtn = document.getElementById('chatToggleBtn');
+            const isActive = chatWindow.classList.toggle('active');
+            
+            chatWindow.setAttribute('aria-hidden', !isActive);
+            chatToggleBtn.setAttribute('aria-expanded', isActive);
+        }
+
+        // Логика отправки сообщений в чат (для демонстрации)
+        function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chatInput');
+            const chatBody = document.getElementById('chatBody');
+            
+            if (input.value.trim() === '') return;
+
+            // Сообщение пользователя
+            const userWrapper = document.createElement('div');
+            userWrapper.className = 'msg-wrapper user-wrapper';
+            userWrapper.innerHTML = `<p class="chat-msg user-msg">${input.value}</p>`;
+            chatBody.appendChild(userWrapper);
+
+            const userText = input.value;
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Имитация ответа AI через 1 секунду
+            setTimeout(() => {
+                const botWrapper = document.createElement('div');
+                botWrapper.className = 'msg-wrapper bot-wrapper';
+                botWrapper.innerHTML = `<p class="chat-msg bot-msg">Керемет сұрақ! Талқылайық: "${userText}" 🚀</p>`;
+                chatBody.appendChild(botWrapper);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+
+        // Переключение темы
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const body = document.body;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fa-solid fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        });
+
+
+        // Копирование кода
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.innerText;
+
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    const originalText = button.innerHTML;
+
+                    button.innerHTML =
+                        '<i class="fa-solid fa-check"></i> Көшірілді';
+
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Көшіру қатесі:', err);
+                });
+        }
+    </script>
+</body>
+</html>

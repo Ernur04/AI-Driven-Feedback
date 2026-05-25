@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Feedback - Басты бет</title>
+
+    <link rel="icon" type="image/x-icon" href="logo/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="logo/logo.png" alt="Logo" onerror="this.style.display='none'">
+                <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button id="themeToggle" class="btn-icon" aria-label="Түнгі/күндізгі режимді ауыстыру">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                <div class="user-actions">
+                    <div class="auth-buttons" id="authButtons">
+                        <a href="" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Кіру</a>
+                        <a href="" class="btn-register"><i class="fa-solid fa-user-plus"></i> Тіркелу</a>
+                    </div>
+                    <div class="user-profile" id="userProfile" style="display: none;">
+                        <a href="" class="btn-profile"><i class="fa-solid fa-user"></i> Профиль</a>
+                        <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Навигация -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li>
+                    <a href="index.html" class="active">
+                        <i class="fa-solid fa-house"></i> Басты бет
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pages/theory.html">
+                        <i class="fa-solid fa-book-open"></i>
+                        Интерактивті оқу модулі
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pages/practice.html">
+                        <i class="fa-solid fa-code"></i>
+                        ЖИ-тьютормен біріктірілген Практикум
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pages/reference.html">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Анықтамалық
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="hero-section">
+            <div class="container hero-content">
+                <h1 class="hero-title"><span class="gradient-text">AI-Driven</span> Feedback</h1>
+                <p class="hero-description">
+                     AI кері байланысты қолдану арқылы Python-да бағдарламалауды үйрен.
+                </p>
+                <a href="pages/theory.html" class="btn btn-primary">Бастау</a>
+            </div>
+        </section>
+
+        <section class="features-section" aria-labelledby="features-heading">
+            <div class="container">
+                <h2 id="features-heading" class="visually-hidden">Платформа мүмкіндіктері</h2>
+                
+                <div class="features-grid">
+                    <article class="feature-card glass">
+                        <i class="fa-solid fa-robot" aria-hidden="true"></i>
+                        <h3>ЖИ-тьютормен Практикум</h3>
+                        <p>Нақты тапсырмаларды орындап, жасанды интеллектен код сапасы бойынша жедел кеңестер алыңыз.</p>
+                        <a href="pages/practice.html" class="btn-secondary">Практикаға өту</a>
+                    </article>
+
+                    <article class="feature-card glass">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <h3>Python Анықтамалығы</h3>
+                        <p>Негізгі синтаксис, функциялар мен деректер типтерін жылдам қарап шығыңыз.</p>
+                        <a href="pages/reference.html" class="btn-secondary">Анықтамалықты ашу</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="chatbot-container">
+        <div class="chatbot-window glass" id="chatWindow" role="dialog" aria-labelledby="chatHeaderTitle" aria-hidden="true">
+            <div class="chat-header">
+                <h3 id="chatHeaderTitle">
+                    <i class="fa-solid fa-robot" aria-hidden="true"></i> AI-Driven Feedback
+                </h3>
+                <button type="button" class="chat-close-btn" onclick="toggleChat()" aria-label="Чатты жабу">&times;</button>
+            </div>
+
+            <div class="chat-body" id="chatBody" aria-live="polite">
+                <div class="msg-wrapper bot-wrapper">
+                    <p class="chat-msg bot-msg">Сәлем, жас программист! 👋 Бағдарламалау бойынша қандай сұрағың бар? Маған жаз!</p>
+                </div>
+            </div>
+
+            <form class="chat-footer" id="chatForm" onsubmit="sendMessage(event)">
+                <input type="text" id="chatInput" placeholder="Сұрағыңды жаз..." required autocomplete="off" aria-label="Сұрақ енгізу өрісі">
+                <button type="submit" aria-label="Жіберу">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+
+        <button class="chatbot-toggle-btn" id="chatToggleBtn" onclick="toggleChat()" aria-label="Чатты ашу" aria-controls="chatWindow" aria-expanded="false">
+            <i class="fa-solid fa-comments" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="pages/privacy.html">Құпиялылық саясаты</a>
+                <a href="pages/terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Функция открытия/закрытия чата с обновлением ARIA-атрибутов
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatToggleBtn = document.getElementById('chatToggleBtn');
+            const isActive = chatWindow.classList.toggle('active');
+            
+            chatWindow.setAttribute('aria-hidden', !isActive);
+            chatToggleBtn.setAttribute('aria-expanded', isActive);
+        }
+
+        // Логика отправки сообщений в чат (для демонстрации)
+        function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chatInput');
+            const chatBody = document.getElementById('chatBody');
+            
+            if (input.value.trim() === '') return;
+
+            // Сообщение пользователя
+            const userWrapper = document.createElement('div');
+            userWrapper.className = 'msg-wrapper user-wrapper';
+            userWrapper.innerHTML = `<p class="chat-msg user-msg">${input.value}</p>`;
+            chatBody.appendChild(userWrapper);
+
+            const userText = input.value;
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Имитация ответа AI через 1 секунду
+            setTimeout(() => {
+                const botWrapper = document.createElement('div');
+                botWrapper.className = 'msg-wrapper bot-wrapper';
+                botWrapper.innerHTML = `<p class="chat-msg bot-msg">Керемет сұрақ! Талқылайық: "${userText}" 🚀</p>`;
+                chatBody.appendChild(botWrapper);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+
+        // Переключение темы
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const body = document.body;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fa-solid fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+/* -------------------------------------------------------------------------
+   ЧАТ-БОТ (CHATBOT) СТИЛЬДЕРІ
+------------------------------------------------------------------------- */
+.chatbot-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+/* Чат терезесі */
+.chatbot-window {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 360px;
+    height: 500px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chatbot-window.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Чаттың үстіңгі жағы */
+.chat-header {
+    background: var(--gradient);
+    color: #ffffff;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-close-btn {
+    background: transparent;
+    color: #ffffff;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 4px;
+}
+
+/* Чаттың іші (хабарламалар аумағы) */
+.chat-body {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.msg-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.bot-wrapper { justify-content: flex-start; }
+.user-wrapper { justify-content: flex-end; }
+
+.chat-msg {
+    padding: 10px 14px;
+    border-radius: 14px;
+    max-width: 85%;
+    font-size: 0.92rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+.bot-msg {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.user-msg {
+    background-color: var(--accent);
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+}
+
+/* Чаттың астыңғы жағы (форма) */
+.chat-footer {
+    padding: 12px;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 8px;
+}
+
+.chat-footer input {
+    flex-grow: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    outline: none;
+    font-size: 0.92rem;
+}
+
+.chat-footer input:focus {
+    border-color: var(--accent);
+}
+
+.chat-footer button {
+    background-color: var(--accent);
+    color: #ffffff;
+    padding: 10px 14px;
+}
+
+.chat-footer button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Чатты ашатын дөңгелек батырма */
+.chatbot-toggle-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #ffffff;
+    font-size: 1.5rem;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+    transition: transform 0.2s ease;
+}
+
+.chatbot-toggle-btn:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .chatbot-window {
+        width: calc(100vw - 40px);
+        right: -10px;
+    }
+}

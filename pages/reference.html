@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Feedback - Анықтамалық</title>
+
+    <link rel="icon" type="image/x-icon" href="logo/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/chat.css">
+    <link rel="stylesheet" href="../css/theory.css">
+    <link rel="stylesheet" href="../css/reference.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="../logo/logo.png" alt="Logo" onerror="this.style.display='none'">
+                <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button id="themeToggle" class="btn-icon" aria-label="Түнгі/күндізгі режимді ауыстыру">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                <div class="user-actions">
+                    <div class="auth-buttons" id="authButtons">
+                        <a href="" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Кіру</a>
+                        <a href="" class="btn-register"><i class="fa-solid fa-user-plus"></i> Тіркелу</a>
+                    </div>
+                    <div class="user-profile" id="userProfile" style="display: none;">
+                        <a href="" class="btn-profile"><i class="fa-solid fa-user"></i> Профиль</a>
+                        <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Навигация -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li>
+                    <a href="../index.html">
+                        <i class="fa-solid fa-house"></i> Басты бет
+                    </a>
+                </li>
+
+                <li>
+                    <a href="theory.html">
+                        <i class="fa-solid fa-book-open"></i>
+                        Интерактивті оқу модулі
+                    </a>
+                </li>
+
+                <li>
+                    <a href="practice.html">
+                        <i class="fa-solid fa-code"></i>
+                        ЖИ-тьютормен біріктірілген Практикум
+                    </a>
+                </li>
+
+                <li>
+                    <a href="reference.html" class="active">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Анықтамалық
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="reference-main">
+        
+        <div class="container reference-container">
+
+
+            <div class="reference-header">
+                <h1 class="reference-title">Python Анықтамалығы</h1>
+                <p class="reference-subtitle">
+                    Ең қажетті командалар мен операторлардың қысқаша шолуы.
+                </p>
+            </div>
+
+            <!-- SEARCH -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Команданы немесе бөлімді іздеу...">
+            </div>
+
+            <nav class="ref-nav">
+                <a href="#basics">Негізгі синтаксис</a>
+                <a href="#data">Деректер типтері</a>
+                <a href="#control">Басқару құрылымдары</a>
+                <a href="#lists">Коллекциялар</a>
+                <a href="#functions">Функциялар</a>
+                <a href="#oop">ООП (Класс)</a>
+                <a href="#io">Файл және қателер</a>
+                <a href="#libs">Модульдер мен әдістер</a>
+                <a href="#strings">Жолдар (String)</a>
+                <a href="#operators">Операторлар</a>
+                <a href="#logic">Логикалық операторлар</a>
+                <a href="#comparison">Салыстыру операторлары</a>
+                <a href="#list-methods">Тізім әдістері</a>
+                <a href="#dict-methods">Сөздік әдістері</a>
+                <a href="#loops">Цикл функциялары</a>
+                <a href="#math">Математикалық функциялар</a>
+                <a href="#conversion">Тип түрлендіру</a>
+                <a href="#comprehension">Comprehension</a>
+                <a href="#datetime">Уақыт және дата</a>
+                <a href="#random">Random модулі</a>
+                <a href="#os">OS модулі</a>
+                <a href="#exceptions">Қате түрлері</a>
+                <a href="#advanced-func">Қосымша функциялар</a>
+                <a href="#boolean">Boolean тексерулер</a>
+                <a href="#sets">Set әдістері</a>
+                <a href="#tuple">Tuple операциялары</a>
+                <a href="#file-modes">Файл режимдері</a>
+                <a href="#string-checks">String тексеру</a>
+                <a href="#string-format">String форматтау</a>
+                <a href="#split-strip">Жолды өңдеу</a>
+                <a href="#numbers">Сандар</a>
+                <a href="#enumeration">Итерация</a>
+                <a href="#any-all">Логикалық тексерулер</a>
+                <a href="#class-methods">Class әдістері</a>
+                <a href="#advanced-oop">Advanced OOP</a>
+                <a href="#json">JSON</a>
+                <a href="#csv">CSV</a>
+                <a href="#math-module">Math модулі</a>
+                <a href="#lambda2">Lambda мысалдары</a>
+                <a href="#decorators">Decorator</a>
+                <a href="#generators">Generator</a>
+                <a href="#virtualenv">Virtual Environment</a>
+                <a href="#pip">PIP</a>
+                <a href="#exceptions2">Try Except кеңейтілген</a>
+            </nav>
+
+            <div class="cheat-sheet" id="cheatSheet">
+                <section id="basics" class="cheat-card">
+                    <h3>Негізгі синтаксис</h3>
+                    <table>
+                        <tr><td><code>print()</code></td><td>Экранға шығару</td></tr>
+                        <tr><td><code>input()</code></td><td>Мәлімет енгізу</td></tr>
+                        <tr><td><code>#</code></td><td>Түсініктеме</td></tr>
+                        <tr><td><code>type()</code></td><td>Типін тексеру</td></tr>
+                    </table>
+                </section>
+
+                <section id="data" class="cheat-card">
+                    <h3>Деректер типтері</h3>
+                    <table>
+                        <tr><td><code>int, float</code></td><td>Сандар</td></tr>
+                        <tr><td><code>str</code></td><td>Жолдар</td></tr>
+                        <tr><td><code>bool</code></td><td>Логика (True/False)</td></tr>
+                        <tr><td><code>None</code></td><td>Бос мән</td></tr>
+                    </table>
+                </section>
+
+                <section id="control" class="cheat-card">
+                    <h3>Басқару құрылымдары</h3>
+                    <table>
+                        <tr><td><code>if, elif, else</code></td><td>Шарттар</td></tr>
+                        <tr><td><code>for...in</code></td><td>Цикл (тізбек)</td></tr>
+                        <tr><td><code>while</code></td><td>Цикл (шарт)</td></tr>
+                        <tr><td><code>break/continue</code></td><td>Үзу/Жалғастыру</td></tr>
+                    </table>
+                </section>
+
+                <section id="lists" class="cheat-card">
+                    <h3>Коллекциялар</h3>
+                    <table>
+                        <tr><td><code>list []</code></td><td>Тізім (өзгеретін)</td></tr>
+                        <tr><td><code>tuple ()</code></td><td>Кортеж (тұрақты)</td></tr>
+                        <tr><td><code>dict {}</code></td><td>Сөздік (кілт:мәні)</td></tr>
+                        <tr><td><code>set {}</code></td><td>Жиын (бірегей)</td></tr>
+                    </table>
+                </section>
+
+                <section id="functions" class="cheat-card">
+                    <h3>Функциялар</h3>
+                    <table>
+                        <tr><td><code>def name():</code></td><td>Функция жариялау</td></tr>
+                        <tr><td><code>return</code></td><td>Нәтиже қайтару</td></tr>
+                        <tr><td><code>lambda</code></td><td>Анонимді функция</td></tr>
+                        <tr><td><code>args, kwargs</code></td><td>Аргументтер</td></tr>
+                    </table>
+                </section>
+
+                <section id="oop" class="cheat-card">
+                    <h3>ООП (Класс)</h3>
+                    <table>
+                        <tr><td><code>class</code></td><td>Класс құру</td></tr>
+                        <tr><td><code>__init__</code></td><td>Конструктор</td></tr>
+                        <tr><td><code>self</code></td><td>Ағымдағы объект</td></tr>
+                        <tr><td><code>inheritance</code></td><td>Мұрагерлік</td></tr>
+                    </table>
+                </section>
+
+                <section id="io" class="cheat-card">
+                    <h3>Файл және қателер</h3>
+                    <table>
+                        <tr><td><code>open()</code></td><td>Файлды ашу</td></tr>
+                        <tr><td><code>with</code></td><td>Контекст менеджері</td></tr>
+                        <tr><td><code>try/except</code></td><td>Қатені өңдеу</td></tr>
+                        <tr><td><code>raise</code></td><td>Қате жіберу</td></tr>
+                    </table>
+                </section>
+
+                <section id="libs" class="cheat-card">
+                    <h3>Модульдер мен әдістер</h3>
+                    <table>
+                        <tr><td><code>import</code></td><td>Модуль қосу</td></tr>
+                        <tr><td><code>dir()</code></td><td>Әдістерді көру</td></tr>
+                        <tr><td><code>help()</code></td><td>Анықтама алу</td></tr>
+                        <tr><td><code>math, random</code></td><td>Кітапханалар</td></tr>
+                    </table>
+                </section>
+
+                <section id="strings" class="cheat-card">
+                    <h3>Жолдар (String)</h3>
+                    <table>
+                        <tr><td><code>len()</code></td><td>Ұзындығын табу</td></tr>
+                        <tr><td><code>lower()</code></td><td>Кіші әріпке ауыстыру</td></tr>
+                        <tr><td><code>upper()</code></td><td>Үлкен әріпке ауыстыру</td></tr>
+                        <tr><td><code>replace()</code></td><td>Мәтінді ауыстыру</td></tr>
+                    </table>
+                </section>
+
+                <section id="operators" class="cheat-card">
+                    <h3>Операторлар</h3>
+                    <table>
+                        <tr><td><code>+</code></td><td>Қосу</td></tr>
+                        <tr><td><code>-</code></td><td>Азайту</td></tr>
+                        <tr><td><code>*</code></td><td>Көбейту</td></tr>
+                        <tr><td><code>/</code></td><td>Бөлу</td></tr>
+                    </table>
+                </section>
+
+                <section id="logic" class="cheat-card">
+                    <h3>Логикалық операторлар</h3>
+                    <table>
+                        <tr><td><code>and</code></td><td>ЖӘНЕ</td></tr>
+                        <tr><td><code>or</code></td><td>НЕМЕСЕ</td></tr>
+                        <tr><td><code>not</code></td><td>ЕМЕС</td></tr>
+                        <tr><td><code>==</code></td><td>Теңдігін тексеру</td></tr>
+                    </table>
+                </section>
+
+                <section id="comparison" class="cheat-card">
+                    <h3>Салыстыру операторлары</h3>
+                    <table>
+                        <tr><td><code>></code></td><td>Үлкен</td></tr>
+                        <tr><td><code><</code></td><td>Кіші</td></tr>
+                        <tr><td><code>>=</code></td><td>Үлкен немесе тең</td></tr>
+                        <tr><td><code><=</code></td><td>Кіші немесе тең</td></tr>
+                    </table>
+                </section>
+
+                <section id="list-methods" class="cheat-card">
+                    <h3>Тізім әдістері</h3>
+                    <table>
+                        <tr><td><code>append()</code></td><td>Элемент қосу</td></tr>
+                        <tr><td><code>remove()</code></td><td>Элемент өшіру</td></tr>
+                        <tr><td><code>sort()</code></td><td>Сұрыптау</td></tr>
+                        <tr><td><code>reverse()</code></td><td>Кері аудару</td></tr>
+                    </table>
+                </section>
+
+                <section id="dict-methods" class="cheat-card">
+                    <h3>Сөздік әдістері</h3>
+                    <table>
+                        <tr><td><code>keys()</code></td><td>Кілттерді алу</td></tr>
+                        <tr><td><code>values()</code></td><td>Мәндерді алу</td></tr>
+                        <tr><td><code>items()</code></td><td>Жұптарды алу</td></tr>
+                        <tr><td><code>get()</code></td><td>Қауіпсіз мән алу</td></tr>
+                    </table>
+                </section>
+
+                <section id="loops" class="cheat-card">
+                    <h3>Цикл функциялары</h3>
+                    <table>
+                        <tr><td><code>range()</code></td><td>Сандар генерациясы</td></tr>
+                        <tr><td><code>enumerate()</code></td><td>Индекс пен мән</td></tr>
+                        <tr><td><code>zip()</code></td><td>Біріктіру</td></tr>
+                        <tr><td><code>pass</code></td><td>Бос операция</td></tr>
+                    </table>
+                </section>
+
+                <section id="math" class="cheat-card">
+                    <h3>Математикалық функциялар</h3>
+                    <table>
+                        <tr><td><code>abs()</code></td><td>Модуль</td></tr>
+                        <tr><td><code>round()</code></td><td>Дөңгелектеу</td></tr>
+                        <tr><td><code>pow()</code></td><td>Дәреже</td></tr>
+                        <tr><td><code>max()/min()</code></td><td>Макс/Мин</td></tr>
+                    </table>
+                </section>
+
+                <section id="conversion" class="cheat-card">
+                    <h3>Тип түрлендіру</h3>
+                    <table>
+                        <tr><td><code>int()</code></td><td>Бүтін санға</td></tr>
+                        <tr><td><code>float()</code></td><td>Ондық санға</td></tr>
+                        <tr><td><code>str()</code></td><td>Жолға айналдыру</td></tr>
+                        <tr><td><code>bool()</code></td><td>Логикалық тип</td></tr>
+                    </table>
+                </section>
+
+                <section id="comprehension" class="cheat-card">
+                    <h3>Comprehension</h3>
+                    <table>
+                        <tr><td><code>[x for x in y]</code></td><td>Тізім генерациясы</td></tr>
+                        <tr><td><code>{x:x*x}</code></td><td>Сөздік генерациясы</td></tr>
+                        <tr><td><code>{x for x in y}</code></td><td>Жиын генерациясы</td></tr>
+                        <tr><td><code>if x &gt; 0</code></td><td>Шарт қолдану</td></tr>
+                    </table>
+                </section>
+
+                <section id="datetime" class="cheat-card">
+                    <h3>Уақыт және дата</h3>
+                    <table>
+                        <tr><td><code>datetime.now()</code></td><td>Ағымдағы уақыт</td></tr>
+                        <tr><td><code>strftime()</code></td><td>Форматтау</td></tr>
+                        <tr><td><code>timedelta</code></td><td>Уақыт айырмасы</td></tr>
+                        <tr><td><code>date.today()</code></td><td>Бүгінгі күн</td></tr>
+                    </table>
+                </section>
+
+                <section id="random" class="cheat-card">
+                    <h3>Random модулі</h3>
+                    <table>
+                        <tr><td><code>random()</code></td><td>Кездейсоқ сан</td></tr>
+                        <tr><td><code>randint()</code></td><td>Аралықтағы сан</td></tr>
+                        <tr><td><code>choice()</code></td><td>Кездейсоқ таңдау</td></tr>
+                        <tr><td><code>shuffle()</code></td><td>Араластыру</td></tr>
+                    </table>
+                </section>
+
+                <section id="os" class="cheat-card">
+                    <h3>OS модулі</h3>
+                    <table>
+                        <tr><td><code>os.getcwd()</code></td><td>Ағымдағы бума</td></tr>
+                        <tr><td><code>os.mkdir()</code></td><td>Бума құру</td></tr>
+                        <tr><td><code>os.remove()</code></td><td>Файл өшіру</td></tr>
+                        <tr><td><code>os.listdir()</code></td><td>Файлдарды көру</td></tr>
+                    </table>
+                </section>
+
+                <section id="exceptions" class="cheat-card">
+                    <h3>Қате түрлері</h3>
+                    <table>
+                        <tr><td><code>ValueError</code></td><td>Қате мән</td></tr>
+                        <tr><td><code>TypeError</code></td><td>Қате тип</td></tr>
+                        <tr><td><code>IndexError</code></td><td>Индекс қатесі</td></tr>
+                        <tr><td><code>KeyError</code></td><td>Кілт қатесі</td></tr>
+                    </table>
+                </section>
+
+                <section id="advanced-func" class="cheat-card">
+                    <h3>Қосымша функциялар</h3>
+                    <table>
+                        <tr><td><code>map()</code></td><td>Функция қолдану</td></tr>
+                        <tr><td><code>filter()</code></td><td>Сүзгілеу</td></tr>
+                        <tr><td><code>sorted()</code></td><td>Сұрыпталған тізім</td></tr>
+                        <tr><td><code>sum()</code></td><td>Қосынды</td></tr>
+                    </table>
+                </section>
+
+                <section id="boolean" class="cheat-card">
+                    <h3>Boolean тексерулер</h3>
+                    <table>
+                        <tr><td><code>is</code></td><td>Бір объект пе</td></tr>
+                        <tr><td><code>in</code></td><td>Құрамында бар ма</td></tr>
+                        <tr><td><code>not in</code></td><td>Құрамында жоқ</td></tr>
+                        <tr><td><code>is not</code></td><td>Бірдей емес</td></tr>
+                    </table>
+                </section>
+
+                <!-- ===== ҚОСЫМША 50 PYTHON SECTION ===== -->
+
+                <section id="sets" class="cheat-card">
+                    <h3>Set әдістері</h3>
+                    <table>
+                        <tr><td><code>add()</code></td><td>Элемент қосу</td></tr>
+                        <tr><td><code>remove()</code></td><td>Элемент өшіру</td></tr>
+                        <tr><td><code>union()</code></td><td>Біріктіру</td></tr>
+                        <tr><td><code>intersection()</code></td><td>Ортақ элементтер</td></tr>
+                    </table>
+                </section>
+
+                <section id="tuple" class="cheat-card">
+                    <h3>Tuple операциялары</h3>
+                    <table>
+                        <tr><td><code>count()</code></td><td>Санын табу</td></tr>
+                        <tr><td><code>index()</code></td><td>Индекс табу</td></tr>
+                        <tr><td><code>len()</code></td><td>Ұзындығы</td></tr>
+                        <tr><td><code>in</code></td><td>Ішінде бар ма</td></tr>
+                    </table>
+                </section>
+
+                <section id="file-modes" class="cheat-card">
+                    <h3>Файл режимдері</h3>
+                    <table>
+                        <tr><td><code>"r"</code></td><td>Оқу</td></tr>
+                        <tr><td><code>"w"</code></td><td>Жазу</td></tr>
+                        <tr><td><code>"a"</code></td><td>Қосу</td></tr>
+                        <tr><td><code>"rb"</code></td><td>Binary оқу</td></tr>
+                    </table>
+                </section>
+
+                <section id="string-checks" class="cheat-card">
+                    <h3>String тексеру</h3>
+                    <table>
+                        <tr><td><code>isdigit()</code></td><td>Сан ба</td></tr>
+                        <tr><td><code>isalpha()</code></td><td>Әріп пе</td></tr>
+                        <tr><td><code>isalnum()</code></td><td>Әріп/сан</td></tr>
+                        <tr><td><code>startswith()</code></td><td>Басталуын тексеру</td></tr>
+                    </table>
+                </section>
+
+                <section id="string-format" class="cheat-card">
+                    <h3>String форматтау</h3>
+                    <table>
+                        <tr><td><code>f""</code></td><td>f-string</td></tr>
+                        <tr><td><code>format()</code></td><td>Форматтау</td></tr>
+                        <tr><td><code>%s</code></td><td>Ескі формат</td></tr>
+                        <tr><td><code>join()</code></td><td>Жолдарды біріктіру</td></tr>
+                    </table>
+                </section>
+
+                <section id="split-strip" class="cheat-card">
+                    <h3>Жолды өңдеу</h3>
+                    <table>
+                        <tr><td><code>split()</code></td><td>Бөлу</td></tr>
+                        <tr><td><code>strip()</code></td><td>Бос орын өшіру</td></tr>
+                        <tr><td><code>find()</code></td><td>Іздеу</td></tr>
+                        <tr><td><code>count()</code></td><td>Қайталану саны</td></tr>
+                    </table>
+                </section>
+
+                <section id="numbers" class="cheat-card">
+                    <h3>Сандар</h3>
+                    <table>
+                        <tr><td><code>//</code></td><td>Бүтін бөлу</td></tr>
+                        <tr><td><code>%</code></td><td>Қалдық</td></tr>
+                        <tr><td><code>**</code></td><td>Дәреже</td></tr>
+                        <tr><td><code>divmod()</code></td><td>Бөлу нәтижесі</td></tr>
+                    </table>
+                </section>
+
+                <section id="enumeration" class="cheat-card">
+                    <h3>Итерация</h3>
+                    <table>
+                        <tr><td><code>next()</code></td><td>Келесі элемент</td></tr>
+                        <tr><td><code>iter()</code></td><td>Итератор жасау</td></tr>
+                        <tr><td><code>reversed()</code></td><td>Кері оқу</td></tr>
+                        <tr><td><code>all()</code></td><td>Барлығы True ма</td></tr>
+                    </table>
+                </section>
+
+                <section id="any-all" class="cheat-card">
+                    <h3>Логикалық тексерулер</h3>
+                    <table>
+                        <tr><td><code>any()</code></td><td>Кемінде бірі True</td></tr>
+                        <tr><td><code>all()</code></td><td>Барлығы True</td></tr>
+                        <tr><td><code>bool()</code></td><td>Boolean тип</td></tr>
+                        <tr><td><code>None</code></td><td>Бос объект</td></tr>
+                    </table>
+                </section>
+
+                <section id="class-methods" class="cheat-card">
+                    <h3>Class әдістері</h3>
+                    <table>
+                        <tr><td><code>@staticmethod</code></td><td>Static әдіс</td></tr>
+                        <tr><td><code>@classmethod</code></td><td>Класс әдісі</td></tr>
+                        <tr><td><code>super()</code></td><td>Ата-ана класс</td></tr>
+                        <tr><td><code>__str__</code></td><td>Мәтіндік көрсету</td></tr>
+                    </table>
+                </section>
+
+                <section id="advanced-oop" class="cheat-card">
+                    <h3>Advanced OOP</h3>
+                    <table>
+                        <tr><td><code>encapsulation</code></td><td>Инкапсуляция</td></tr>
+                        <tr><td><code>polymorphism</code></td><td>Полиморфизм</td></tr>
+                        <tr><td><code>abstraction</code></td><td>Абстракция</td></tr>
+                        <tr><td><code>inheritance</code></td><td>Мұрагерлік</td></tr>
+                    </table>
+                </section>
+
+                <section id="json" class="cheat-card">
+                    <h3>JSON</h3>
+                    <table>
+                        <tr><td><code>json.load()</code></td><td>JSON оқу</td></tr>
+                        <tr><td><code>json.dump()</code></td><td>JSON жазу</td></tr>
+                        <tr><td><code>loads()</code></td><td>String → JSON</td></tr>
+                        <tr><td><code>dumps()</code></td><td>JSON → String</td></tr>
+                    </table>
+                </section>
+
+                <section id="csv" class="cheat-card">
+                    <h3>CSV</h3>
+                    <table>
+                        <tr><td><code>csv.reader()</code></td><td>CSV оқу</td></tr>
+                        <tr><td><code>csv.writer()</code></td><td>CSV жазу</td></tr>
+                        <tr><td><code>DictReader</code></td><td>Сөздік оқу</td></tr>
+                        <tr><td><code>writerow()</code></td><td>Жол жазу</td></tr>
+                    </table>
+                </section>
+
+                <section id="math-module" class="cheat-card">
+                    <h3>Math модулі</h3>
+                    <table>
+                        <tr><td><code>sqrt()</code></td><td>Түбір</td></tr>
+                        <tr><td><code>ceil()</code></td><td>Жоғары дөңгелектеу</td></tr>
+                        <tr><td><code>floor()</code></td><td>Төмен дөңгелектеу</td></tr>
+                        <tr><td><code>pi</code></td><td>π саны</td></tr>
+                    </table>
+                </section>
+
+                <section id="lambda2" class="cheat-card">
+                    <h3>Lambda мысалдары</h3>
+                    <table>
+                        <tr><td><code>lambda x:x*2</code></td><td>Көбейту</td></tr>
+                        <tr><td><code>map(lambda)</code></td><td>Map қолдану</td></tr>
+                        <tr><td><code>filter(lambda)</code></td><td>Filter қолдану</td></tr>
+                        <tr><td><code>sorted(key=lambda)</code></td><td>Сұрыптау</td></tr>
+                    </table>
+                </section>
+
+                <section id="decorators" class="cheat-card">
+                    <h3>Decorator</h3>
+                    <table>
+                        <tr><td><code>@decorator</code></td><td>Декоратор</td></tr>
+                        <tr><td><code>wrapper()</code></td><td>Қаптау функциясы</td></tr>
+                        <tr><td><code>*args</code></td><td>Аргументтер</td></tr>
+                        <tr><td><code>**kwargs</code></td><td>Кілттік аргументтер</td></tr>
+                    </table>
+                </section>
+
+                <section id="generators" class="cheat-card">
+                    <h3>Generator</h3>
+                    <table>
+                        <tr><td><code>yield</code></td><td>Generator қайтару</td></tr>
+                        <tr><td><code>next()</code></td><td>Келесі мән</td></tr>
+                        <tr><td><code>generator()</code></td><td>Генератор функциясы</td></tr>
+                        <tr><td><code>StopIteration</code></td><td>Аяқталу қатесі</td></tr>
+                    </table>
+                </section>
+
+                <section id="virtualenv" class="cheat-card">
+                    <h3>Virtual Environment</h3>
+                    <table>
+                        <tr><td><code>venv</code></td><td>Орта құру</td></tr>
+                        <tr><td><code>activate</code></td><td>Іске қосу</td></tr>
+                        <tr><td><code>pip install</code></td><td>Кітапхана орнату</td></tr>
+                        <tr><td><code>pip freeze</code></td><td>Тізім көру</td></tr>
+                    </table>
+                </section>
+
+                <section id="pip" class="cheat-card">
+                    <h3>PIP</h3>
+                    <table>
+                        <tr><td><code>pip list</code></td><td>Пакеттер</td></tr>
+                        <tr><td><code>pip uninstall</code></td><td>Өшіру</td></tr>
+                        <tr><td><code>pip show</code></td><td>Ақпарат</td></tr>
+                        <tr><td><code>requirements.txt</code></td><td>Тәуелділіктер</td></tr>
+                    </table>
+                </section>
+
+                <section id="exceptions2" class="cheat-card">
+                    <h3>Try Except кеңейтілген</h3>
+                    <table>
+                        <tr><td><code>finally</code></td><td>Әрқашан орындалады</td></tr>
+                        <tr><td><code>else</code></td><td>Қате болмаса</td></tr>
+                        <tr><td><code>Exception</code></td><td>Жалпы қате</td></tr>
+                        <tr><td><code>assert</code></td><td>Тексеру</td></tr>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </main>
+
+
+    <div class="chatbot-container">
+        <div class="chatbot-window glass" id="chatWindow" role="dialog" aria-labelledby="chatHeaderTitle" aria-hidden="true">
+            <div class="chat-header">
+                <h3 id="chatHeaderTitle">
+                    <i class="fa-solid fa-robot" aria-hidden="true"></i> AI-Driven Feedback
+                </h3>
+                <button type="button" class="chat-close-btn" onclick="toggleChat()" aria-label="Чатты жабу">&times;</button>
+            </div>
+
+            <div class="chat-body" id="chatBody" aria-live="polite">
+                <div class="msg-wrapper bot-wrapper">
+                    <p class="chat-msg bot-msg">Сәлем, жас программист! 👋 Бағдарламалау бойынша қандай сұрағың бар? Маған жаз!</p>
+                </div>
+            </div>
+
+            <form class="chat-footer" id="chatForm" onsubmit="sendMessage(event)">
+                <input type="text" id="chatInput" placeholder="Сұрағыңды жаз..." required autocomplete="off" aria-label="Сұрақ енгізу өрісі">
+                <button type="submit" aria-label="Жіберу">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+
+        <button class="chatbot-toggle-btn" id="chatToggleBtn" onclick="toggleChat()" aria-label="Чатты ашу" aria-controls="chatWindow" aria-expanded="false">
+            <i class="fa-solid fa-comments" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Құпиялылық саясаты</a>
+                <a href="terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Функция открытия/закрытия чата с обновлением ARIA-атрибутов
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatToggleBtn = document.getElementById('chatToggleBtn');
+            const isActive = chatWindow.classList.toggle('active');
+            
+            chatWindow.setAttribute('aria-hidden', !isActive);
+            chatToggleBtn.setAttribute('aria-expanded', isActive);
+        }
+
+        // Логика отправки сообщений в чат (для демонстрации)
+        function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chatInput');
+            const chatBody = document.getElementById('chatBody');
+            
+            if (input.value.trim() === '') return;
+
+            // Сообщение пользователя
+            const userWrapper = document.createElement('div');
+            userWrapper.className = 'msg-wrapper user-wrapper';
+            userWrapper.innerHTML = `<p class="chat-msg user-msg">${input.value}</p>`;
+            chatBody.appendChild(userWrapper);
+
+            const userText = input.value;
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Имитация ответа AI через 1 секунду
+            setTimeout(() => {
+                const botWrapper = document.createElement('div');
+                botWrapper.className = 'msg-wrapper bot-wrapper';
+                botWrapper.innerHTML = `<p class="chat-msg bot-msg">Керемет сұрақ! Талқылайық: "${userText}" 🚀</p>`;
+                chatBody.appendChild(botWrapper);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+
+        // Переключение темы
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const body = document.body;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fa-solid fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        });
+
+        // Іздеу функционалы (Search logic)
+        const searchInput = document.getElementById('searchInput');
+        const cheatSheet = document.getElementById('cheatSheet');
+        const cards = document.querySelectorAll('.cheat-card');
+
+        // Контейнер для сообщения "Нәтиже жоқ"
+        const noResultsMsg = document.createElement('div');
+        noResultsMsg.className = 'search-no-results';
+        noResultsMsg.style.display = 'none';
+        noResultsMsg.textContent = 'Кешіріңіз, ештеңе табылмады...';
+        cheatSheet.appendChild(noResultsMsg);
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            noResultsMsg.style.display = (visibleCount === 0 && query !== '') ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>
