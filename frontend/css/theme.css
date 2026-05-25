@@ -31,6 +31,10 @@ body.dark-mode {
     --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
 }
 
+html {
+    height: 100%;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -43,6 +47,9 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Глассморфизм стилі */
