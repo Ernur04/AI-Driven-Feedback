@@ -15,53 +15,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/theory.css">
     
-    <style>
-        .legal-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        .legal-content-box {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: var(--shadow);
-        }
-        .legal-content-box h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-        .legal-content-box h3 {
-            font-size: 1.3rem;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            color: var(--accent);
-        }
-        .legal-content-box p, .legal-content-box li {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            font-size: 1.05rem;
-            margin-bottom: 15px;
-        }
-        .legal-content-box ul {
-            padding-left: 20px;
-            margin-bottom: 20px;
-        }
-        .legal-date {
-            font-style: italic;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            display: block;
-            margin-bottom: 30px;
-        }
-        @media (max-width: 768px) {
-            .legal-content-box {
-                padding: 24px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../css/legal.css">
 </head>
 <body>
     <header>
@@ -92,14 +46,14 @@
                 </li>
 
                 <li>
-                    <a href="privacy.html" class="active">
+                    <a href="privacy.html">
                         <i class="fa-solid fa-shield-halved"></i>
                         Құпиялылық саясаты
                     </a>
                 </li>
 
                 <li>
-                    <a href="terms.html">
+                    <a href="terms.html" class="active">
                         <i class="fa-solid fa-file-signature"></i>
                         Пайдалану шарттары
                     </a>
@@ -148,26 +102,6 @@
             </div>
         </div>
     </footer>
-    <script>
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = themeToggle.querySelector('i');
-        const body = document.body;
-
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark-mode');
-            themeIcon.className = 'fa-solid fa-sun';
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                themeIcon.className = 'fa-solid fa-sun';
-            } else {
-                localStorage.setItem('theme', 'light');
-                themeIcon.className = 'fa-solid fa-moon';
-            }
-        });
-    </script>
+    <script src="../js/theme.js"></script>
 </body>
 </html>
