@@ -15,6 +15,7 @@
 .practice-main {
     background-color: var(--bg-primary); 
     padding: 40px 0;
+    flex: 1 0 auto;
 }
 
 /* Заголовок страницы (Theory) */
