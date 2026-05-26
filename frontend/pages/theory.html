@@ -37,12 +37,32 @@
                 </div>
                 <div class="user-actions">
                     <div class="auth-buttons" id="authButtons">
-                        <a href="" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Кіру</a>
-                        <a href="" class="btn-register"><i class="fa-solid fa-user-plus"></i> Тіркелу</a>
+                        <a href="login.html" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Кіру</a>
+                        <a href="register.html" class="btn-register"><i class="fa-solid fa-user-plus"></i> Тіркелу</a>
                     </div>
-                    <div class="user-profile" id="userProfile" style="display: none;">
-                        <a href="" class="btn-profile"><i class="fa-solid fa-user"></i> Профиль</a>
-                        <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
+                    <!-- USER PROFILE WRAPPER -->
+                    <div class="user-profile-wrapper" id="userProfileWrapper" style="display: none;">
+                        <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                            <img src="../logo/default-user.png" alt="User Avatar" class="avatar-small" id="userAvatarSmall">
+                        </button>
+
+                        <div class="user-profile glass" id="userProfile" style="display: none;">
+                            <div class="profile-header">
+                                <img src="../logo/default-user.png" alt="User Avatar" class="avatar" id="userAvatar">
+                                <div class="user-info">
+                                    <h2 id="userName">Ernur</h2>
+                                    <p id="userRole">Student</p>
+                                </div>
+                            </div>
+                            <div class="profile-menu">
+                                <button id="btnProfile" class="profile-btn">
+                                    <i class="fa-solid fa-user"></i> Профиль
+                                </button>
+                                <button id="btnLogout" class="logout-btn">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Шығу
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -579,5 +599,6 @@ hp = <span class="keyword">3</span>
     <script src="../js/chat.js"></script>
     <script src="../js/theme.js"></script>
     <script src="../js/copy-code.js"></script>
+    <script src="../js/profile.js"></script>
 </body>
 </html>

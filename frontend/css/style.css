@@ -41,6 +41,11 @@ header .container {
     font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: -0.5px;
+    color: var(--text-primary);
+}
+
+body.dark-mode .logo img {
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.2)) brightness(1.1);
 }
 
 .header-actions {
@@ -66,45 +71,206 @@ button, .btn-login, .btn-register, .btn-profile, .btn-logout {
 .btn-icon {
     background: transparent;
     color: var(--text-primary);
-    font-size: 1.2rem;
-    padding: 8px;
+    font-size: 1.25rem;
+    padding: 10px;
     border-radius: 50%;
+    transition: all 0.2s ease;
 }
 .btn-icon:hover {
     background-color: var(--border-color);
 }
 
-.auth-buttons, .user-profile {
+/* Auth Buttons */
+.auth-buttons {
     display: flex;
     gap: 12px;
+    align-items: center;
 }
 
-.btn-login, .btn-profile {
+.btn-login {
     color: var(--text-primary);
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: transparent;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
-.btn-login:hover, .btn-profile:hover {
+
+.btn-login:hover {
     background-color: var(--border-color);
+    border-color: var(--text-secondary);
 }
 
 .btn-register {
-    background-color: var(--accent);
+    background: var(--gradient);
     color: #ffffff !important;
-    padding: 8px 16px;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
-}
-.btn-register:hover {
-    background-color: var(--accent-hover);
+    padding: 10px 24px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transition: all 0.3s ease;
 }
 
-.btn-logout {
+.btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+    color: #ffffff !important;
+}
+
+.btn-register i {
+    color: #ffffff;
+}
+
+.user-profile-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.profile-trigger {
+    background: transparent;
+    padding: 2px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-trigger:hover {
+    border-color: var(--accent);
+    background: rgba(37, 99, 235, 0.1);
+    transform: scale(1.05);
+}
+
+.avatar-small {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-profile {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 280px;
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+    padding: 0;
+    z-index: 1000;
+    overflow: hidden;
+    transform-origin: top right;
+    animation: dropdownShow 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes dropdownShow {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.2);
+
+/* small avatar used in compact triggers */
+.avatar-small, .avatar-preview-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(0,0,0,0.06);
+}
+
+.profile-trigger {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user-info h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.user-info p {
+    font-size: 0.85rem;
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.profile-menu {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-btn, .logout-btn {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.profile-btn {
+    background-color: transparent;
+    color: var(--text-primary);
+}
+
+.profile-btn:hover {
+    background-color: var(--border-color);
+    transform: translateX(4px);
+}
+
+.profile-btn i {
+    color: var(--accent);
+}
+
+.logout-btn {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.logout-btn:hover {
     background-color: #ef4444;
     color: #ffffff;
-    padding: 8px 16px;
+    transform: translateX(4px);
 }
-.btn-logout:hover {
-    background-color: #dc2626;
+
+.logout-btn i {
+    color: inherit;
 }
 
 /* -------------------------------------------------------------------------
@@ -129,9 +295,15 @@ button, .btn-login, .btn-register, .btn-profile, .btn-logout {
     color: var(--text-secondary);
     text-decoration: none;
     padding: 15px 0;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.95rem;
     position: relative;
+    transition: color 0.3s ease;
+}
+
+.main-nav a i {
+    font-size: 1.1rem;
+    color: var(--accent);
 }
 
 .main-nav a:hover, .main-nav a.active {

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Feedback - Тіркелу</title>
+
+    <link rel="icon" type="image/svg+xml" href="../logo/logo3.png">
+    <link rel="icon" type="image/png" href="../logo/logo3.png">
+    <link rel="icon" type="image/x-icon" href="../logo/logo3.png">
+    
+    <link rel="apple-touch-icon" href="../logo/logo3.png">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="../logo/logo3.png" alt="Logo" onerror="this.style.display='none'">
+                <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button id="themeToggle" class="btn-icon" aria-label="Түнгі/күндізгі режимді ауыстыру">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li>
+                    <a href="../index.html">
+                        <i class="fa-solid fa-house"></i> Басты бет
+                    </a>
+                </li>
+                <li>
+                    <a href="theory.html">
+                        <i class="fa-solid fa-book-open"></i>
+                        Интерактивті оқу модулі
+                    </a>
+                </li>
+                <li>
+                    <a href="practice.html">
+                        <i class="fa-solid fa-code"></i>
+                        ЖИ-тьютормен біріктірілген Практикум
+                    </a>
+                </li>
+                <li>
+                    <a href="reference.html">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Анықтамалық
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="register-container">
+        <div class="register-form">
+            <h2><i class="fa-solid fa-user-plus"></i> Тіркелу</h2>
+            
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="fullName">Аты-жөні *</label>
+                    <input type="text" id="fullName" name="fullName" required placeholder="Өз атыңызды енгізіңіз">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="Email-ді енгізіңіз">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль *</label>
+                    <input type="password" id="password" name="password" required placeholder="Күшті пароль таңдаңыз">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Парольді растау *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Парольді қайта енгізіңіз">
+                </div>
+
+                <div class="form-group">
+                    <label>Рөлі таңдаңыз *</label>
+                    <div class="role-selection">
+                        <div class="role-option">
+                            <input type="radio" id="roleStudent" name="role" value="student" required>
+                            <label for="roleStudent">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                Студент
+                            </label>
+                        </div>
+
+                        <div class="role-option">
+                            <input type="radio" id="roleTeacher" name="role" value="teacher">
+                            <label for="roleTeacher">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                                Мұғалім
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-register">Тіркелу</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Аккаунтыңыз бар ма? <a href="login.html">Кіру</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Құпиялылық саясаты</a>
+                <a href="terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/server.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>
