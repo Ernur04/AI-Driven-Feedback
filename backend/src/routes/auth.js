@@ -11,7 +11,8 @@ const SALT_ROUNDS = 12;
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name, role } = req.body;
-    if (!email || !password || password.length < 6) return res.status(400).json({ error: 'Invalid input' });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email) || !password || password.length < 6) return res.status(400).json({ error: 'Invalid input' });
     const exists = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
     if (exists.rows.length) return res.status(409).json({ error: 'Email exists' });
     const password_hash = await bcrypt.hash(password, SALT_ROUNDS);

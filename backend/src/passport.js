@@ -21,8 +21,8 @@ async function findOrCreateOAuthUser(provider, profile) {
       return u.rows[0];
     }
   }
-  // create user
-  const insert = await pool.query('INSERT INTO users(email,name,email_verified,created_at) VALUES($1,$2,true,NOW()) RETURNING id,email,name,role', [email || null, profile.displayName || null]);
+  // create user with explicit default role to match frontend expectations
+  const insert = await pool.query('INSERT INTO users(email,name,role,email_verified,created_at) VALUES($1,$2,$3,true,NOW()) RETURNING id,email,name,role', [email || null, profile.displayName || null, 'student']);
   const newUser = insert.rows[0];
   await pool.query('INSERT INTO oauth_accounts(user_id,provider,provider_user_id,provider_email) VALUES($1,$2,$3,$4)', [newUser.id, provider, providerId, email]);
   return newUser;
@@ -57,5 +57,19 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
     }
   }));
 }
+
+// Serialize / deserialize for session support
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const r = await pool.query('SELECT id,email,name,role FROM users WHERE id=$1', [id]);
+    done(null, r.rows[0]);
+  } catch (err) {
+    done(err);
+  }
+});
 
 module.exports = passport;

@@ -3,6 +3,11 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const cors = require('cors');
 require('dotenv').config();
+const morgan = require('morgan');
+const fs = require('fs');
+const path = require('path');
+const winston = require('winston');
+const session = require('express-session');
 
 const { init } = require('./db');
 const authRoutes = require('./routes/auth');
@@ -13,13 +18,12 @@ const verifyRoutes = require('./routes/verify');
 const passport = require('./passport');
 
 const app = express();
+
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(express.json());
-const morgan = require('morgan');
-const fs = require('fs');
-const path = require('path');
-const winston = require('winston');
 
 // setup logging
 const logDir = path.join(__dirname, '..', 'logs');
@@ -38,11 +42,26 @@ app.use(
   })
 );
 
+// ensure uploads dir exists and expose it
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+app.use('/uploads', express.static(uploadsDir));
+
+// session + passport (must be before routes that use passport)
+app.use(session({
+  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'change_me',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production', sameSite: 'lax' }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', passwordRoutes);
 app.use('/api/auth/oauth', oauthRoutes);
-app.use(passport.initialize());
 app.use('/api/auth/verify', verifyRoutes);
 
 const PORT = process.env.PORT || 4000;

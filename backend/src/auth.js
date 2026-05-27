@@ -15,12 +15,10 @@ function verifyAccess(token) {
   return jwt.verify(token, JWT_SECRET);
 }
 
+const { hashToken } = require('./utils/token');
+
 function generateRefresh() {
   return crypto.randomBytes(48).toString('hex');
-}
-
-function hashToken(token) {
-  return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 async function saveRefresh(userId, token, days = REFRESH_DAYS) {
