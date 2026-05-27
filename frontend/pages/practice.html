@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Driven Feedback - Басты бет</title>
+    <title>AI-Driven Feedback - ЖИ-тьютормен біріктірілген Практикум</title>
 
     <link rel="icon" type="image/svg+xml" href="logo/logo3.png">
     <link rel="icon" type="image/png" href="logo/logo3.png">
@@ -16,9 +16,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/chat.css">
 </head>
 <body>
     <header>
@@ -74,27 +74,27 @@
         <div class="container">
             <ul>
                 <li>
-                    <a href="index.html" class="active">
+                    <a href="../index.html">
                         <i class="fa-solid fa-house"></i> Басты бет
                     </a>
                 </li>
 
                 <li>
-                    <a href="pages/theory.html">
+                    <a href="theory.html">
                         <i class="fa-solid fa-book-open"></i>
                         Интерактивті оқу модулі
                     </a>
                 </li>
 
                 <li>
-                    <a href="pages/practice.html">
+                    <a href="practice.html" class="active">
                         <i class="fa-solid fa-code"></i>
                         ЖИ-тьютормен біріктірілген Практикум
                     </a>
                 </li>
 
                 <li>
-                    <a href="pages/reference.html">
+                    <a href="reference.html">
                         <i class="fa-solid fa-circle-info"></i>
                         Анықтамалық
                     </a>
@@ -103,39 +103,14 @@
         </div>
     </nav>
 
-    <main class="main-content">
-        <section class="hero-section">
-            <div class="container hero-content">
-                <h1 class="hero-title"><span class="gradient-text">AI-Driven</span> Feedback</h1>
-                <p class="hero-description">
-                     AI кері байланысты қолдану арқылы Python-да бағдарламалауды үйрен.
-                </p>
-                <a href="pages/theory.html" class="btn btn-primary">Бастау</a>
+    <main class="practice-main">
+        <div class="container">
+            <div class="theory-header">
+                <h1 class="theory-title">ЖИ-тьютормен біріктірілген Практикум</h1>
+                <p class="theory-subtitle"></p>
             </div>
-        </section>
-
-        <section class="features-section" aria-labelledby="features-heading">
-            <div class="container">
-                <h2 id="features-heading" class="visually-hidden">Платформа мүмкіндіктері</h2>
-                
-                <div class="features-grid">
-                    <article class="feature-card glass">
-                        <i class="fa-solid fa-robot" aria-hidden="true"></i>
-                        <h3>ЖИ-тьютормен Практикум</h3>
-                        <p>Нақты тапсырмаларды орындап, жасанды интеллектен код сапасы бойынша жедел кеңестер алыңыз.</p>
-                        <a href="pages/practice.html" class="btn-secondary">Практикаға өту</a>
-                    </article>
-
-                    <article class="feature-card glass">
-                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                        <h3>Python Анықтамалығы</h3>
-                        <p>Негізгі синтаксис, функциялар мен деректер типтерін жылдам қарап шығыңыз.</p>
-                        <a href="pages/reference.html" class="btn-secondary">Анықтамалықты ашу</a>
-                    </article>
-                </div>
-            </div>
-        </section>
-    </main>
+        </div>
+    </main>    
 
     <div class="chatbot-container">
         <div class="chatbot-window glass" id="chatWindow" role="dialog" aria-labelledby="chatHeaderTitle" aria-hidden="true">

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ Панелі - AI-Driven Feedback</title>
+    <link rel="icon" type="image/png" href="../logo/logo3.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        /* Басты контенттің ішкі құрылымы */
+        /* Статистика карточкаларының торы (Grid) */
+.stats-counter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.stat-card.glass {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* Иконкалардың түстері */
+.icon-blue { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+.icon-green { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+.icon-orange { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+
+.stat-info h3 {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 5px 0;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+
+/* Трендтер (Өсім немесе Төмендеу) */
+.stat-trend {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.trend-up { color: #2ecc71; }
+.trend-down { color: #e74c3c; }
+
+/* Графиктер торы */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Сол жағы үлкенірек, оң жағы кішірек */
+    gap: 20px;
+    margin-top: 10px;
+}
+
+@media (max-width: 992px) {
+    .charts-grid {
+        grid-template-columns: 1fr; /* Мобильді нұсқада екеуі де бір қатарға жиналады */
+    }
+}
+
+.chart-container.glass {
+    padding: 20px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chart-time {
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 300px; /* Графиктің биіктігі */
+}
+
+.pie-wrapper {
+    max-width: 250px;
+    margin: 0 auto; /* Дөңгелек графикті ортаға қою */
+}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <img src="../logo/logo3.png" alt="Logo">
+                    <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+                </a>
+            </div>
+                <div class="user-actions">
+                    <!-- USER PROFILE WRAPPER -->
+                    <div class="user-profile-wrapper" id="userProfileWrapper" style="display: flex;">
+                        <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                            <img src="../logo/default-user.webp" alt="User Avatar" class="avatar-small" id="userAvatarSmall">
+                        </button>
+
+                        <div class="user-profile glass" id="userProfile" style="display: none;">
+                            <div class="profile-header">
+                                <img src="../logo/default-user.webp" alt="User Avatar" class="avatar" id="userAvatar">
+                                <div class="user-info">
+                                    <h2 id="userName">Ernur</h2>
+                                    <p id="userRole">Admin</p>
+                                </div>
+                            </div>
+                            <div class="profile-menu">
+                                <button id="btnProfile" class="profile-btn">
+                                    <i class="fa-solid fa-user"></i> Профиль
+                                </button>
+                                <button id="btnLogout" class="logout-btn">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Шығу
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div class="sidebar-card glass">
+                    <div class="sidebar-user">
+                        <div class="avatar-edit-wrapper">
+                            <img src="../logo/default-user.webp" alt="User" class="avatar-large" id="profileAvatarBig">
+                            <input type="file" id="avatarUpload" hidden accept="image/*">
+                        </div>
+                        <h2 id="profileNameBig">Админ</h2>
+                        <p id="profileRoleBig">Administrator</p>
+                    </div>
+                    <ul class="sidebar-nav">
+                        <li><a href="admin-panel.html"><i class="fa-solid fa-user-shield"></i> Профиль</a></li>
+                        <li><a href="admin-users.html"><i class="fa-solid fa-users"></i> Пайдаланушылар</a></li>
+                        <li><a href="admin-line.html" class="active"><i class="fa-solid fa-chart-line"></i> Статистика</a></li>
+                        <li><a href="../index.html"><i class="fa-solid fa-house"></i> Басты бет</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+             <div class="dashboard-main">
+                <div class="stats-counter-grid">
+                    <div class="stat-card glass">
+                        <div class="stat-icon icon-blue"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>Жалпы қолданушылар</h3>
+                            <p class="stat-number">1,248</p>
+                            <span class="stat-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +12% осы айда</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass">
+                        <div class="stat-icon icon-green"><i class="fa-solid fa-user-check"></i></div>
+                        <div class="stat-info">
+                            <h3>Бүгінгі белсенділер</h3>
+                            <p class="stat-number">342</p>
+                            <span class="stat-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +5% кешегіден</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass">
+                        <div class="stat-icon icon-orange"><i class="fa-solid fa-user-plus"></i></div>
+                        <div class="stat-info">
+                            <h3>Жаңа тіркелгендер</h3>
+                            <p class="stat-number">56</p>
+                            <span class="stat-trend trend-down"><i class="fa-solid fa-arrow-down"></i> -2% өткен аптадан</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-container glass">
+                        <div class="chart-header">
+                            <h3>Пайдаланушылардың өсім динамикасы</h3>
+                            <span class="chart-time">Соңғы 6 ай</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container glass">
+                        <div class="chart-header">
+                            <h3>Кіру құрылғылары (Devices)</h3>
+                        </div>
+                        <div class="chart-wrapper pie-wrapper">
+                            <canvas id="deviceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Құпиялылық саясаты</a>
+                <a href="terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/profile.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

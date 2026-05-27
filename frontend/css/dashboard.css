@@ -35,11 +35,7 @@
     border: 3px solid var(--accent);
     margin-bottom: 15px;
     box-shadow: 0 0 20px rgba(37, 99, 235, 0.2);
-    cursor: pointer;
-    transition: transform 0.15s ease;
 }
-
-.sidebar-user .avatar-large:hover { transform: scale(1.03); }
 
 .sidebar-nav {
     list-style: none;
@@ -203,90 +199,10 @@
     background: var(--accent-hover);
 }
 
-/* hide legacy camera button if present (we use separate controls) */
-.avatar-edit-btn { display: none; }
-
-/* small action buttons for profile controls */
-.btn-sm {
-    display: inline-block;
-    padding: 8px 12px;
-    border-radius: 10px;
-    background: white;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.btn-sm:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(16,24,40,0.06); }
-
-/* layout for avatar/cover controls */
-.profile-extra-controls {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-/* stronger visual for avatar/cover controls in combined form */
-.profile-extra-controls .btn-sm {
-    background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
-    border: 1px solid rgba(16,24,40,0.06);
-    padding: 10px 14px;
-}
-
-.profile-extra-controls label.btn-sm {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-/* cover preview when present */
-.cover-preview {
-    width: 100%;
-    height: 140px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 1px solid var(--border-color);
-    margin-bottom: 12px;
-}
-
-/* Password card smaller save button */
-.feature-card .save-btn { padding: 10px 22px; border-radius: 10px; }
-
-/* slightly softer save button hover */
-.save-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(37,99,235,0.18); }
-
-/* spinner on buttons */
-.save-btn .spinner, .btn-sm .spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-top-color: white;
-    margin-right: 8px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.save-btn.loading { opacity: 0.85; }
-
-/* ensure small buttons align with icons */
-.btn-sm { display: inline-flex; align-items: center; gap: 8px; }
-
-
 /* Profile Form Layout */
 .profile-form {
     margin-top: 20px;
 }
-
-/* make combined form card spacing tighter and center save actions */
-#profileCombinedForm .feature-card { padding: 0; }
-#profileCombinedForm .feature-card > .card-header { padding: 18px 20px; }
-#profileCombinedForm .feature-card > div { padding: 12px 16px; }
 
 .form-grid {
     display: grid;
@@ -345,9 +261,6 @@
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
 }
-
-/* make the main save button slightly larger in combined form */
-#profileCombinedForm .save-btn { padding: 14px 36px; font-size: 1rem; }
 
 /* Responsive */
 @media (max-width: 768px) {

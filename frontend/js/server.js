@@ -335,14 +335,13 @@ class MockAuthServer {
     }
 }
 
-// Create instance only when explicitly enabled (prevents accidental inclusion)
-let authServer = null;
-const mockEnabled = (typeof window !== 'undefined' && window.USE_MOCK_AUTH === true) || localStorage.getItem('useMockServer') === 'true';
-if (mockEnabled) {
-    authServer = new MockAuthServer();
-    if (typeof module !== 'undefined' && module.exports) module.exports = authServer;
-    console.log('✅ Mock Auth Server initialized');
-    console.log('📊 Stats:', authServer.getStatistics());
-} else {
-    if (typeof module !== 'undefined' && module.exports) module.exports = null;
+// Создать глобальный экземпляр сервера
+const authServer = new MockAuthServer();
+
+// Экспортировать для использования в других файлах
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = authServer;
 }
+
+console.log('✅ Mock Auth Server инициализирован');
+console.log('📊 Статистика:', authServer.getStatistics());

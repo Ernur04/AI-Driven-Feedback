@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ Панелі - AI-Driven Feedback</title>
+    <link rel="icon" type="image/png" href="../logo/logo3.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        /* Басты контенттің ішкі құрылымы */
+.dashboard-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Үстіңгі панель */
+.users-header-cards {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    border-radius: 12px;
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.btn-add-user {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    background: rgba(0, 123, 255, 0.3);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-add-user:hover {
+    background: rgba(0, 123, 255, 0.5);
+}
+
+/* Іздеу және фильтр */
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 15px;
+    border-radius: 8px;
+    width: 300px;
+}
+
+.search-box input {
+    background: none;
+    border: none;
+    color: white;
+    outline: none;
+    width: 100%;
+}
+
+.filter-select {
+    padding: 8px 15px;
+    border-radius: 8px;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    outline: none;
+}
+
+/* Кесте стилі */
+.table-container {
+    border-radius: 12px;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.users-table th, .users-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.users-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar-small {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Құпия сөзді жасыру эффекті (Blur) */
+.password-blur {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    filter: blur(3px);
+    transition: filter 0.3s;
+    cursor: pointer;
+}
+
+.password-blur:hover {
+    filter: blur(0); /* Тінтуірді апарғанда көрінеді */
+}
+
+/* Рольдерге арналған бейдждер */
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-admin { background: rgba(220, 53, 69, 0.2); color: #ff6b6b; }
+.badge-user { background: rgba(40, 167, 69, 0.2); color: #2ecc71; }
+
+/* Әрекет батырмалары (Өңдеу/Өшіру) */
+.actions-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-action {
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-edit:hover { background: rgba(255, 193, 7, 0.4); color: #ffc107; }
+.btn-delete:hover { background: rgba(220, 53, 69, 0.4); color: #dc3545; }
+
+/* Бос кесте хабарламасының стилі */
+.empty-row td {
+    padding: 60px 0 !important; /* Бос кеңістік жасау */
+    text-align: center;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.empty-state p {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.empty-state span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <img src="../logo/logo3.png" alt="Logo">
+                    <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+                </a>
+            </div>
+                <div class="user-actions">
+                    <!-- USER PROFILE WRAPPER -->
+                    <div class="user-profile-wrapper" id="userProfileWrapper" style="display: flex;">
+                        <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                            <img src="../logo/default-user.webp" alt="User Avatar" class="avatar-small" id="userAvatarSmall">
+                        </button>
+
+                        <div class="user-profile glass" id="userProfile" style="display: none;">
+                            <div class="profile-header">
+                                <img src="../logo/default-user.webp" alt="User Avatar" class="avatar" id="userAvatar">
+                                <div class="user-info">
+                                    <h2 id="userName">Ernur</h2>
+                                    <p id="userRole">Admin</p>
+                                </div>
+                            </div>
+                            <div class="profile-menu">
+                                <button id="btnProfile" class="profile-btn">
+                                    <i class="fa-solid fa-user"></i> Профиль
+                                </button>
+                                <button id="btnLogout" class="logout-btn">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Шығу
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div class="sidebar-card glass">
+                    <div class="sidebar-user">
+                        <div class="avatar-edit-wrapper">
+                            <img src="../logo/default-user.webp" alt="User" class="avatar-large" id="profileAvatarBig">
+                            <input type="file" id="avatarUpload" hidden accept="image/*">
+                        </div>
+                        <h2 id="profileNameBig">Админ</h2>
+                        <p id="profileRoleBig">Administrator</p>
+                    </div>
+                    <ul class="sidebar-nav">
+                        <li><a href="admin-panel.html"><i class="fa-solid fa-user-shield"></i> Профиль</a></li>
+                        <li><a href="admin-users.html" class="active"><i class="fa-solid fa-users"></i> Пайдаланушылар</a></li>
+                        <li><a href="admin-line.html"><i class="fa-solid fa-chart-line"></i> Статистика</a></li>
+                        <li><a href="../index.html"><i class="fa-solid fa-house"></i> Басты бет</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="dashboard-main">
+                <div class="users-header-cards">
+                    <div class="stat-card glass">
+                        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>Барлық пайдаланушылар</h3>
+                            <p class="stat-number">0</p> </div>
+                    </div>
+                    <button class="btn-add-user glass"><i class="fa-solid fa-user-plus"></i> Жаңа қолданушы</button>
+                </div>
+
+                <div class="table-controls glass">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Имя немесе почта арқылы іздеу..." disabled> </div>
+                    <select class="filter-select glass" disabled>
+                        <option value="all">Барлығы</option>
+                        <option value="admin">Администраторлар</option>
+                        <option value="user">Пайдаланушылар</option>
+                    </select>
+                </div>
+
+                <div class="table-container glass">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Пайдаланушы</th>
+                                <th>Почта (Email)</th>
+                                <th>Құпия сөз (Password)</th>
+                                <th>Тіркелген күні</th>
+                                <th>Рөлі</th>
+                                <th>Әрекеттер</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row">
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="fa-solid fa-folder-open empty-icon"></i>
+                                        <p>Пайдаланушылар тізімі бос</p>
+                                        <span>Жаңа қолданушыларды қосқан кезде осы жерде пайда болады.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Құпиялылық саясаты</a>
+                <a href="terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/profile.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

@@ -26,14 +26,14 @@
                     <!-- USER PROFILE WRAPPER -->
                     <div class="user-profile-wrapper" id="userProfileWrapper" style="display: flex;">
                         <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
-                            <img src="../logo/default-user.png" alt="User Avatar" class="avatar-small" id="userAvatarSmall">
+                            <img src="../logo/default-user.webp" alt="User Avatar" class="avatar-small" id="userAvatarSmall">
                         </button>
 
                         <div class="user-profile glass" id="userProfile" style="display: none;">
                             <div class="profile-header">
-                                <img src="../logo/default-user.png" alt="User Avatar" class="avatar" id="userAvatar">
+                                <img src="../logo/default-user.webp" alt="User Avatar" class="avatar" id="userAvatar">
                                 <div class="user-info">
-                                    <h2 id="userName">Ernur</h2>
+                                        <h2 id="userName">Мұғалім</h2>
                                     <p id="userRole">Teacher</p>
                                 </div>
                             </div>
@@ -44,6 +44,10 @@
                                 <button id="btnLogout" class="logout-btn">
                                     <i class="fa-solid fa-right-from-bracket"></i> Шығу
                                 </button>
+                                <div class="profile-views" style="margin-top:8px; display:flex; gap:8px;">
+                                    <a class="glass" href="admin-panel.html" title="Жеке профиль (Админ)" style="padding:6px 8px; text-decoration:none; color:inherit; border-radius:6px;"><i class="fa-solid fa-user-shield"></i> Админ</a>
+                                    <a class="glass" href="student-profile.html" title="Жеке профиль (Студент)" style="padding:6px 8px; text-decoration:none; color:inherit; border-radius:6px;"><i class="fa-solid fa-user-graduate"></i> Студент</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -58,13 +62,13 @@
                 <div class="sidebar-card glass">
                     <div class="sidebar-user">
                         <div class="avatar-edit-wrapper">
-                            <img src="../logo/default-user.png" alt="User" class="avatar-large" id="profileAvatarBig">
+                            <img src="../logo/default-user.webp" alt="User" class="avatar-large" id="profileAvatarBig">
                             <label for="avatarUpload" class="avatar-edit-btn" title="Фотоны өзгерту">
                                 <i class="fa-solid fa-camera"></i>
                             </label>
                             <input type="file" id="avatarUpload" hidden accept="image/*">
                         </div>
-                        <h2 id="profileNameBig">Мұғалім</h2>
+                            <h2 id="profileNameBig">Мұғалім</h2>
                         <p id="profileRoleBig">Teacher</p>
                     </div>
                     <ul class="sidebar-nav">
@@ -74,46 +78,105 @@
                 </div>
             </aside>
 
-            <!-- Main Content -->
             <div class="dashboard-main">
                 <h1 class="section-title">Жеке профиль</h1>
 
-                <!-- Жеке мәліметтер (Profile section) -->
-                <div class="feature-card glass shadow">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fa-solid fa-address-card"></i> Жеке мәліметтер</h2>
+                <form id="profileCombinedForm" class="profile-form">
+                    
+                    <div class="profile-header-card glass shadow">
+                        <div class="profile-cover" id="coverPreview" style="background-image: url('../logo/default-cover.jpg');">
+                            <label for="coverUpload" class="btn-cover-edit" title="Мұқабаны өзгерту">
+                                <i class="fa-solid fa-camera"></i> <span>Cover өзгерту</span>
+                            </label>
+                            <input type="file" id="coverUpload" hidden accept="image/*">
+                        </div>
+                        
+                        <div class="profile-avatar-bar">
+                            <div class="avatar-container">
+                                <img src="../logo/default-user.webp" alt="User" id="profileAvatarMain">
+                                <button type="button" id="btnChangeAvatarMain" class="btn-avatar-edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                            </div>
+                            <div class="profile-title-text">
+                                <h2 id="displayAdminName">Мұғалім</h2>
+                                <p><i class="fa-solid fa-chalkboard-teacher"></i> Мұғалім (Teacher)</p>
+                            </div>
+                        </div>
                     </div>
-                    <form id="profileForm" class="profile-form">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="editName">Аты-жөні</label>
-                                <input type="text" id="editName" required placeholder="Толық атыңызды енгізіңіз">
+
+                    <div class="profile-details-grid">
+                        
+                        <div class="feature-card glass shadow">
+                            <div class="card-header">
+                                <h2 class="card-title"><i class="fa-solid fa-address-card"></i> Жеке мәліметтер</h2>
                             </div>
-                            <div class="form-group">
-                                <label for="editBirth">Туған күні</label>
-                                <input type="date" id="editBirth">
-                            </div>
-                            <div class="form-group">
-                                <label for="editEmail">Электрондық пошта (Email)</label>
-                                <input type="email" id="editEmail" required placeholder="email@example.com">
-                            </div>
-                            <div class="form-group">
-                                <label for="editPhone">Телефон нөмірі</label>
-                                <input type="tel" id="editPhone" placeholder="+7 (___) ___-__-__">
-                            </div>
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label for="editAddress">Мекен-жайы</label>
-                                <input type="text" id="editAddress" placeholder="Қала, көше, үй нөмірі">
+                            <div class="card-body">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="editName">Аты-жөні</label>
+                                        <input type="text" id="editName" required placeholder="Толық атыңыз">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editBirth">Туған күні</label>
+                                        <input type="date" id="editBirth">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editEmail">Электрондық пошта (Email)</label>
+                                        <input type="email" id="editEmail" required placeholder="email@example.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editPhone">Телефон нөмірі</label>
+                                        <input type="tel" id="editPhone" placeholder="+7 (___) ___-__-__">
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label for="editAddress">Мекен-жайы</label>
+                                        <input type="text" id="editAddress" placeholder="Қала, көше, үй нөмірі">
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-actions">
-                            <button type="submit" class="save-btn">
-                                <i class="fa-solid fa-floppy-disk"></i> Сақтау
-                            </button>
+
+                        <div class="feature-card glass shadow">
+                            <div class="card-header">
+                                <h2 class="card-title"><i class="fa-solid fa-key"></i> Құпиясөзді өзгерту</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-grid single-column">
+                                    <div class="form-group">
+                                        <label for="currentPassword">Қазіргі пароль</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="currentPassword" placeholder="••••••••">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newPassword">Жаңа пароль</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="newPassword" placeholder="Жаңа құпиясөз">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirmPassword">Парольді растау</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="confirmPassword" placeholder="Қайталау">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </form>
-                </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn glass">
+                            <i class="fa-solid fa-floppy-disk"></i> Өзгерістерді сақтау
+                        </button>
+                    </div>
+
+                </form>
             </div>
+            
+            
         </div>
     </main>
 
@@ -129,7 +192,7 @@
         </div>
     </footer>
 
-    <script src="../js/config.js"></script>
+    <script src="../js/server.js"></script>
     <script src="../js/theme.js"></script>
     <script src="../js/profile.js"></script>
     <script src="../js/dashboard.js"></script>
