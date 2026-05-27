@@ -91,23 +91,26 @@ window.addEventListener("load", function () {
   if (savedProfile) {
     const userData = JSON.parse(savedProfile);
     updateUserProfile(userData);
+  } else {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    fetch((window.API_BASE || 'http://localhost:4000') + '/api/users/me', { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(res => res.json())
+      .then(data => { if (data.user) { localStorage.setItem('userProfile', JSON.stringify(data.user)); updateUserProfile(data.user); } })
+      .catch(err => console.warn('Failed to fetch profile', err));
   }
 });
 
 // Обработчик кнопки выхода
 document.getElementById("btnLogout")?.addEventListener("click", function () {
-  localStorage.removeItem("userProfile");
+  // Удаляем только токены при выходе, но сохраняем локальный профиль
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  // Скрыть/показать элементы UI, но не стирать сохранённые данные
   const wrapper = document.getElementById("userProfileWrapper");
   if (wrapper) wrapper.style.display = "none";
-  document.getElementById("authButtons").style.display = "flex";
-  document.getElementById("userProfile").style.display = "none";
-  
-  // Сброс аватаров к дефолтным
-  const isSubPage = window.location.pathname.includes('/pages/');
-  const defaultAvatar = isSubPage ? '../logo/default-user.png' : 'logo/default-user.png';
-  
-  const smallAvatar = document.getElementById('userAvatarSmall');
-  if (smallAvatar) smallAvatar.src = defaultAvatar;
-  const headerAvatar = document.getElementById('userAvatar');
-  if (headerAvatar) headerAvatar.src = defaultAvatar;
+  const authButtons = document.getElementById("authButtons");
+  if (authButtons) authButtons.style.display = "flex";
+  const userProfileDropdown = document.getElementById("userProfile");
+  if (userProfileDropdown) userProfileDropdown.style.display = "none";
 });

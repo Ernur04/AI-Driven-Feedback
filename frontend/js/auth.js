@@ -12,29 +12,26 @@ function handleLogin(event) {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const remember = document.querySelector('input[name="remember"]')?.checked || false;
-
-    // Попытка входа через сервер
-    const userData = authServer.login(email, password);
-    
-    if (userData) {
-        // Сохранение профиля если отмечена опция "Помнить"
-        if (remember) {
-            localStorage.setItem('rememberMe', 'true');
-        }
-        
-        // Уведомление об успешном входе
-        showNotification(`Сәтті кірдіңіз, ${userData.name}!`, 'success');
-        
-        console.log('👤 Вошел пользователь:', userData);
-        
-        // Перенаправление на главную страницу
-        setTimeout(() => {
-            window.location.href = '../index.html';
-        }, 500);
-    } else {
-        showNotification('Email немесе пароль қате!', 'error');
-        console.warn('❌ Неверные учетные данные');
-    }
+    // Попытка входа через backend API
+    fetch((window.API_BASE || 'http://localhost:4000') + '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    }).then(async res => {
+        const data = await res.json().catch(()=>({ error: 'Invalid response' }));
+        if (!res.ok) return showNotification(data.error || 'Ошибка входа', 'error');
+        // Сохраняем токены и профиль
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('userProfile', JSON.stringify(data.user));
+        if (remember) localStorage.setItem('rememberMe', 'true');
+        showNotification(`Сәтті кірдіңіз, ${data.user.name}!`, 'success');
+        console.log('👤 Вошел пользователь:', data.user);
+        setTimeout(() => window.location.href = '../index.html', 500);
+    }).catch(err => {
+        console.error(err);
+        showNotification('Серверға қосылу қатесі', 'error');
+    });
 }
 
 /**
@@ -66,40 +63,39 @@ function handleRegister(event) {
         showNotification('Пароли сәйкес емес!', 'error');
         return;
     }
-
-    // Регистрация через сервер
-    const result = authServer.register(fullName, email, password, role);
-
-    if (result.error) {
-        showNotification(result.error, 'error');
-        return;
-    }
-
-    // Уведомление об успешной регистрации
-    showNotification(`${fullName}, сәтті тіркелдіңіз!`, 'success');
-    
-    console.log('✅ Новый пользователь зарегистрирован:', result);
-    
-    // Перенаправление на главную страницу
-    setTimeout(() => {
-        window.location.href = '../index.html';
-    }, 500);
+    // Регистрация через backend API
+    fetch((window.API_BASE || 'http://localhost:4000') + '/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: fullName, email, password, role })
+    }).then(async res => {
+        const data = await res.json().catch(()=>({ error: 'Invalid response' }));
+        if (!res.ok) return showNotification(data.error || 'Ошибка регистрации', 'error');
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('userProfile', JSON.stringify(data.user));
+        showNotification(`${fullName}, сәтті тіркелдіңіз!`, 'success');
+        console.log('✅ Новый пользователь зарегистрирован:', data.user);
+        setTimeout(() => window.location.href = '../index.html', 500);
+    }).catch(err => {
+        console.error(err);
+        showNotification('Серверға қосылу қатесі', 'error');
+    });
 }
 
 /**
  * Вход через Google (заглушка)
  */
 function loginWithGoogle() {
-    showNotification('Google арқылы кіру әзірге іске асырылмаған', 'info');
-    // TODO: Интеграция с Google OAuth
+    // Redirect to backend OAuth start
+    window.location.href = (window.API_BASE || 'http://localhost:4000') + '/api/auth/oauth/google';
 }
 
 /**
  * Вход через GitHub (заглушка)
  */
 function loginWithGithub() {
-    showNotification('GitHub арқылы кіру әзірге іске асырылмаған', 'info');
-    // TODO: Интеграция с GitHub OAuth
+    window.location.href = (window.API_BASE || 'http://localhost:4000') + '/api/auth/oauth/github';
 }
 
 /**
@@ -136,31 +132,46 @@ function updateUserProfile(userData) {
  * Выход из системы
  */
 function handleLogout() {
-    if (confirm('Шығуға сіз сенімдісіз бе?')) {
-        const currentUser = authServer.getCurrentUser();
-        authServer.logout();
-        
-        const userProfile = document.getElementById('userProfile');
-        const authButtons = document.getElementById('authButtons');
-        
-        if (userProfile && authButtons) {
-            userProfile.style.display = 'none';
-            authButtons.style.display = 'flex';
-        }
-        
-        showNotification(`${currentUser?.name} сәтті шықты!`, 'info');
-        console.log('👋 Пользователь вышел из системы');
-    }
+        if (!confirm('Шығуға сіз сенімдісіз бе?')) return;
+        const refreshToken = localStorage.getItem('refreshToken');
+        fetch((window.API_BASE || 'http://localhost:4000') + '/api/auth/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken })
+        }).catch(()=>{}).finally(()=>{
+            const currentUser = JSON.parse(localStorage.getItem('userProfile') || 'null');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userProfile');
+            localStorage.removeItem('rememberMe');
+            const userProfile = document.getElementById('userProfile');
+            const authButtons = document.getElementById('authButtons');
+            if (userProfile && authButtons) {
+                userProfile.style.display = 'none';
+                authButtons.style.display = 'flex';
+            }
+            showNotification(`${currentUser?.name || ''} сәтті шықты!`, 'info');
+            console.log('👋 Пользователь вышел из системы');
+        });
 }
 
 /**
  * Загрузка профиля при загрузке страницы
  */
 function loadUserProfile() {
-    const userData = authServer.getCurrentUser();
+    const userData = localStorage.getItem('userProfile');
     if (userData) {
-        updateUserProfile(userData);
-        console.log('📱 Профиль загружен:', userData.name);
+        const parsed = JSON.parse(userData);
+        updateUserProfile(parsed);
+        console.log('📱 Профиль загружен:', parsed.name);
+    } else {
+      // try to fetch from API using access token
+      const token = localStorage.getItem('accessToken');
+      if (!token) return;
+      fetch((window.API_BASE || 'http://localhost:4000') + '/api/users/me', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => { if (data.user) { localStorage.setItem('userProfile', JSON.stringify(data.user)); updateUserProfile(data.user); } })
+        .catch(err => console.warn('Failed to load profile', err));
     }
 }
 
