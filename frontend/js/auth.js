@@ -104,14 +104,32 @@ function loginWithGithub() {
  * @param {string} type - тип уведомления (success, error, info)
  */
 function showNotification(message, type = 'info') {
-    // Простой способ с alert (можно заменить на красивый toast)
-    if (type === 'error') {
-        alert('❌ ' + message);
-    } else if (type === 'success') {
-        alert('✅ ' + message);
-    } else {
-        alert('ℹ️ ' + message);
+    // Lightweight non-blocking toast
+    const id = 'app-notification-container';
+    let container = document.getElementById(id);
+    if (!container) {
+        container = document.createElement('div');
+        container.id = id;
+        container.style.position = 'fixed';
+        container.style.top = '16px';
+        container.style.right = '16px';
+        container.style.zIndex = 99999;
+        document.body.appendChild(container);
     }
+    const el = document.createElement('div');
+    el.textContent = message;
+    el.style.marginTop = '8px';
+    el.style.padding = '10px 14px';
+    el.style.borderRadius = '6px';
+    el.style.color = '#fff';
+    el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
+    el.style.opacity = '1';
+    el.style.transition = 'opacity 0.4s';
+    if (type === 'error') el.style.background = '#dc2626';
+    else if (type === 'success') el.style.background = '#16a34a';
+    else el.style.background = '#0ea5e9';
+    container.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 400); }, 3500);
 }
 
 /**
@@ -183,5 +201,9 @@ window.addEventListener('load', function() {
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) {
         btnLogout.addEventListener('click', handleLogout);
+        try { btnLogout.dataset.logoutAttached = '1'; } catch (e) {}
     }
 });
+
+// expose for other modules (profile.js, etc.)
+window.handleLogout = handleLogout;

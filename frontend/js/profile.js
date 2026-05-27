@@ -101,16 +101,21 @@ window.addEventListener("load", function () {
   }
 });
 
-// Обработчик кнопки выхода
-document.getElementById("btnLogout")?.addEventListener("click", function () {
-  // Удаляем только токены при выходе, но сохраняем локальный профиль
+// Обработчик кнопки выхода — делегируем на общий обработчик из auth.js
+const btnLogoutEl = document.getElementById("btnLogout");
+if (btnLogoutEl && !btnLogoutEl.dataset.logoutAttached) {
+  btnLogoutEl.addEventListener("click", function () {
+    if (typeof window.handleLogout === 'function') return window.handleLogout();
+  // fallback: clear tokens and UI
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
-  // Скрыть/показать элементы UI, но не стирать сохранённые данные
+  localStorage.removeItem('userProfile');
   const wrapper = document.getElementById("userProfileWrapper");
   if (wrapper) wrapper.style.display = "none";
   const authButtons = document.getElementById("authButtons");
   if (authButtons) authButtons.style.display = "flex";
   const userProfileDropdown = document.getElementById("userProfile");
   if (userProfileDropdown) userProfileDropdown.style.display = "none";
-});
+  });
+  try { btnLogoutEl.dataset.logoutAttached = '1'; } catch (e) {}
+}

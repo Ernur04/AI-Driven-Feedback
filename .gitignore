@@ -1,0 +1,12 @@
+# Ignore backend env and uploads
+/backend/.env
+/backend/node_modules/
+/backend/logs/
+/backend/uploads/
+
+# Node
+node_modules/
+
+# Local env
+.env
+.DS_Store

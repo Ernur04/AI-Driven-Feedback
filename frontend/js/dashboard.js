@@ -97,37 +97,38 @@ function initAvatarUpload() {
         const file = e.target.files[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const base64Image = event.target.result;
-            
-            // Local UI Update
-            const bigAvatar = document.getElementById('profileAvatarBig');
-            if (bigAvatar) bigAvatar.src = base64Image;
+        // show immediate preview using object URL
+        const previewUrl = URL.createObjectURL(file);
+        const bigAvatar = document.getElementById('profileAvatarBig');
+        if (bigAvatar) bigAvatar.src = previewUrl;
 
-            // Persistence
-            const savedProfile = localStorage.getItem('userProfile');
-            if (savedProfile) {
-                const userData = JSON.parse(savedProfile);
-                userData.photo = base64Image;
-                localStorage.setItem('userProfile', JSON.stringify(userData));
-                // Persist to backend if access token exists
-                const token = localStorage.getItem('accessToken');
-                if (token) {
-                    fetch((window.API_BASE || 'http://localhost:4000') + '/api/users/me', {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                        body: JSON.stringify({ photo: base64Image })
-                    }).catch(err => console.warn('Failed to persist avatar', err));
-                }
+        const savedProfile = localStorage.getItem('userProfile');
+        if (savedProfile) {
+            const userData = JSON.parse(savedProfile);
+            userData.photo = previewUrl; // temporary preview
+            localStorage.setItem('userProfile', JSON.stringify(userData));
+            if (typeof updateUserProfile === 'function') updateUserProfile(userData);
+        }
 
-                // Global UI sync (Top right header/dropdown)
-                if (typeof updateUserProfile === 'function') {
-                    updateUserProfile(userData);
-                }
-            }
-        };
-        reader.readAsDataURL(file);
+        // Upload to backend as multipart/form-data to avoid storing large base64 in DB/localStorage
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            const fd = new FormData();
+            fd.append('avatar', file);
+            fetch((window.API_BASE || 'http://localhost:4000') + '/api/users/me/avatar', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + token },
+                body: fd
+            }).then(async res => {
+                const d = await res.json().catch(()=>({ error: 'Invalid response' }));
+                if (!res.ok) return console.warn('Failed to upload avatar', d);
+                const newUser = d.user;
+                localStorage.setItem('userProfile', JSON.stringify(newUser));
+                if (typeof updateUserProfile === 'function') updateUserProfile(newUser);
+                if (bigAvatar && newUser.photo) bigAvatar.src = newUser.photo;
+                URL.revokeObjectURL(previewUrl);
+            }).catch(err => console.warn('Failed to upload avatar', err));
+        }
     });
 
     // allow clicking avatar images to open file chooser
