@@ -190,81 +190,73 @@
 </footer>
 
 <script src="../js/auth-server.js"></script>
+<script src="../js/google-sheets-sync.js"></script>
 <script src="../js/theme.js"></script>
 <script src="../js/avatar-generator.js"></script>
 <script src="../js/profile.js"></script>
 <script src="../js/dashboard.js"></script>
 <script>
-    // ─── 1. НАДЕЖНОЕ ПОЛУЧЕНИЕ СПИСКА СТУДЕНТОВ ─────────────────────────────────────
-    function getStudents() {
-        const srv = window.authServer || window.AuthServer;
-        let students = [];
-        
-        // Пытаемся взять из сервера авторизации
-        if (srv && typeof srv.getAllStudents === 'function') {
-            students = srv.getAllStudents();
+
+    // ─── 1. ПОЛУЧЕНИЕ ТОЛЬКО СТУДЕНТОВ — СНАЧАЛА ИЗ GOOGLE SHEETS ────────────────
+    async function getStudents() {
+        // Пробуем Google Sheets
+        try {
+            if (typeof getAllUsersFromSheets === 'function') {
+                const result = await getAllUsersFromSheets();
+                if (result && result.success && Array.isArray(result.users) && result.users.length > 0) {
+                    console.log('✅ Google Sheets: получено', result.users.length, 'пользователей');
+
+                    // Синхронизируем в localStorage
+                    const grouped = { students: [], teachers: [], admins: [] };
+                    result.users.forEach(u => {
+                        const role = (u.role || 'student').toLowerCase();
+                        if (grouped[role]) grouped[role].push(u);
+                        else grouped.students.push(u);
+                    });
+                    localStorage.setItem('mockUsers', JSON.stringify(grouped));
+                    if (window.authServer) window.authServer.users = grouped;
+
+                    // Возвращаем ТОЛЬКО студентов
+                    return grouped.students;
+                }
+            }
+        } catch (e) {
+            console.warn('⚠️ Google Sheets недоступен, берём из localStorage:', e.message);
         }
-        
-        // Пытаемся взять из localStorage
-        if (!students || !students.length) {
-            try {
+
+        // Fallback — localStorage, только студенты
+        let students = [];
+        try {
+            const srv = window.authServer || window.AuthServer;
+            if (srv && typeof srv.getAllStudents === 'function') {
+                students = srv.getAllStudents();
+            }
+            if (!students || !students.length) {
                 const raw = localStorage.getItem('mockUsers');
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    // Структура: { students: [], teachers: [], admins: [] }
-                    students = Array.isArray(parsed.students) ? parsed.students : (Array.isArray(parsed) ? parsed : []);
+                    students = Array.isArray(parsed.students) ? parsed.students : [];
                 }
-            } catch(e) {
-                console.error("Ошибка парсинга mockUsers:", e);
             }
+        } catch (e) {
+            console.error('Ошибка localStorage:', e);
         }
-        
-        // Fallback — только если реальных студентов нет вообще
-        // НЕ используем хардкод ID — они не совпадут с реальными логами
-        if (!Array.isArray(students) || !students.length) {
-            students = [];
-        }
-        return students;
+        return Array.isArray(students) ? students : [];
     }
 
-    // ─── 2. ЗАГРУЗКА И СИНХРОНИЗАЦИЯ ИСТОРИИ ВХОДОВ ──────────────────────────────────
+    // ─── 2. ЗАГРУЗКА ИСТОРИИ ВХОДОВ ──────────────────────────────────────────────
     function loadLoginHistory() {
         const raw = localStorage.getItem('userLoginLog');
         if (raw) {
-            try { 
+            try {
                 const parsed = JSON.parse(raw);
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             } catch(e) {}
         }
-        // Если логов нет, генерируем новые на базе наших студентов
-        return generateDemoLog();
+        return [];
     }
 
-    function generateDemoLog() {
-        const students = getStudents(); // Синхронизируем ID студентов с логами!
-        const log = [];
-        const now = Date.now();
-        
-        for (let d = 0; d < 14; d++) {
-            const dayBase = now - d * 86400000;
-            students.forEach(s => {
-                if (Math.random() > 0.35) {
-                    const count = Math.floor(Math.random() * 3) + 1;
-                    for (let i = 0; i < count; i++) {
-                        const hour = Math.floor(Math.random() * 16) + 7;
-                        const loginTime  = new Date(dayBase).setHours(hour, Math.floor(Math.random() * 60), 0, 0);
-                        const duration   = (Math.floor(Math.random() * 90) + 10) * 60000;
-                        const logoutTime = loginTime + duration;
-                        log.push({ userId: s.id, loginTime, logoutTime });
-                    }
-                }
-            });
-        }
-        localStorage.setItem('userLoginLog', JSON.stringify(log));
-        return log;
-    }
-
-    // ─── 3. ПОДГРУЗКА ВСПОМОГАТЕЛЬНЫХ РАСЧЕТОВ ─────────────────────────────────────
+    // ─── 3. ВСПОМОГАТЕЛЬНЫЕ РАСЧЁТЫ ──────────────────────────────────────────────
     function calcHoursSpent(userId, log) {
         return log
             .filter(e => e.userId === userId && e.loginTime && e.logoutTime)
@@ -289,31 +281,32 @@
     function getActivityByHour(log) {
         const counts = new Array(24).fill(0);
         log.forEach(e => {
-            if (e.loginTime) {
-                const h = new Date(e.loginTime).getHours();
-                counts[h]++;
-            }
+            if (e.loginTime) counts[new Date(e.loginTime).getHours()]++;
         });
         return counts;
     }
 
-    // ─── 4. ОБНОВЛЕНИЕ КАРТОЧЕК СТАТИСТИКИ (ВЕРХНЯЯ ПАНЕЛЬ) ─────────────────────────
-    function updateSummaryStats(log) {
-        document.getElementById('statTotalLogins').textContent = log.length;
+    // ─── 4. КАРТОЧКИ СТАТИСТИКИ (считаем только по логам студентов) ──────────────
+    function updateSummaryStats(log, students) {
+        // Фильтруем логи только по ID студентов
+        const studentIds = new Set(students.map(s => s.id));
+        const studentLog = log.filter(e => studentIds.has(e.userId));
 
-        const totalMs = log.reduce((s,e) => s + ((e.logoutTime||0)-(e.loginTime||0)), 0);
+        document.getElementById('statTotalLogins').textContent = studentLog.length;
+
+        const totalMs = studentLog.reduce((s,e) => s + ((e.logoutTime||0)-(e.loginTime||0)), 0);
         document.getElementById('statTotalHours').textContent = (totalMs/3600000).toFixed(1);
 
         const today = new Date(); today.setHours(0,0,0,0);
-        const todaySessions = log.filter(e => new Date(e.loginTime) >= today).length;
-        document.getElementById('statTodaySessions').textContent = todaySessions;
+        document.getElementById('statTodaySessions').textContent =
+            studentLog.filter(e => new Date(e.loginTime) >= today).length;
 
-        const withDur = log.filter(e => e.loginTime && e.logoutTime && e.logoutTime > e.loginTime);
+        const withDur = studentLog.filter(e => e.loginTime && e.logoutTime && e.logoutTime > e.loginTime);
         const avgMs = withDur.length ? withDur.reduce((s,e)=>s+(e.logoutTime-e.loginTime),0)/withDur.length : 0;
         document.getElementById('statAvgSession').textContent = Math.round(avgMs/60000) + ' мин';
     }
 
-    // ─── 5. СТИЛИ ГРАФИКОВ (ЦВЕТОВАЯ ПАЛИТРА) ──────────────────────────────────────
+    // ─── 5. ЦВЕТА ГРАФИКОВ ───────────────────────────────────────────────────────
     function getChartColors() {
         const isDark = document.body.classList.contains('dark-mode');
         return {
@@ -324,90 +317,50 @@
         };
     }
 
-    // ─── 6. ОТРИСОВКА ГРАФИКА ВХОДОВ (LINE CHART) ──────────────────────────────────
-    function renderLoginChart(log) {
-        const { labels, data } = getActivityByDay(log);
+    // ─── 6. ГРАФИК ВХОДОВ (LINE) ──────────────────────────────────────────────────
+    function renderLoginChart(log, students) {
+        const studentIds = new Set(students.map(s => s.id));
+        const studentLog = log.filter(e => studentIds.has(e.userId));
+        const { labels, data } = getActivityByDay(studentLog);
         const c = getChartColors();
         const canvas = document.getElementById('loginChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-
         const gradient = ctx.createLinearGradient(0,0,0,240);
         gradient.addColorStop(0, 'rgba(59,130,246,0.3)');
         gradient.addColorStop(1, 'rgba(59,130,246,0)');
-
         new Chart(ctx, {
             type: 'line',
-            data: {
-                labels,
-                datasets: [{
-                    label: 'Кіру саны',
-                    data,
-                    borderColor: c.accent,
-                    backgroundColor: gradient,
-                    borderWidth: 2.5,
-                    pointBackgroundColor: c.accent,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    tension: 0.4,
-                    fill: true,
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 } } },
-                    y: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 }, stepSize: 1 }, beginAtZero: true }
-                }
-            }
+            data: { labels, datasets: [{ label: 'Кіру саны', data, borderColor: c.accent, backgroundColor: gradient, borderWidth: 2.5, pointBackgroundColor: c.accent, pointRadius: 4, pointHoverRadius: 6, tension: 0.4, fill: true }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 } } }, y: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 }, stepSize: 1 }, beginAtZero: true } } }
         });
     }
 
-    // ─── 7. ОТРИСОВКА ГРАФИКА ЧАСОВ (BAR CHART) ───────────────────────────────────
+    // ─── 7. ГРАФИК ЧАСОВ ПО СТУДЕНТАМ (BAR) ──────────────────────────────────────
     function renderHoursChart(log, students) {
         const c = getChartColors();
         const canvas = document.getElementById('hoursChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-
         const labels = students.map(s => (s.name||s.id).split(' ')[0]);
         const data   = students.map(s => parseFloat(calcHoursSpent(s.id, log).toFixed(1)));
-
-        const colors = ['rgba(59,130,246,0.8)','rgba(139,92,246,0.8)','rgba(34,197,94,0.8)',
-                        'rgba(249,115,22,0.8)','rgba(236,72,153,0.8)','rgba(20,184,166,0.8)'];
-
+        const colors = ['rgba(59,130,246,0.8)','rgba(139,92,246,0.8)','rgba(34,197,94,0.8)','rgba(249,115,22,0.8)','rgba(236,72,153,0.8)','rgba(20,184,166,0.8)'];
         new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels,
-                datasets: [{
-                    label: 'Сағат',
-                    data,
-                    backgroundColor: students.map((_,i) => colors[i % colors.length]),
-                    borderRadius: 8,
-                    borderSkipped: false,
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { display: false }, ticks: { color: c.text, font: { size: 11 } } },
-                    y: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 } }, beginAtZero: true }
-                }
-            }
+            data: { labels, datasets: [{ label: 'Сағат', data, backgroundColor: students.map((_,i) => colors[i % colors.length]), borderRadius: 8, borderSkipped: false }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: c.text, font: { size: 11 } } }, y: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 } }, beginAtZero: true } } }
         });
     }
 
-    // ─── 8. ОТРИСОВКА ТЕПЛОВОЙ КАРТЫ АКТИВНОСТИ (HEATMAP) ──────────────────────────
-    function renderActivityHeatmap(log) {
-        const counts = getActivityByHour(log);
+    // ─── 8. ТЕПЛОВАЯ КАРТА (только логи студентов) ───────────────────────────────
+    function renderActivityHeatmap(log, students) {
+        const studentIds = new Set(students.map(s => s.id));
+        const studentLog = log.filter(e => studentIds.has(e.userId));
+        const counts = getActivityByHour(studentLog);
         const maxVal = Math.max(...counts, 1);
         const grid   = document.getElementById('heatmapGrid');
         if (!grid) return;
         grid.innerHTML = '';
-
         grid.appendChild(Object.assign(document.createElement('div'), {className:'heatmap-label'}));
         for (let h = 0; h < 24; h++) {
             const el = document.createElement('div');
@@ -415,12 +368,10 @@
             el.textContent = h < 10 ? '0'+h : h;
             grid.appendChild(el);
         }
-
         const rowLabel = document.createElement('div');
         rowLabel.className = 'heatmap-label';
         rowLabel.textContent = 'Кіру';
         grid.appendChild(rowLabel);
-
         for (let h = 0; h < 24; h++) {
             const intensity = counts[h] / maxVal;
             const cell = document.createElement('div');
@@ -431,11 +382,10 @@
         }
     }
 
-    // ─── 9. ПОЛНАЯ РАБОЧАЯ ФУНКЦИЯ ВЫВОДА ДАННЫХ В ТАБЛИЦУ ───────────────────────
+    // ─── 9. ТАБЛИЦА СТУДЕНТОВ ────────────────────────────────────────────────────
     function renderStudentStats(log, students) {
         const tbody = document.getElementById('statsTableBody');
         if (!tbody) return;
-
         if (!students || !students.length) {
             tbody.innerHTML = `<tr><td colspan="4"><div class="empty-table">
                 <i class="fa-solid fa-users-slash"></i>
@@ -443,47 +393,36 @@
                 </div></td></tr>`;
             return;
         }
-
-        // Рассчитываем массив всех часов заранее, чтобы узнать максимум для масштабирования
         const hoursMapped = students.map(s => calcHoursSpent(s.id, log) || 0);
         const maxHours = Math.max(...hoursMapped, 0.1);
-
         tbody.innerHTML = students.map((s, index) => {
             const studentLog = log.filter(e => e.userId === s.id);
             const sessions   = studentLog.length;
             const hours      = hoursMapped[index];
             const pct        = ((hours / maxHours) * 100).toFixed(0);
-
-            // Поиск последнего входа студента
-            const lastEntry = [...studentLog].sort((a,b) => b.loginTime - a.loginTime)[0];
-            const lastDate  = lastEntry
+            const lastEntry  = [...studentLog].sort((a,b) => b.loginTime - a.loginTime)[0];
+            const lastDate   = lastEntry
                 ? new Date(lastEntry.loginTime).toLocaleDateString('kk-KZ', {year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})
                 : null;
-
-            // Генерация инициалов для красивой круглой аватарки
-            const initials = (s.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-
+            const initials = (s.name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
             return `
             <tr>
                 <td>
-                    <div class="user-cell" style="display: flex; align-items: center; gap: 10px;">
-                        <div class="user-avatar" style="background: #3b82f6; color: #fff; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-size: 12px; font-weight: 600;">
-                            ${initials}
-                        </div>
-                        <div class="user-name" style="font-weight: 500;">${escHtml(s.name || s.id)}</div>
+                    <div class="user-cell" style="display:flex;align-items:center;gap:10px;">
+                        <div style="background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:12px;font-weight:600;">${initials}</div>
+                        <div style="font-weight:500;">${escHtml(s.name || s.id)}</div>
                     </div>
                 </td>
-                <td>
-                    ${lastDate
-                        ? `<span class="date-text">${lastDate}</span>`
-                        : `<span class="never-text" style="color: #9ca3af; font-style: italic;">Ешқашан кірмеген</span>`}
+                <td>${lastDate
+                    ? `<span class="date-text">${lastDate}</span>`
+                    : `<span style="color:#9ca3af;font-style:italic;">Ешқашан кірмеген</span>`}
                 </td>
                 <td>
-                    <div class="hours-bar-wrap" style="display: flex; align-items: center; gap: 8px;">
-                        <div class="hours-bar-bg" style="flex-grow: 1; height: 6px; background: rgba(0,0,0,0.06); border-radius: 4px; overflow: hidden;">
-                            <div class="hours-bar-fill" style="width:${pct}%; height: 100%; background: #3b82f6; border-radius: 4px;"></div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="flex-grow:1;height:6px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden;">
+                            <div style="width:${pct}%;height:100%;background:#3b82f6;border-radius:4px;"></div>
                         </div>
-                        <span class="hours-val" style="min-width: 50px; text-align: right; font-weight: 600;">${hours.toFixed(1)} сағ</span>
+                        <span style="min-width:50px;text-align:right;font-weight:600;">${hours.toFixed(1)} сағ</span>
                     </div>
                 </td>
                 <td><span class="sessions-badge"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${sessions}</span></td>
@@ -491,21 +430,24 @@
         }).join('');
     }
 
-    // ─── 10. ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ БЕЗОПАСНОГО HTML ──────────────────────────
+    // ─── 10. БЕЗОПАСНЫЙ HTML ─────────────────────────────────────────────────────
     function escHtml(str) {
         return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // ─── 11. ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ──────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-        const students = getStudents();
+    // ─── 11. ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Спиннер пока грузим
+        document.getElementById('statsTableBody').innerHTML =
+            `<tr><td colspan="4"><div class="empty-table"><i class="fa-solid fa-spinner fa-spin"></i><span>Деректер жүктелуде...</span></div></td></tr>`;
+
+        const students = await getStudents();
         const log      = loadLoginHistory();
 
-        // Запуск рендеринга всех компонентов панели
-        updateSummaryStats(log);
-        renderLoginChart(log);
+        updateSummaryStats(log, students);
+        renderLoginChart(log, students);
         renderHoursChart(log, students);
-        renderActivityHeatmap(log);
+        renderActivityHeatmap(log, students);
         renderStudentStats(log, students);
     });
 </script>
