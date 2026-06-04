@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../css/theme.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/admin-line.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
     <header>
@@ -208,16 +209,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function getRealUsers() {
         let users = [];
         try {
-            // Пытаемся взять данные из вашего AuthServer, если он доступен в window
-            const authServer = window.authServer || window.AuthServer;
-            if (authServer && typeof authServer.getAllUsers === 'function') {
-                users = authServer.getAllUsers();
-            } else {
-                // Если глобального объекта нет, берем данные напрямую из localStorage проекта
-                const rawUsers = localStorage.getItem('mockUsers') || localStorage.getItem('users');
+            // Берём из authServer — используем правильные методы (getAllUsers не существует!)
+            const srv = window.authServer || window.AuthServer;
+            if (srv) {
+                const students = (typeof srv.getAllStudents === 'function') ? srv.getAllStudents() : [];
+                const teachers = (typeof srv.getAllTeachers === 'function') ? srv.getAllTeachers() : [];
+                const admins   = (typeof srv.getAllAdmins   === 'function') ? srv.getAllAdmins()   : [];
+                users = [...students, ...teachers, ...admins];
+            }
+
+            // Если authServer не вернул ничего — читаем напрямую из localStorage
+            if (!users.length) {
+                const rawUsers = localStorage.getItem('mockUsers');
                 if (rawUsers) {
                     const parsed = JSON.parse(rawUsers);
-                    users = parsed.students || parsed.users || (Array.isArray(parsed) ? parsed : []);
+                    // Структура: { students: [], teachers: [], admins: [] }
+                    const s = Array.isArray(parsed.students) ? parsed.students : [];
+                    const t = Array.isArray(parsed.teachers) ? parsed.teachers : [];
+                    const a = Array.isArray(parsed.admins)   ? parsed.admins   : [];
+                    users = [...s, ...t, ...a];
                 }
             }
         } catch (e) {

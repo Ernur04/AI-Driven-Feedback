@@ -197,12 +197,12 @@
 <script>
     // ─── 1. НАДЕЖНОЕ ПОЛУЧЕНИЕ СПИСКА СТУДЕНТОВ ─────────────────────────────────────
     function getStudents() {
-        const authServer = window.authServer || window.AuthServer;
+        const srv = window.authServer || window.AuthServer;
         let students = [];
         
         // Пытаемся взять из сервера авторизации
-        if (authServer && typeof authServer.getAllStudents === 'function') {
-            students = authServer.getAllStudents();
+        if (srv && typeof srv.getAllStudents === 'function') {
+            students = srv.getAllStudents();
         }
         
         // Пытаемся взять из localStorage
@@ -211,20 +211,18 @@
                 const raw = localStorage.getItem('mockUsers');
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    students = parsed.students || parsed; // На случай, если там чистый массив
+                    // Структура: { students: [], teachers: [], admins: [] }
+                    students = Array.isArray(parsed.students) ? parsed.students : (Array.isArray(parsed) ? parsed : []);
                 }
             } catch(e) {
                 console.error("Ошибка парсинга mockUsers:", e);
             }
         }
         
-        // Если данных нет вообще, создаем базовый список (Fallback)
+        // Fallback — только если реальных студентов нет вообще
+        // НЕ используем хардкод ID — они не совпадут с реальными логами
         if (!Array.isArray(students) || !students.length) {
-            students = [
-                {id:'student_1', name:'Ernur Seitkali',  email:'ernur@example.com'},
-                {id:'student_2', name:'Aida Bekova',     email:'aida@example.com'},
-                {id:'student_3', name:'Damir Akhmetov',  email:'damir@example.com'},
-            ];
+            students = [];
         }
         return students;
     }
@@ -440,7 +438,9 @@
 
         if (!students || !students.length) {
             tbody.innerHTML = `<tr><td colspan="4"><div class="empty-table">
-                <i class="fa-solid fa-users-slash"></i><span>Студенттер жоқ</span></div></td></tr>`;
+                <i class="fa-solid fa-users-slash"></i>
+                <span>Тіркелген студенттер жоқ. Студент рөлінде тіркелу қажет.</span>
+                </div></td></tr>`;
             return;
         }
 
