@@ -1,0 +1,220 @@
+/* =========================================================================
+   Reference Page Layout (Анықтамалық бетінің стильдері)
+   ========================================================================= */
+
+.reference-main {
+    padding-top: 40px;
+    padding-bottom: 80px;
+    background-color: var(--bg-primary);
+    flex: 1 0 auto;
+}
+
+/* -------------------------------------------------------------------------
+   Search Box (Іздеу өрісі)
+   ------------------------------------------------------------------------- */
+.search-box {
+    max-width: 700px;
+    margin: 0 auto 30px auto;
+    width: 100%;
+    padding: 0 20px;
+    position: sticky;
+    top: 85px;
+    z-index: 100;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 18px 28px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    outline: none;
+    box-shadow: var(--shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-box input:focus {
+    border-color: var(--accent);
+    background: var(--bg-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(37, 99, 235, 0.2);
+}
+
+/* -------------------------------------------------------------------------
+   Navigation (Қысқаша навигация - Pills Grid)
+   ------------------------------------------------------------------------- */
+.ref-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 60px;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.ref-nav a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.ref-nav a:hover {
+    background-color: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.ref-nav a.active {
+    background-color: var(--accent);
+    color: #ffffff;
+}
+
+/* -------------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------------- */
+
+.reference-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.reference-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 800;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.reference-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* -------------------------------------------------------------------------
+   Cheat Sheet Grid (Карточкалар торы)
+   ------------------------------------------------------------------------- */
+.cheat-sheet {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.cheat-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    scroll-margin-top: 220px; /* Навигациядан кейін дұрыс көріну үшін */
+}
+
+.cheat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+}
+
+.cheat-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+/* -------------------------------------------------------------------------
+   Table Styles (Командалар кестесі)
+   ------------------------------------------------------------------------- */
+.cheat-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cheat-card td {
+    padding: 10px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+body.dark-mode .cheat-card td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.cheat-card td:first-child {
+    width: 1%;
+    white-space: nowrap;
+    padding-right: 16px;
+}
+
+.cheat-card code {
+    background-color: rgba(37, 99, 235, 0.08);
+    color: var(--accent);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* -------------------------------------------------------------------------
+   Empty Results (Іздеу нәтижесі жоқ болғанда)
+   ------------------------------------------------------------------------- */
+.search-no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* -------------------------------------------------------------------------
+   Responsive
+   ------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .reference-title {
+        font-size: 2rem;
+    }
+    
+    .search-box {
+        top: 75px;
+    }
+    
+    .ref-nav {
+        top: 135px;
+        padding: 6px;
+        gap: 6px;
+    }
+    
+    .ref-nav a {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .cheat-sheet {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Feedback - Басты бет</title>
+
+    <link rel="icon" type="image/svg+xml" href="logo/logo3.png">
+    <link rel="icon" type="image/png" href="logo/logo3.png">
+    <link rel="icon" type="image/x-icon" href="logo/logo3.png">
+    
+    <link rel="apple-touch-icon" href="logo/logo3.png">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="logo/logo3.png" alt="Logo" onerror="this.style.display='none'">
+                <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button id="themeToggle" class="btn-icon" aria-label="Түнгі/күндізгі режимді ауыстыру">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                <div class="user-actions">
+                    <div class="auth-buttons" id="authButtons">
+                        <a href="pages/login.html" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Кіру</a>
+                        <a href="pages/register.html" class="btn-register"><i class="fa-solid fa-user-plus"></i> Тіркелу</a>
+                    </div>
+                    
+                    <!-- USER PROFILE WRAPPER -->
+                    <div class="user-profile-wrapper" id="userProfileWrapper" style="display: none;">
+                        <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                            <div class="avatar-small" id="userAvatarSmall" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        </button>
+
+                        <div class="user-profile glass" id="userProfile" style="display: none;">
+                            <div class="profile-header">
+                                <div class="avatar" id="userAvatar" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 28px;">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <h2 id="userName"></h2> 
+                                    <p id="userRole"></p>
+                                </div>
+                            </div>
+                            <div class="profile-menu">
+                                <button id="btnLogout" class="logout-btn">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Шығу
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Навигация -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li>
+                    <a href="index.html" class="active">
+                        <i class="fa-solid fa-house"></i> Басты бет
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pages/theory.html">
+                        <i class="fa-solid fa-book-open"></i>
+                        Интерактивті оқу модулі
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pages/practice.html">
+                        <i class="fa-solid fa-code"></i>
+                        ЖИ-тьютормен біріктірілген Практикум
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pages/reference.html">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Анықтамалық
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="hero-section">
+            <div class="container hero-content">
+                <h1 class="hero-title"><span class="gradient-text">AI-Driven</span> Feedback</h1>
+                <p class="hero-description">
+                     AI кері байланысты қолдану арқылы Python-да бағдарламалауды үйрен.
+                </p>
+                <a href="pages/theory.html" class="btn btn-primary">Бастау</a>
+            </div>
+        </section>
+
+        <section class="features-section" aria-labelledby="features-heading">
+            <div class="container">
+                <h2 id="features-heading" class="visually-hidden">Платформа мүмкіндіктері</h2>
+                
+                <div class="features-grid">
+                    <article class="feature-card glass">
+                        <i class="fa-solid fa-robot" aria-hidden="true"></i>
+                        <h3>ЖИ-тьютормен Практикум</h3>
+                        <p>Нақты тапсырмаларды орындап, жасанды интеллектен код сапасы бойынша жедел кеңестер алыңыз.</p>
+                        <a href="pages/practice.html" class="btn-secondary">Практикаға өту</a>
+                    </article>
+
+                    <article class="feature-card glass">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <h3>Python Анықтамалығы</h3>
+                        <p>Негізгі синтаксис, функциялар мен деректер типтерін жылдам қарап шығыңыз.</p>
+                        <a href="pages/reference.html" class="btn-secondary">Анықтамалықты ашу</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+        <!-- ================================================================
+         CHATBOT КОМПОНЕНТІ
+         ================================================================ -->
+    <div class="chatbot-container">
+ 
+        <!-- Чат терезесі -->
+        <div class="chatbot-window" id="chatWindow"
+             role="dialog"
+             aria-labelledby="chatHeaderTitle"
+             aria-hidden="true">
+ 
+            <!-- Шапка -->
+            <div class="chat-header">
+                <div class="chat-header-top">
+                    <h3 class="chat-header-title" id="chatHeaderTitle">
+                        <i class="fa-solid fa-robot" aria-hidden="true"></i>
+                        AI Code Mentor
+                    </h3>
+                    <span class="chat-header-subtitle" id="activeModeLabel">🏗 Scaffolding</span>
+                    <button type="button" class="chat-clear-btn" onclick="clearChat()" aria-label="Чатты тазалау" title="Чатты тазалау">
+                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="chat-close-btn" onclick="toggleChat()" aria-label="Чатты жабу">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+ 
+                <!-- Режим табтары -->
+                <div class="mode-tabs" role="tablist" aria-label="AI режимі" style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 5px;">
+                    <button class="mode-tab active" data-mode="scaffolding" role="tab" aria-selected="true">
+                        🏗 Scaffolding
+                    </button>
+                    <button class="mode-tab" data-mode="pair" role="tab" aria-selected="false">
+                        👥 Pair
+                    </button>
+                    <button class="mode-tab" data-mode="socratic" role="tab" aria-selected="false">
+                        💬 Socratic
+                    </button>
+                    <button class="mode-tab" data-mode="bug_hunting" role="tab" aria-selected="false">
+                        🐛 Bug Hunt
+                    </button>
+                    <button class="mode-tab" data-mode="theory_module" role="tab" aria-selected="false">
+                        📚 Оқу модулі
+                    </button>
+                    <button class="mode-tab" data-mode="python_ref" role="tab" aria-selected="false">
+                        📖 Анықтамалық
+                    </button>
+                </div>
+ 
+                <p class="mode-hint" id="modeHint">Деңгейлі кеңестер — дайын код берілмейді</p>
+            </div>
+ 
+            <!-- Хабарламалар аймағы -->
+            <div class="chat-body" id="chatBody" aria-live="polite" aria-atomic="false">
+                <div class="msg-row">
+                    <div class="msg-avatar bot-avatar" aria-hidden="true">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="msg-content">
+                        <span class="msg-badge badge-scaffolding">🏗 Scaffolding</span>
+                        <div class="bubble bot-bubble">
+                            Сәлем, жас программист! 👋 Мен AI Code Mentor — Python үйренуге арналған AI-мұғалімің. Жоғарыдан режим таңдап, кодыңды немесе сұрағыңды жаз!
+                        </div>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Ввод аймағы -->
+            <form class="chat-footer" id="chatForm">
+                <textarea
+                    id="chatInput"
+                    placeholder="Кодыңды немесе сұрағыңды жаз... (Enter — жіберу)"
+                    rows="1"
+                    aria-label="Хабарлама енгізу өрісі"
+                    autocomplete="off"></textarea>
+                <button type="submit" class="chat-send-btn" id="chatSendBtn" aria-label="Жіберу">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+ 
+        <!-- Ашу батырмасы -->
+        <button type="button"
+                class="chatbot-toggle-btn"
+                id="chatToggleBtn"
+                onclick="toggleChat()"
+                aria-label="Чатты ашу"
+                aria-controls="chatWindow"
+                aria-expanded="false">
+            <i class="fa-solid fa-comments" aria-hidden="true"></i>
+            <span class="chat-badge-dot" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="pages/privacy.html">Құпиялылық саясаты</a>
+                <a href="pages/terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/avatar-generator.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/auth-server.js"></script>
+    <script src="js/server-demo.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

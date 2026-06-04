@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ Панелі - AI-Driven Feedback</title>
+    <link rel="icon" type="image/png" href="../logo/logo3.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin-users.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <img src="../logo/logo3.png" alt="Logo">
+                    <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+                </a>
+            </div>
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button id="themeToggle" class="btn-icon" aria-label="Тема ауыстыру">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                <div class="user-actions">
+                    <!-- USER PROFILE WRAPPER -->
+                    <div class="user-profile-wrapper" id="userProfileWrapper" style="display: flex;">
+                        <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                            <div class="avatar-small" id="userAvatarSmall" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        </button>
+
+                        <div class="user-profile glass" id="userProfile" style="display: none;">
+                            <div class="profile-header">
+                                <div class="avatar" id="userAvatar" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 28px;">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <h2 id="userName">Ernur</h2>
+                                    <p id="userRole">Admin</p>
+                                </div>
+                            </div>
+                            <div class="profile-menu">
+                                <button id="btnProfile" class="profile-btn">
+                                    <i class="fa-solid fa-user"></i> Профиль
+                                </button>
+                                <button id="btnLogout" class="logout-btn">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Шығу
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-container">
+            <aside class="dashboard-sidebar">
+                <div class="sidebar-card glass">
+                    <div class="sidebar-user">
+                        <div class="avatar-edit-wrapper">
+                            <div class="avatar-large" id="profileAvatarBig" style="display: flex; align-items: center; justify-content: center; width: 120px; height: 120px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 42px;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <input type="file" id="avatarUpload" hidden accept="image/*">
+                        </div>
+                        <h2 id="profileNameBig">Админ</h2>
+                        <p id="profileRoleBig">Administrator</p>
+                    </div>
+                    <ul class="sidebar-nav">
+                        <li><a href="admin-panel.html"><i class="fa-solid fa-user-shield"></i> Профиль</a></li>
+                        <li><a href="admin-users.html" class="active"><i class="fa-solid fa-users"></i> Пайдаланушылар</a></li>
+
+                        <li><a href="../index.html"><i class="fa-solid fa-house"></i> Басты бет</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <div class="dashboard-main animate-fade-in">
+                
+                <div class="users-stats-grid">
+                    <div class="stat-card glass-premium">
+                        <div class="stat-icon-wrapper blue"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>Барлық қолданушылар</h3>
+                            <p class="stat-number" id="totalUsersCount">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-premium">
+                        <div class="stat-icon-wrapper green"><i class="fa-solid fa-user-check"></i></div>
+                        <div class="stat-info">
+                            <h3>Белсенді (Online)</h3>
+                            <p class="stat-number" id="activeUsersCount">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-premium">
+                        <div class="stat-icon-wrapper orange"><i class="fa-solid fa-user-clock"></i></div>
+                        <div class="stat-info">
+                            <h3>Жаңа тіркелгендер</h3>
+                            <p class="stat-number" id="newUsersCount">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-actions-toolbar glass">
+                    <div class="left-controls">
+                        <div class="search-box-modern">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="userSearchInput" placeholder="Аты немесе почта арқылы іздеу...">
+                        </div>
+                        <select class="filter-select-modern glass" id="roleFilter">
+                            <option value="all">Барлық рөлдер</option>
+                            <option value="admin">Администраторлар</option>
+                            <option value="user">Пайдаланушылар</option>
+                        </select>
+                    </div>
+                    
+                    <div class="right-buttons">
+                        <button class="btn-secondary-icon glass" id="exportExcelBtn" title="Excel-ге жүктеу">
+                            <i class="fa-solid fa-file-excel"></i> Export
+                        </button>
+                        <button class="btn-add-user-modern" id="openModalBtn">
+                            <i class="fa-solid fa-user-plus"></i> <span>Жаңа қолданушы</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container glass-premium">
+                    <table class="users-table-modern" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Пайдаланушы</th>
+                                <th>Почта (Email)</th>
+                                <th>Тіркелген күні</th>
+                                <th>Құпия сөз</th>
+                                <th>Рөлі</th>
+                                <th>Әрекеттер</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row" id="emptyRowState">
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <div class="empty-icon-wrapper">
+                                            <i class="fa-solid fa-database empty-icon"></i>
+                                        </div>
+                                        <p>Деректер қоры бос</p>
+                                        <span>Жаңа қолданушыларды қосқан кезде олардың мәліметтері автоматты түрде осы жерге жинақталады.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<div class="modal-overlay" id="addUserModal">
+    <div class="modal-window glass-premium">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-user-gear"></i> Жаңа пайдаланушы деректерін енгізу</h3>
+            <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+        </div>
+        
+        <form id="addUserForm" class="modal-form">
+            <div class="modal-form-group">
+                <label for="newUserName">Толық аты-жөні</label>
+                <div class="modal-input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="newUserName" placeholder="Мысалы: Асхат Серіков" required>
+                </div>
+            </div>
+            
+            <div class="modal-form-group">
+                <label for="newUserEmail">Электрондық пошта (Email)</label>
+                <div class="modal-input-wrapper">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="newUserEmail" placeholder="example@weatherai.kz" required>
+                </div>
+            </div>
+
+            <div class="modal-form-grid">
+                <div class="modal-form-group">
+                    <label for="newUserRole">Жүйедегі рөлі</label>
+                    <div class="modal-input-wrapper">
+                        <i class="fa-solid fa-user-tag"></i>
+                        <select id="newUserRole" required>
+                            <option value="user">Пайдаланушы</option>
+                            <option value="admin">Администратор</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-form-group">
+                    <label for="newUserPassword">Құпия сөз (Password)</label>
+                    <div class="modal-input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="newUserPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" id="cancelModalBtn">Бас тарту</button>
+                <button type="submit" class="btn-modal-submit"><i class="fa-solid fa-plus"></i> Деректер қорына қосу</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Құпиялылық саясаты</a>
+                <a href="terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/profile.js"></script>
+    <script src="../js/avatar-generator.js"></script>
+    <script src="../js/google-sheets-sync.js"></script>
+    <script src="../js/admin-users.js"></script>
+</body>
+</html>

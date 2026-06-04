@@ -1,0 +1,404 @@
+/* =========================================================================
+   4. ДЕШБОРДТЫҢ ЖАЛПЫ ҚҰРЫЛЫМЫ (COMMON LAYOUT)
+========================================================================= */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 140px);
+    gap: 30px;
+    padding: 30px 0;
+}
+
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-card {
+    padding: 26px 22px;
+    border-radius: 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.sidebar-user {
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 24px;
+    margin-bottom: 15px;
+}
+
+.sidebar-user .avatar-large {
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    margin-bottom: 15px;
+    box-shadow: 0 0 25px var(--accent-glow);
+    object-fit: cover;
+}
+
+.sidebar-user h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.sidebar-user p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar-nav li a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Навигация ховер эффектілері */
+.sidebar-nav li a:hover, 
+.sidebar-nav li a.active {
+    background: rgba(59, 130, 246, 0.08);
+    color: #60a5fa;
+    transform: translateX(4px);
+}
+
+/* Активті мәзірге арналған сол жақ сызық */
+.sidebar-nav li a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 4px;
+    background: var(--accent);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.dashboard-main {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Парақшаның ашылу анимациясы */
+.animate-fade-in {
+    animation: fadeInAnalytics 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes fadeInAnalytics {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* Респонсив (Мобильді құрылғылар үшін сәл бейімдеу) */
+@media (max-width: 992px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+    .avatar-settings-single-card {
+        max-width: 100%;
+    }
+}
+
+
+/* =========================================================================
+   2. СТАТИСТИКА ЖОҒАРҒЫ ҚҰРАЛДАР ПАНЕЛІ (ANALYTICS TOOLBAR)
+========================================================================= */
+.analytics-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.toolbar-title h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+}
+
+.toolbar-title p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.analytics-time-select {
+    padding: 10px 36px 10px 16px;
+    border-radius: 12px;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    outline: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239CA3AF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px top 52%;
+    background-size: 10px auto;
+}
+
+.analytics-time-select option {
+    background: #141928;
+    color: #fff;
+}
+
+.btn-refresh-stats {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+}
+
+.btn-refresh-stats:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent, #3b82f6);
+    color: var(--accent, #3b82f6);
+    transform: rotate(45deg);
+}
+
+
+/* =========================================================================
+   3. СТАТИСТИКА КАРТОЧКАЛАРЫ (STATS COUNTER GRID)
+========================================================================= */
+.stats-counter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.stat-card.glass-premium {
+    padding: 24px;
+    border-radius: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card.glass-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+/* Белгішелердің түстік топтары */
+.stat-icon.icon-blue { background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+.stat-icon.icon-green { background: rgba(34, 197, 94, 0.12); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.2); }
+.stat-icon.icon-orange { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+.stat-icon.icon-purple { background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.2); }
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-info h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 6px 0;
+    letter-spacing: 0.3px;
+}
+
+.stat-number {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+/* Трендовые индикаторы (+/-) */
+.stat-trend {
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 8px;
+    width: fit-content;
+}
+.stat-trend.trend-up { background: rgba(34, 197, 94, 0.1); color: #4ade80; }
+.stat-trend.trend-down { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+.stat-trend.trend-stable { background: rgba(168, 85, 247, 0.1); color: #c084fc; }
+
+
+/* =========================================================================
+   4. ГРАФИКТЕР ОРНАЛАСУЫ ЖӘНЕ КОНТЕЙНЕРЛЕРІ (CHARTS GRID)
+========================================================================= */
+.charts-main-layout {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 25px;
+}
+
+.charts-side-group {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.chart-container.glass-premium {
+    padding: 24px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.chart-header-title h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: var(--text-primary);
+}
+
+.chart-header-title p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* График типінің белгілері (Badges) */
+.chart-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+.chart-badge.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.chart-badge.green { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.chart-badge.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+
+/* График айналасы (Wrapper) */
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 280px; /* Барлық сызықтық және бағандық графиктерге ортақ тең биіктік */
+}
+
+/* Шеңберлік (Pie) график өлшемін шектеу */
+.chart-wrapper.pie-wrapper {
+    height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* =========================================================================
+   5. АДАПТИВТІ ДИЗАЙН (RESPONSIVE ANALYTICS)
+========================================================================= */
+@media (max-width: 1200px) {
+    .charts-main-layout {
+        grid-template-columns: 1fr; /* Планшеттерде графиктер бір бағанға тізіледі */
+    }
+}
+
+@media (max-width: 992px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+    .analytics-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .toolbar-actions {
+        width: 100%;
+    }
+    .analytics-time-select {
+        flex-grow: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-counter-grid {
+        grid-template-columns: 1fr;
+    }
+    .stat-card.glass-premium {
+        padding: 18px;
+    }
+}

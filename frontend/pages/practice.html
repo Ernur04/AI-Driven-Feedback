@@ -1,0 +1,396 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Feedback — Практикум</title>
+
+    <link rel="icon" type="image/png" href="../logo/logo3.png">
+    <link rel="apple-touch-icon" href="../logo/logo3.png">
+    <meta name="theme-color" content="#2563eb">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/chat.css">
+    <link rel="stylesheet" href="../css/practice.css">
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <img src="../logo/logo3.png" alt="Logo" onerror="this.style.display='none'">
+            <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+        </div>
+        <div class="header-actions">
+            <div class="theme-switcher">
+                <button id="themeToggle" class="btn-icon" aria-label="Тема ауыстыру">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+            
+            <div class="user-actions">
+                <div class="auth-buttons" id="authButtons">
+                    <a href="login.html" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Кіру</a>
+                    <a href="register.html" class="btn-register"><i class="fa-solid fa-user-plus"></i> Тіркелу</a>
+                </div>
+                <div class="user-profile-wrapper" id="userProfileWrapper" style="display: none;">
+                        <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                            <div class="avatar-small" id="userAvatarSmall" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        </button>
+
+                        <div class="user-profile glass" id="userProfile" style="display: none;">
+                            <div class="profile-header">
+                                <div class="avatar" id="userAvatar" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 28px;">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <h2 id="userName"></h2> 
+                                    <p id="userRole"></p>
+                                </div>
+                            </div>
+                            <div class="profile-menu">
+                                <button id="btnLogout" class="logout-btn">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Шығу
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ====== NAV ====== -->
+<nav class="main-nav">
+    <div class="container">
+        <ul>
+            <li><a href="../index.html">
+                <i class="fa-solid fa-house">
+            </i> Басты бет</a></li>
+            <li><a href="theory.html">
+                <i class="fa-solid fa-book-open">
+            </i> Интерактивті оқу модулі</a></li>
+            <li><a href="practice.html" class="active">
+                <i class="fa-solid fa-code">
+            </i> ЖИ-тьютормен Практикум</a></li>
+            <li><a href="reference.html">
+                <i class="fa-solid fa-circle-info">
+            </i> Анықтамалық</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ====== MAIN ====== -->
+<main class="practice-main">
+    <div class="container">
+
+        <!-- Заголовок -->
+        <div class="theory-header">
+            <h1 class="theory-title">ЖИ-тьютормен біріктірілген Практикум</h1>
+            <p class="theory-subtitle">Кодты жаз, AI-мен тексер, компилятормен іске қос</p>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="practice-tabs" role="tablist">
+            <button class="tab-btn active" role="tab" aria-selected="true"
+                    onclick="switchTab('checker', event)">
+                <i class="fa-solid fa-magnifying-glass-code"></i>
+                <span class="tab-label">AI Код тексеру</span>
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false"
+                    onclick="switchTab('tasks', event)">
+                <i class="fa-solid fa-list-check"></i>
+                <span class="tab-label">Тапсырмалар</span>
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false"
+                    onclick="switchTab('hints', event)">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span class="tab-label">AI Кеңестер</span>
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false"
+                    onclick="switchTab('compiler', event)">
+                <i class="fa-solid fa-play"></i>
+                <span class="tab-label">Python компилятор</span>
+            </button>
+        </div>
+
+        <!-- ── TAB: AI CODE CHECKER ── -->
+        <div id="tab-checker" class="tab-panel active" role="tabpanel">
+            <div class="editor-wrapper">
+                <!-- Редактор кода -->
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <div class="editor-title">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                            &nbsp;main.py
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn-sm btn-ghost" onclick="clearEditor()" title="Тазалау">
+                                <i class="fa-solid fa-trash"></i> Тазалау
+                            </button>
+                            <button class="btn-sm btn-primary" onclick="runAICheck()">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Тексеру
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="codeInput"
+                        placeholder="# Python кодыңды осында жаз...&#10;# Мысалы:&#10;for i in range(5)&#10;    print(i)"
+                        spellcheck="false"
+                        aria-label="Python код редакторы"></textarea>
+                </div>
+
+                <!-- Результат AI -->
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <div class="editor-title">
+                            <i class="fa-solid fa-robot" style="color:var(--accent);"></i>
+                            &nbsp;AI Нәтижесі
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn-sm btn-ghost" onclick="clearResult()" title="Тазалау">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-panel" id="aiResult">
+                        <div class="result-empty">
+                            <i class="fa-solid fa-robot"></i>
+                            <p>Кодыңды жазып, <strong>AI Тексеру</strong> батырмасын басыңыз</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TAB: TASKS ── -->
+        <div id="tab-tasks" class="tab-panel" role="tabpanel">
+            <div class="tasks-controls">
+                <span style="font-weight:700; color:var(--text-primary); margin-right:4px; font-size:0.875rem;">Қиындық:</span>
+                <button class="filter-btn active" onclick="filterTasks('all', this)">Барлығы</button>
+                <button class="filter-btn" onclick="filterTasks('easy', this)">🟢 Оңай</button>
+                <button class="filter-btn" onclick="filterTasks('medium', this)">🟡 Орта</button>
+                <button class="filter-btn" onclick="filterTasks('hard', this)">🔴 Қиын</button>
+                <button class="btn-sm btn-outline" style="margin-left:auto;" onclick="generateMoreTasks()">
+                    <i class="fa-solid fa-rotate"></i> AI-мен жаңарту
+                </button>
+            </div>
+            <div class="tasks-grid" id="tasksGrid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+
+        <!-- ── TAB: HINTS ── -->
+        <div id="tab-hints" class="tab-panel" role="tabpanel">
+            <div class="hint-form">
+                <label>
+                    <i class="fa-solid fa-keyboard" style="color:var(--accent);"></i>
+                    &nbsp;Кодыңды жаз немесе сұрағыңды қой
+                </label>
+                <textarea id="hintInput"
+                    placeholder="# Мысалы: for i in range(10): print(i)&#10;# немесе: palindrome-ді қалай тексеруге болады?"
+                    spellcheck="false"
+                    aria-label="Кеңес сұрау өрісі"></textarea>
+                <div style="display:flex; gap:8px; margin-top:12px;">
+                    <button class="btn-sm btn-primary" onclick="getHint()">
+                        <i class="fa-solid fa-lightbulb"></i> Кеңес алу
+                    </button>
+                    <button class="btn-sm btn-ghost" onclick="document.getElementById('hintInput').value=''; document.getElementById('hintResult').innerHTML='<div class=\'result-empty\'><i class=\'fa-solid fa-lightbulb\' style=\'font-size:2rem;opacity:0.3;\'></i><p style=\'color:var(--text-secondary);\'>AI толық жауап бермейді — тек бағыт береді 💡</p></div>'">
+                        Тазалау
+                    </button>
+                </div>
+            </div>
+            <div class="hint-result" id="hintResult">
+                <div class="result-empty">
+                    <i class="fa-solid fa-lightbulb" style="font-size:2rem; opacity:0.3;"></i>
+                    <p style="color:var(--text-secondary);">AI толық жауап бермейді — тек бағыт береді 💡</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TAB: COMPILER ── -->
+        <div id="tab-compiler" class="tab-panel" role="tabpanel">
+            <div class="compiler-layout">
+                <!-- Редактор -->
+                <div class="compiler-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fa-brands fa-python"></i>
+                            Код редакторы
+                            <span class="lang-badge">Python 3</span>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-sm btn-ghost" onclick="loadExample()">
+                                <i class="fa-solid fa-file-code"></i> Мысал
+                            </button>
+                            <button class="btn-sm btn-primary" onclick="runCode()">
+                                <i class="fa-solid fa-play"></i> Іске қос
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="compilerCode"
+                        placeholder="# Python кодыңды осында жаз&#10;print('Hello, World!')"
+                        spellcheck="false"
+                        aria-label="Python компилятор редакторы"></textarea>
+                    <textarea id="compilerInput"
+                        placeholder="stdin (енгізу деректері, міндетті емес)..."
+                        aria-label="Стандартты енгізу"></textarea>
+                </div>
+
+                <!-- Output -->
+                <div class="compiler-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-terminal"></i>
+                            Нәтиже (Output)
+                        </div>
+                        <button class="btn-sm btn-ghost" onclick="clearOutput()">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="result-panel" id="compilerOutput" style="padding:0;">
+                        <div class="result-empty" style="min-height:320px;">
+                            <i class="fa-solid fa-terminal"></i>
+                            <p>Кодты іске қосу үшін ▶ батырманы басыңыз</p>
+                        </div>
+                    </div>
+                    <div class="run-stats" id="runStats" style="display:none;">
+                        <div class="stat-item"><i class="fa-solid fa-clock"></i> <span id="execTime">-</span></div>
+                        <div class="stat-item"><i class="fa-solid fa-memory"></i> <span id="execMemory">-</span></div>
+                        <div class="stat-item">
+                            <i class="fa-solid fa-circle-check" style="color:#22c55e;"></i>
+                            <span id="execStatus">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.container -->
+</main>
+
+            <!-- ================================================================
+         CHATBOT КОМПОНЕНТІ
+         ================================================================ -->
+    <div class="chatbot-container">
+ 
+        <!-- Чат терезесі -->
+        <div class="chatbot-window" id="chatWindow"
+             role="dialog"
+             aria-labelledby="chatHeaderTitle"
+             aria-hidden="true">
+ 
+            <!-- Шапка -->
+            <div class="chat-header">
+                <div class="chat-header-top">
+                    <h3 class="chat-header-title" id="chatHeaderTitle">
+                        <i class="fa-solid fa-robot" aria-hidden="true"></i>
+                        AI Code Mentor
+                    </h3>
+                    <span class="chat-header-subtitle" id="activeModeLabel">🏗 Scaffolding</span>
+                    <button type="button" class="chat-clear-btn" onclick="clearChat()" aria-label="Чатты тазалау" title="Чатты тазалау">
+                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="chat-close-btn" onclick="toggleChat()" aria-label="Чатты жабу">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+ 
+                <!-- Режим табтары -->
+                <div class="mode-tabs" role="tablist" aria-label="AI режимі" style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 5px;">
+                    <button class="mode-tab active" data-mode="scaffolding" role="tab" aria-selected="true">
+                        🏗 Scaffolding
+                    </button>
+                    <button class="mode-tab" data-mode="pair" role="tab" aria-selected="false">
+                        👥 Pair
+                    </button>
+                    <button class="mode-tab" data-mode="socratic" role="tab" aria-selected="false">
+                        💬 Socratic
+                    </button>
+                    <button class="mode-tab" data-mode="bug_hunting" role="tab" aria-selected="false">
+                        🐛 Bug Hunt
+                    </button>
+                    <button class="mode-tab" data-mode="theory_module" role="tab" aria-selected="false">
+                        📚 Оқу модулі
+                    </button>
+                    <button class="mode-tab" data-mode="python_ref" role="tab" aria-selected="false">
+                        📖 Анықтамалық
+                    </button>
+                </div>
+ 
+                <p class="mode-hint" id="modeHint">Деңгейлі кеңестер — дайын код берілмейді</p>
+            </div>
+ 
+            <!-- Хабарламалар аймағы -->
+            <div class="chat-body" id="chatBody" aria-live="polite" aria-atomic="false">
+                <div class="msg-row">
+                    <div class="msg-avatar bot-avatar" aria-hidden="true">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="msg-content">
+                        <span class="msg-badge badge-scaffolding">🏗 Scaffolding</span>
+                        <div class="bubble bot-bubble">
+                            Сәлем, жас программист! 👋 Мен AI Code Mentor — Python үйренуге арналған AI-мұғалімің. Жоғарыдан режим таңдап, кодыңды немесе сұрағыңды жаз!
+                        </div>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Ввод аймағы -->
+            <form class="chat-footer" id="chatForm">
+                <textarea
+                    id="chatInput"
+                    placeholder="Кодыңды немесе сұрағыңды жаз... (Enter — жіберу)"
+                    rows="1"
+                    aria-label="Хабарлама енгізу өрісі"
+                    autocomplete="off"></textarea>
+                <button type="submit" class="chat-send-btn" id="chatSendBtn" aria-label="Жіберу">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+ 
+        <!-- Ашу батырмасы -->
+        <button type="button"
+                class="chatbot-toggle-btn"
+                id="chatToggleBtn"
+                onclick="toggleChat()"
+                aria-label="Чатты ашу"
+                aria-controls="chatWindow"
+                aria-expanded="false">
+            <i class="fa-solid fa-comments" aria-hidden="true"></i>
+            <span class="chat-badge-dot" aria-hidden="true"></span>
+        </button>
+    </div>
+<!-- ====== FOOTER ====== -->
+<footer>
+    <div class="container footer-content">
+        <div class="footer-links">
+            <a href="privacy.html">Құпиялылық саясаты</a>
+            <a href="terms.html">Пайдалану шарттары</a>
+        </div>
+        <div class="footer-text">
+            <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+        </div>
+    </div>
+</footer>
+
+<script src="../js/api-key-manager.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/server-demo.js"></script>
+<script src="../js/avatar-generator.js"></script>
+<script src="../js/profile.js"></script>
+<script src="../js/practice.js"></script>
+</body>
+</html>

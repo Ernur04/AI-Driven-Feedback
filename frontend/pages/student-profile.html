@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ученик Профилі - AI-Driven Feedback</title>
+    <link rel="icon" type="image/png" href="../logo/logo3.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <img src="../logo/logo3.png" alt="Logo">
+                    <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+                </a>
+            </div>
+            <div class="user-actions">
+                <div class="user-profile-wrapper" id="userProfileWrapper" style="display:flex;">
+                    <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                        <div class="avatar-small" id="userAvatarSmall" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0;">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    </button>
+                    <div class="user-profile glass" id="userProfile" style="display:none;">
+                        <div class="profile-header">
+                            <div class="avatar" id="userAvatar" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 28px;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="user-info">
+                                <h2 id="userName">Мұғалім</h2>
+                                <p id="userRole">Teacher</p>
+                            </div>
+                        </div>
+                        <div class="profile-menu">
+                            <button id="btnProfile" class="profile-btn"><i class="fa-solid fa-user"></i> Профиль</button>
+                            <button id="btnLogout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div class="sidebar-card glass">
+                    <div class="sidebar-user">
+                        <div class="avatar-edit-wrapper">
+                            <img src="../logo/default-user.webp" alt="User" class="avatar-large" id="profileAvatarBig">
+                            <input type="file" id="avatarUpload" hidden accept="image/*">
+                        </div>
+                        <h2 id="profileNameBig">Ernur</h2>
+                        <p id="profileRoleBig">Student</p>
+                    </div>
+                    <ul class="sidebar-nav">
+                        <li><a href="student-profile.html" class="active"><i class="fa-solid fa-user-shield"></i> Профиль</a></li>
+                        <li><a href="../index.html"><i class="fa-solid fa-house"></i> Басты бет</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <section class="dashboard-content">
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-id-card"></i> Жеке мәліметтер</h3>
+                        <p>Профиль ақпаратын реттеу және жаңарту</p>
+                    </div>
+                    
+                    <form id="profileEditForm" class="profile-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="inputName"><i class="fa-solid fa-user"></i> Толық аты-жөні</label>
+                                <input type="text" id="inputName" value="" placeholder="Аты-жөніңізді енгізіңіз">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="inputEmail"><i class="fa-solid fa-envelope"></i> Электрондық пошта</label>
+                                <input type="email" id="inputEmail" value="" placeholder="email@example.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputPhone"><i class="fa-solid fa-phone"></i> Телефон нөмірі</label>
+                                <input type="tel" id="inputPhone" value="" placeholder="+7 (707) 000-00-00">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputRole"><i class="fa-solid fa-briefcase"></i> Рөлі</label>
+                                <input type="text" id="inputRole" value="" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <div class="password-section">
+                            <h4><i class="fa-solid fa-lock"></i> Қауіпсіздік (Құпия сөзді өзгерту)</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="currentPassword">Ағымдағы құпия сөз</label>
+                                    <div style="position: relative; display: flex; align-items: center;">
+                                        <input type="password" id="currentPassword" placeholder="••••••••" style="width: 100%; padding-right: 40px;">
+                                        <button type="button" onclick="toggleProfilePassword('currentPassword', this)" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #9ca3af; padding: 5px; outline: none;">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">Жаңа құпия сөз</label>
+                                    <div style="position: relative; display: flex; align-items: center;">
+                                        <input type="password" id="newPassword" placeholder="Жаңа құпия сөз" style="width: 100%; padding-right: 40px;">
+                                        <button type="button" onclick="toggleProfilePassword('newPassword', this)" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #9ca3af; padding: 5px; outline: none;">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn"><i class="fa-solid fa-floppy-disk"></i> Өзгерістерді сақтау</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Құпиялылық саясаты</a>
+                <a href="terms.html">Пайдалану шарттары</a>
+            </div>
+            <div class="footer-text">
+                <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/google-sheets-sync.js"></script>
+    <script src="../js/auth-server.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/avatar-generator.js"></script>
+    <script src="../js/profile.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

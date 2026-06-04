@@ -1,0 +1,539 @@
+/* =========================================================================
+   AI CODE MENTOR — ЧАТ-БОТ СТИЛЬДЕРІ
+   Педагогикалық 4 режим: Scaffolding · Pair Programming · Socratic · Bug Hunting
+   ========================================================================= */
+
+/* --- Режим түстері --- */
+:root {
+    --mode-scaffolding-bg: #eef2ff;
+    --mode-scaffolding-text: #3730a3;
+    --mode-scaffolding-border: #c7d2fe;
+    --mode-pair-bg: #ecfdf5;
+    --mode-pair-text: #065f46;
+    --mode-pair-border: #a7f3d0;
+    --mode-socratic-bg: #fffbeb;
+    --mode-socratic-text: #92400e;
+    --mode-socratic-border: #fde68a;
+    --mode-bug-bg: #fff1f2;
+    --mode-bug-text: #9f1239;
+    --mode-bug-border: #fecdd3;
+}
+
+/* =========================================================================
+   ПЛАВАЮЩИЙ КОНТЕЙНЕР
+   ========================================================================= */
+.chatbot-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* =========================================================================
+   ЧАТ ТЕРЕЗЕСІ
+   ========================================================================= */
+.chatbot-window {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 400px;
+    height: 580px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px) scale(0.92);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: var(--bg-secondary);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+.chatbot-window.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* =========================================================================
+   ШАПКА
+   ========================================================================= */
+.chat-header {
+    background: var(--gradient);
+    color: #fff;
+    padding: 14px 16px 10px;
+    flex-shrink: 0;
+}
+
+.chat-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.chat-header-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.chat-header-title i {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.chat-header-subtitle {
+    font-size: 0.72rem;
+    opacity: 0.75;
+    margin-left: auto;
+    margin-right: 12px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.chat-close-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    line-height: 1;
+    padding: 0;
+}
+
+.chat-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Режим табтары */
+.mode-tabs {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.mode-tab {
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-family: inherit;
+    letter-spacing: 0.01em;
+}
+
+.mode-tab:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.mode-tab.active {
+    background: #fff;
+    border-color: #fff;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+/* Режим сипаттамасы */
+.mode-hint {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-top: 7px;
+    padding: 0 2px;
+    min-height: 16px;
+    transition: opacity 0.2s;
+    font-style: italic;
+}
+
+/* =========================================================================
+   ХАТ ДЕНЕСІ (BODY)
+   ========================================================================= */
+.chat-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--bg-primary);
+    scroll-behavior: smooth;
+}
+
+.chat-body::-webkit-scrollbar {
+    width: 4px;
+}
+.chat-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat-body::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+/* =========================================================================
+   ХАБАРЛАМА ЖОЛДАРЫ
+   ========================================================================= */
+.msg-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    animation: msgFadeIn 0.28s ease forwards;
+}
+.msg-row.user-row {
+    flex-direction: row-reverse;
+}
+
+@keyframes msgFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Аватар */
+.msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    font-weight: 600;
+}
+
+.bot-avatar {
+    background: var(--gradient);
+    color: #fff;
+}
+
+.user-avatar {
+    background: var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* Хабарлама бурбл */
+.msg-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-width: 80%;
+}
+
+.msg-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 10px;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+.badge-scaffolding { background: var(--mode-scaffolding-bg); color: var(--mode-scaffolding-text); }
+.badge-pair        { background: var(--mode-pair-bg);        color: var(--mode-pair-text); }
+.badge-socratic    { background: var(--mode-socratic-bg);    color: var(--mode-socratic-text); }
+.badge-bug         { background: var(--mode-bug-bg);         color: var(--mode-bug-text); }
+
+.bubble {
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    word-break: break-word;
+}
+
+.bot-bubble {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: 4px;
+}
+
+.user-bubble {
+    background: var(--gradient);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+/* Инлайн код */
+.bubble code {
+    background: rgba(0, 0, 0, 0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.8rem;
+}
+
+.user-bubble code {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Код блогы */
+.code-block {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    margin-top: 4px;
+    white-space: pre;
+    overflow-x: auto;
+    max-width: 100%;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Typing dots */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 2px;
+}
+.typing-indicator span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    display: inline-block;
+    animation: typingBounce 1.1s infinite;
+    opacity: 0.5;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.18s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes typingBounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40%            { transform: translateY(-6px); opacity: 1; }
+}
+
+/* =========================================================================
+   ФУТЕР (ВВОД)
+   ========================================================================= */
+.chat-footer {
+    padding: 12px 14px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.chat-footer textarea {
+    flex: 1;
+    resize: none;
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    outline: none;
+    min-height: 40px;
+    max-height: 96px;
+    line-height: 1.45;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.chat-footer textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.chat-footer textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.65;
+}
+
+.chat-send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--gradient);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: opacity 0.2s, transform 0.15s;
+    flex-shrink: 0;
+}
+.chat-send-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+.chat-send-btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+    transform: none;
+}
+
+/* =========================================================================
+   АШУ БАТЫРМАСЫ
+   ========================================================================= */
+.chatbot-toggle-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+    font-size: 1.5rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    position: relative;
+}
+.chatbot-toggle-btn:hover {
+    transform: scale(1.1) rotate(8deg);
+    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.55);
+}
+
+/* Хабарлама санауышы нүктесі */
+.chat-badge-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ef4444;
+    border: 2px solid var(--bg-primary);
+    display: none;
+}
+.chatbot-toggle-btn.has-new .chat-badge-dot {
+    display: block;
+    animation: pulseDot 1.5s infinite;
+}
+@keyframes pulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.3); opacity: 0.7; }
+}
+
+/* =========================================================================
+   МОБИЛЬДІ НҰСҚА
+   ========================================================================= */
+@media (max-width: 480px) {
+    .chatbot-container {
+        bottom: 16px;
+        right: 16px;
+    }
+    .chatbot-window {
+        width: calc(100vw - 32px);
+        height: 520px;
+        right: 0;
+        bottom: 76px;
+        border-radius: 16px;
+    }
+}
+
+/* =========================================================================
+   ЧАТТЫ ТАЗАЛАУ БАТЫРМАСЫНЫҢ СТИЛЬДЕРІ
+   ========================================================================= */
+.chat-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Элементтерді ретімен тізу */
+}
+
+.chat-clear-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s, transform 0.1s;
+    line-height: 1;
+    padding: 0;
+    margin-left: auto; /* Батырманы оң жақ шетке итереді */
+    margin-right: 8px;  /* Жабу батырмасымен арасындағы қашықтық */
+}
+
+.chat-clear-btn:hover {
+    background: rgba(239, 68, 68, 0.2); /* Аздап қызыл фон */
+    color: #f87171; /* Қызыл белгіше */
+    transform: scale(1.05);
+}
+
+.chat-clear-btn:active {
+    transform: scale(0.95);
+}
+
+/* Жабу батырмасының шеткі маргинін бейтараптандыру */
+.chat-close-btn {
+    margin-left: 0 !important;
+}
+
+/* --- Жаңа режим түстері :root ішіне қос --- */
+:root {
+    /* бұрынғы түстер... */
+    --mode-theory-bg: #f0fdf4; /* жасылдау фон */
+    --mode-theory-text: #166534;
+    --mode-theory-border: #bbf7d0;
+    
+    --mode-reference-bg: #f0f9ff; /* көгілдір фон */
+    --mode-reference-text: #075985;
+    --mode-reference-border: #bae6fd;
+}
+
+/* Жаңа бадждарымыздың стилі */
+.badge-theory {
+    background-color: var(--mode-theory-bg);
+    color: var(--mode-theory-text);
+    border: 1px solid var(--mode-theory-border);
+}
+
+.badge-reference {
+    background-color: var(--mode-reference-bg);
+    color: var(--mode-reference-text);
+    border: 1px solid var(--mode-reference-border);
+}
+
+/* Табтар көп болғанда сыймай қалса, оңға қарай жылжитын (прокрутка) жасау */
+.mode-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 6px;
+}
+.mode-tab {
+    flex-shrink: 0; /* Батырмалар қысылып қалмауы үшін */
+}
+
+.badge-reference {
+    background-color: #0d6efd20;
+    color: #0d6efd;
+    border: 1px solid #0d6efd40;
+}

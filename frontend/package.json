@@ -1,0 +1,15 @@
+{
+  "name": "ai-driven-feedback",
+  "version": "1.0.0",
+  "description": "AI-Driven Feedback backend proxy",
+  "main": "js/server.js",
+  "scripts": {
+    "start": "node js/server.js",
+    "dev": "node js/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Студенттер тізімі - AI-Driven Feedback</title>
+    <link rel="icon" type="image/png" href="../logo/logo3.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/teacher-students.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a href="../index.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;">
+                <img src="../logo/logo3.png" alt="Logo">
+                <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+            </a>
+        </div>
+        <div class="user-actions">
+            <div class="user-profile-wrapper" id="userProfileWrapper" style="display:flex;">
+                <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                    <div class="avatar-small" id="userAvatarSmall" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0;">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </button>
+                <div class="user-profile glass" id="userProfile" style="display:none;">
+                    <div class="profile-header">
+                        <div class="avatar" id="userAvatar" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 28px;">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <h2 id="userName">Мұғалім</h2>
+                            <p id="userRole">Teacher</p>
+                        </div>
+                    </div>
+                    <div class="profile-menu">
+                        <button id="btnProfile" class="profile-btn"><i class="fa-solid fa-user"></i> Профиль</button>
+                        <button id="btnLogout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="container">
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-card glass">
+                <div class="sidebar-user">
+                    <div class="avatar-edit-wrapper">
+                        <img src="../logo/default-user.webp" alt="User" class="avatar-large" id="profileAvatarBig">
+                    </div>
+                    <h2 id="profileNameBig">Мұғалім</h2>
+                    <p id="profileRoleBig">Teacher</p>
+                </div>
+                <ul class="sidebar-nav">
+                    <li><a href="teacher-monitor.html"><i class="fa-solid fa-user-shield"></i> Профиль</a></li>
+                    <li><a href="teacher-students.html" class="active"><i class="fa-solid fa-users"></i> Студенттер</a></li>
+                    <li><a href="teacher-analytics.html"><i class="fa-solid fa-chart-line"></i> Аналитика</a></li>
+                    <li><a href="../index.html"><i class="fa-solid fa-house"></i> Басты бет</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="dashboard-main animate-fade-in">
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fa-solid fa-users"></i></div>
+                    <div class="stat-info">
+                        <h4>Барлық студенттер</h4>
+                        <p class="stat-number" id="totalCount">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="stat-info">
+                        <h4>Бүгін кірген</h4>
+                        <p class="stat-number" id="todayCount">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple"><i class="fa-solid fa-user-plus"></i></div>
+                    <div class="stat-info">
+                        <h4>Осы аптада тіркелген</h4>
+                        <p class="stat-number" id="weekCount">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Аты немесе email арқылы іздеу...">
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrap">
+                <table class="students-table" id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>Студент</th>
+                            <th>Email</th>
+                            <th>Тіркелген күні</th>
+                            <th>Рөлі</th>
+                            <th>Әрекеттер</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsBody">
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-spinner fa-spin"></i>
+                                    <p>Деректер жүктелуде...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<!-- ===== TEMP PASSWORD MODAL ===== -->
+<div class="modal-overlay" id="tempPassModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-key" style="color:#f59e0b;margin-right:8px;"></i> Уақытша пароль</h3>
+            <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+
+        <div class="student-info-block">
+            <div class="name" id="modalStudentName">—</div>
+            <div class="email" id="modalStudentEmail">—</div>
+        </div>
+
+        <div class="pass-label">Жаңа уақытша пароль:</div>
+        <div class="pass-display" id="passDisplay">
+            <span class="pass-value" id="passValue">— — — — — —</span>
+            <button class="pass-copy-btn" id="copyPassBtn" title="Көшіру" style="display:none;">
+                <i class="fa-solid fa-copy"></i>
+            </button>
+        </div>
+        <div class="copy-success" id="copySuccess"><i class="fa-solid fa-check"></i> Буферге көшірілді!</div>
+
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" id="cancelModal">Жабу</button>
+            <button class="btn-generate" id="generateBtn">
+                <i class="fa-solid fa-arrows-rotate"></i> Пароль генерациялау
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMsg">Сақталды!</span>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container footer-content">
+        <div class="footer-links">
+            <a href="privacy.html">Құпиялылық саясаты</a>
+            <a href="terms.html">Пайдалану шарттары</a>
+        </div>
+        <div class="footer-text">
+            <p><small>&copy; 2026 AI-Driven Feedback. Барлық құқықтар қорғалған.</small></p>
+        </div>
+    </div>
+</footer>
+
+<script src="../js/google-sheets-sync.js"></script>
+<script src="../js/auth-server.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../js/avatar-generator.js"></script>
+<script src="../js/profile.js"></script>
+<script src="../js/dashboard.js"></script>
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+let allStudents = [];
+let currentStudentId = null;
+
+async function loadStudentList() {
+    if (typeof getAllUsersFromSheets === 'function') {
+        const sheetData = await getAllUsersFromSheets();
+        if (sheetData && sheetData.success && sheetData.users) {
+            allStudents = sheetData.users.filter(u => u.role === 'student');
+        }
+    }
+
+    if (!allStudents.length) {
+        const authServer = window.authServer || new AuthServer();
+        allStudents = authServer.getAllStudents ? authServer.getAllStudents() : [];
+    }
+
+    // Fallback: читаем напрямую из localStorage
+    if (!allStudents.length) {
+        try {
+            const raw = localStorage.getItem('mockUsers');
+            if (raw) {
+                const data = JSON.parse(raw);
+                allStudents = data.students || [];
+            }
+        } catch(e) {}
+    }
+
+    // Демо-данные если ничего нет
+    if (!allStudents.length) {
+        allStudents = [
+            { id:'student_1', name:'Ernur Seitkali',  email:'ernur@example.com',  role:'student', registeredAt: new Date(Date.now()-86400000*2).toISOString() },
+            { id:'student_2', name:'Aida Bekova',     email:'aida@example.com',   role:'student', registeredAt: new Date(Date.now()-86400000*5).toISOString() },
+            { id:'student_3', name:'Damir Akhmetov',  email:'damir@example.com',  role:'student', registeredAt: new Date(Date.now()-86400000*1).toISOString() },
+            { id:'student_4', name:'Zarina Nurova',   email:'zarina@example.com', role:'student', registeredAt: new Date(Date.now()-86400000*8).toISOString() },
+        ];
+    }
+
+    updateStats();
+    renderStudentTable(allStudents);
+}
+
+// ─── STATS ───────────────────────────────────────────────────────────────────
+function updateStats() {
+    document.getElementById('totalCount').textContent = allStudents.length;
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    const week  = new Date(today); week.setDate(week.getDate()-7);
+
+    const loginLog = JSON.parse(localStorage.getItem('userLoginLog') || '[]');
+    const todayLogins = new Set(loginLog.filter(e => new Date(e.loginTime) >= today).map(e => e.userId));
+    document.getElementById('todayCount').textContent = todayLogins.size;
+
+    const newThisWeek = allStudents.filter(s => s.registeredAt && new Date(s.registeredAt) >= week).length;
+    document.getElementById('weekCount').textContent = newThisWeek;
+}
+
+// ─── RENDER TABLE ────────────────────────────────────────────────────────────
+function renderStudentTable(students) {
+    const tbody = document.getElementById('studentsBody');
+
+    if (!students.length) {
+        tbody.innerHTML = `<tr><td colspan="5">
+            <div class="empty-state">
+                <i class="fa-solid fa-users-slash"></i>
+                <p>Студенттер табылмады</p>
+            </div></td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = students.map(s => {
+        const initials = (s.name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+        const date = s.registeredAt
+            ? new Date(s.registeredAt).toLocaleDateString('kk-KZ', {year:'numeric',month:'short',day:'numeric'})
+            : '—';
+        return `
+        <tr>
+            <td>
+                <div class="user-cell">
+                    <div class="user-avatar">${initials}</div>
+                    <div>
+                        <div class="user-name">${escHtml(s.name || '—')}</div>
+                        <div class="user-id">${s.id}</div>
+                    </div>
+                </div>
+            </td>
+            <td>${escHtml(s.email || '—')}</td>
+            <td><span class="date-text">${date}</span></td>
+            <td><span class="role-badge student"><i class="fa-solid fa-user-graduate"></i> Студент</span></td>
+            <td>
+                <button class="action-btn key" title="Уақытша пароль" onclick="showTempPasswordModal('${s.id}')">
+                    <i class="fa-solid fa-key"></i>
+                </button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ─── SEARCH ──────────────────────────────────────────────────────────────────
+function searchStudent(query) {
+    const q = query.toLowerCase().trim();
+    if (!q) { renderStudentTable(allStudents); return; }
+    const filtered = allStudents.filter(s =>
+        (s.name  || '').toLowerCase().includes(q) ||
+        (s.email || '').toLowerCase().includes(q)
+    );
+    renderStudentTable(filtered);
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+    searchStudent(e.target.value);
+});
+
+// ─── TEMP PASSWORD ────────────────────────────────────────────────────────────
+function generateTempPassword() {
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    const specials = '!@#$%';
+    let pass = 'Temp' + specials[Math.floor(Math.random()*specials.length)];
+    for (let i = 0; i < 4; i++) pass += Math.floor(Math.random()*10);
+    return pass;
+}
+
+function setTempPassword(studentId, password) {
+    try {
+        const raw = localStorage.getItem('mockUsers');
+        const data = raw ? JSON.parse(raw) : { students:[], teachers:[], admins:[] };
+        const idx = data.students.findIndex(s => s.id === studentId);
+        if (idx !== -1) {
+            data.students[idx].password = password;
+            data.students[idx].tempPassword = password;
+            localStorage.setItem('mockUsers', JSON.stringify(data));
+        }
+        // Обновляем локальный массив
+        const local = allStudents.find(s => s.id === studentId);
+        if (local) local.password = password;
+        return true;
+    } catch(e) { return false; }
+}
+
+function showTempPasswordModal(studentId) {
+    currentStudentId = studentId;
+    const student = allStudents.find(s => s.id === studentId);
+    if (!student) return;
+
+    document.getElementById('modalStudentName').textContent  = student.name  || '—';
+    document.getElementById('modalStudentEmail').textContent = student.email || '—';
+    document.getElementById('passValue').textContent = '— — — — — —';
+    document.getElementById('passDisplay').classList.remove('generated');
+    document.getElementById('copyPassBtn').style.display = 'none';
+    document.getElementById('copySuccess').classList.remove('show');
+
+    document.getElementById('tempPassModal').classList.add('open');
+}
+
+function copyTempPassword() {
+    const pass = document.getElementById('passValue').textContent;
+    if (!pass || pass.includes('—')) return;
+    navigator.clipboard.writeText(pass).then(() => {
+        document.getElementById('copySuccess').classList.add('show');
+        setTimeout(() => document.getElementById('copySuccess').classList.remove('show'), 2000);
+    });
+}
+
+// Modal events
+document.getElementById('generateBtn').addEventListener('click', () => {
+    const pass = generateTempPassword();
+    document.getElementById('passValue').textContent = pass;
+    document.getElementById('passDisplay').classList.add('generated');
+    document.getElementById('copyPassBtn').style.display = 'flex';
+
+    if (currentStudentId) {
+        const ok = setTempPassword(currentStudentId, pass);
+        if (ok) showToast('Пароль сақталды және қолданушыға орнатылды');
+    }
+});
+
+document.getElementById('copyPassBtn').addEventListener('click', copyTempPassword);
+document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('tempPassModal').classList.remove('open');
+});
+document.getElementById('cancelModal').addEventListener('click', () => {
+    document.getElementById('tempPassModal').classList.remove('open');
+});
+document.getElementById('tempPassModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', loadStudentList);
+</script>
+</body>
+</html>
