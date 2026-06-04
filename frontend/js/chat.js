@@ -464,8 +464,8 @@ async function sendMessage(event) {
             role: m.role === 'assistant' ? 'model' : (m.role || 'user'),
             parts: m.parts ? m.parts : [{ text: m.content || '' }]
         })).filter(m => m.parts[0]?.text);
-        // ӨЗГЕРТІЛДІ: Модель gemini-2.0-flash орнына тұрақты әрі тегін gemini-1.5-flash қойылды
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
