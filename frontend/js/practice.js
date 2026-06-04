@@ -53,29 +53,81 @@ async function callClaude(systemPrompt, userMessage) {
     }
     if (!apiKey) throw new Error("API кілті енгізілмеді!");
 
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                system_instruction: { parts: [{ text: systemPrompt }] },
-                contents: [{ role: "user", parts: [{ text: userMessage }] }]
-            })
-        });
+    const doRequest = () => fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ role: "user", parts: [{ text: userMessage }] }]
+        })
+    });
 
-        const data = await response.json();
-        
-        if (!response.ok) {
-            if (response.status === 400 || response.status === 403) {
-                localStorage.removeItem('gemini_api_key');
-            }
-            throw new Error(data.error?.message || `HTTP қате: ${response.status}`);
+    const waitWithCountdown = (seconds) => new Promise(resolve => {
+        let remaining = seconds;
+        const toastId = 'retry-toast-' + Date.now();
+
+        // Показываем тост с обратным отсчётом
+        let container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
+            document.body.appendChild(container);
         }
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.style.cssText = `
+            display:flex; align-items:center; gap:10px;
+            padding:12px 18px; border-radius:12px;
+            background:var(--bg-secondary); border:1px solid var(--border-color);
+            box-shadow:0 8px 24px rgba(0,0,0,0.15);
+            font-size:0.875rem; font-weight:500; color:var(--text-primary);
+            pointer-events:auto; max-width:340px;
+            border-left:3px solid #f59e0b;
+        `;
+        toast.innerHTML = `<i class="fa-solid fa-clock" style="color:#f59e0b;flex-shrink:0;"></i><span>⏳ Квота бітті. <b id="retry-count-${toastId}">${remaining}</b> секундтан кейін қайталанады...</span>`;
+        container.appendChild(toast);
 
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    } catch (error) {
-        console.error("Gemini API Error:", error);
-        throw error;
+        const interval = setInterval(() => {
+            remaining--;
+            const el = document.getElementById('retry-count-' + toastId);
+            if (el) el.textContent = remaining;
+            if (remaining <= 0) {
+                clearInterval(interval);
+                toast.remove();
+                resolve();
+            }
+        }, 1000);
+    });
+
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            const response = await doRequest();
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Квота исчерпана — ждём и повторяем
+                if (response.status === 429) {
+                    const retryMatch = data.error?.message?.match(/retry in ([\d.]+)s/i);
+                    const waitSec = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) : 40;
+                    if (attempt < 3) {
+                        await waitWithCountdown(waitSec);
+                        continue;
+                    }
+                }
+                if (response.status === 400 || response.status === 403) {
+                    localStorage.removeItem('gemini_api_key');
+                }
+                throw new Error(data.error?.message || `HTTP қате: ${response.status}`);
+            }
+
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        } catch (error) {
+            if (attempt === 3) {
+                console.error("Gemini API Error:", error);
+                throw error;
+            }
+        }
     }
 }
 

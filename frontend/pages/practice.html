@@ -385,6 +385,13 @@
     </div>
 </footer>
 
+<script>
+  // Автоматически устанавливает ключ если его нет
+  (function() {
+    var key = 'AQ.Ab8RN6I5krYawPZVafwRZXDR6YCN0DnX4BOhHH4TEEbmHGo83Q';
+    localStorage.setItem('gemini_api_key', key);
+  })();
+</script>
 <script src="../js/api-key-manager.js"></script>
 <script src="../js/theme.js"></script>
 <script src="../js/chat.js"></script>
