@@ -441,23 +441,8 @@ async function sendMessage(event) {
     showTypingIndicator();
 
     try {
-        // getApiKey modal арқылы немесе localStorage fallback
-        let apiKey;
-        if (typeof window.getApiKey === 'function') {
-            apiKey = await window.getApiKey();
-        } else {
-            apiKey = localStorage.getItem('gemini_api_key');
-            if (!apiKey) {
-                apiKey = prompt('Gemini API кілтін енгіз (aistudio.google.com/apikey):');
-                if (apiKey) localStorage.setItem('gemini_api_key', apiKey.trim());
-            }
-        }
-        if (!apiKey) {
-            removeTypingIndicator();
-            setLoading(false);
-            appendBotMessage("API кілті енгізілген жоқ. Жұмыс істеу үшін кілт қажет.", currentMode, false);
-            return;
-        }
+        // API кілті тікелей жазылған (hardcoded)
+        const apiKey = "AQ.Ab8RN6I5krYawPZVafwRZXDR6YCN0DnX4BOhHH4TEEbmHGo83Q";
 
         // Conversation history-ді дұрыс Gemini форматына түрлендіру
         const contentsForApi = conversationHistory.map(m => ({
