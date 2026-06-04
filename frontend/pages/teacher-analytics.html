@@ -16,165 +16,133 @@
     <link rel="stylesheet" href="../css/teacher-analytics.css">
 </head>
 <body>
-
-<!-- ===== HEADER ===== -->
-<header>
-    <div class="container">
-        <div class="logo">
-            <a href="../index.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;">
-                <img src="../logo/logo3.png" alt="Logo">
-                <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
-            </a>
-        </div>
-         <div class="header-actions">
-            <div class="theme-switcher">
-                <button id="themeToggle" class="btn-icon" aria-label="Тема ауыстыру">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;">
+                    <img src="../logo/logo3.png" alt="Logo">
+                    <h1><span class="gradient-text">AI-Driven</span> Feedback</h1>
+                </a>
             </div>
-            <div class="user-actions">
-            <div class="user-profile-wrapper" id="userProfileWrapper" style="display:flex;">
-                <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
-                    <div class="avatar-small" id="userAvatarSmall" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0;">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                </button>
-                <div class="user-profile glass" id="userProfile" style="display:none;">
-                    <div class="profile-header">
-                        <div class="avatar" id="userAvatar" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 28px;">
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button id="themeToggle" class="btn-icon" aria-label="Тема ауыстыру">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                <div class="user-actions">
+                <div class="user-profile-wrapper" id="userProfileWrapper" style="display:flex;">
+                    <button id="profileTrigger" class="profile-trigger" aria-label="Профиль менюін ашу">
+                        <div class="avatar-small" id="userAvatarSmall" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0;">
                             <i class="fa-solid fa-user"></i>
                         </div>
-                        <div class="user-info">
-                            <h2 id="userName">Мұғалім</h2>
-                            <p id="userRole">Teacher</p>
+                    </button>
+                    <div class="user-profile glass" id="userProfile" style="display:none;">
+                        <div class="profile-header">
+                            <div class="avatar" id="userAvatar" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; color: #374151; font-weight: 600; flex-shrink: 0; font-size: 28px;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="user-info">
+                                <h2 id="userName">Мұғалім</h2>
+                                <p id="userRole">Teacher</p>
+                            </div>
+                        </div>
+                        <div class="profile-menu">
+                            <button id="btnProfile" class="profile-btn"><i class="fa-solid fa-user"></i> Профиль</button>
+                            <button id="btnLogout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
                         </div>
                     </div>
-                    <div class="profile-menu">
-                        <button id="btnProfile" class="profile-btn"><i class="fa-solid fa-user"></i> Профиль</button>
-                        <button id="btnLogout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<!-- ===== MAIN ===== -->
-<main class="container">
-    <div class="dashboard-container">
+    <!-- ===== MAIN ===== -->
+    <main class="container">
+        <div class="dashboard-container">
 
-        <!-- Sidebar -->
-        <aside class="dashboard-sidebar">
-            <div class="sidebar-card glass">
-                <div class="sidebar-user">
-                    <div class="avatar-edit-wrapper">
-                        <img src="../logo/default-user.webp" alt="User" class="avatar-large" id="profileAvatarBig">
+            <aside class="dashboard-sidebar">
+                <div class="sidebar-card glass">
+                    <div class="sidebar-user">
+                        <div class="avatar-edit-wrapper">
+                            <img src="../logo/default-user.webp" alt="User" class="avatar-large" id="profileAvatarBig">
+                        </div>
+                        <h2 id="profileNameBig">Мұғалім</h2>
+                        <p id="profileRoleBig">Teacher</p>
                     </div>
-                    <h2 id="profileNameBig">Мұғалім</h2>
-                    <p id="profileRoleBig">Teacher</p>
+                    <ul class="sidebar-nav">
+                        <li><a href="teacher-monitor.html"><i class="fa-solid fa-user-shield"></i> Профиль</a></li>
+                        <li><a href="teacher-students.html"><i class="fa-solid fa-users"></i> Студенттер тізімі</a></li>
+                        <li><a href="teacher-analytics.html" class="active"><i class="fa-solid fa-chart-line"></i> Аналитика</a></li>
+                        <li><a href="../index.html"><i class="fa-solid fa-house"></i> Басты бет</a></li>
+                    </ul>
                 </div>
-                <ul class="sidebar-nav">
-                    <li><a href="teacher-monitor.html"><i class="fa-solid fa-user-shield"></i> Профиль</a></li>
-                    <li><a href="teacher-students.html"><i class="fa-solid fa-users"></i> Студенттер тізімі</a></li>
-                    <li><a href="teacher-analytics.html" class="active"><i class="fa-solid fa-chart-line"></i> Аналитика</a></li>
-                    <li><a href="../index.html"><i class="fa-solid fa-house"></i> Басты бет</a></li>
-                </ul>
-            </div>
-        </aside>
+            </aside>
 
-        <!-- Main content -->
-        <div class="dashboard-main animate-fade-in">
-
-            <!-- Stats row -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon blue"><i class="fa-solid fa-right-to-bracket"></i></div>
-                    <div class="stat-info">
-                        <h4>Барлық кіру саны</h4>
-                        <p class="stat-number" id="statTotalLogins">0</p>
-                    </div>
+            <div class="page" style="flex-grow: 1;">
+                <div class="page-title">Студент аналитикасы</div>
+                <div class="page-sub">Тек студент рөліндегі пайдаланушылар</div>
+            
+                <div class="sync-bar">
+                    <div class="sync-dot loading" id="syncDot"></div>
+                    <span id="syncText">Google Sheets-тен жүктелуде...</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon green"><i class="fa-solid fa-clock"></i></div>
-                    <div class="stat-info">
-                        <h4>Барлық сағат</h4>
-                        <p class="stat-number" id="statTotalHours">0</p>
+            
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-label">Барлық кіру</div>
+                        <div class="stat-value blue" id="statLogins">—</div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon orange"><i class="fa-solid fa-fire"></i></div>
-                    <div class="stat-info">
-                        <h4>Бүгінгі сессиялар</h4>
-                        <p class="stat-number" id="statTodaySessions">0</p>
+                    <div class="stat">
+                        <div class="stat-label">Барлық сағат</div>
+                        <div class="stat-value green" id="statHours">—</div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon purple"><i class="fa-solid fa-chart-bar"></i></div>
-                    <div class="stat-info">
-                        <h4>Орт. сессия ұзақтығы</h4>
-                        <p class="stat-number" id="statAvgSession">0 мин</p>
+                    <div class="stat">
+                        <div class="stat-label">Бүгін</div>
+                        <div class="stat-value orange" id="statToday">—</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Студент саны</div>
+                        <div class="stat-value purple" id="statCount">—</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Charts row -->
-            <div class="charts-grid">
-                <!-- Login chart -->
+            
                 <div class="chart-card">
-                    <div class="chart-title"><i class="fa-solid fa-chart-line"></i> Кіру белсенділігі (7 күн)</div>
-                    <div class="chart-wrap">
-                        <canvas id="loginChart"></canvas>
+                    <div class="card-title">Белсенділік — соңғы 7 күн</div>
+                    <div class="chart-wrap" style="position: relative; height: 300px;">
+                        <canvas id="activityChart"></canvas>
                     </div>
                 </div>
-
-                <!-- Hours chart -->
-                <div class="chart-card">
-                    <div class="chart-title"><i class="fa-solid fa-chart-bar"></i> Студент белсенділігі (сағат)</div>
-                    <div class="chart-wrap">
-                        <canvas id="hoursChart"></canvas>
+            
+                <div class="table-card">
+                    <div class="table-head">
+                        <div class="table-head-title">Студенттер тізімі</div>
+                        <div class="student-count" id="studentCountBadge">0 студент</div>
                     </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Студент</th>
+                                <th>Соңғы кіру</th>
+                                <th>Сағат</th>
+                                <th>Сессия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr><td colspan="4">
+                                <div class="empty">
+                                    <i class="fa-solid fa-spinner fa-spin"></i>
+                                    Жүктелуде...
+                                </div>
+                            </td></tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <!-- Heatmap -->
-                <div class="chart-card full">
-                    <div class="chart-title"><i class="fa-solid fa-table-cells"></i> Тәулік бойынша белсенділік (0–23 сағат)</div>
-                    <div class="heatmap-wrap">
-                        <div class="heatmap-grid" id="heatmapGrid"></div>
-                    </div>
-                    <div class="heatmap-legend">
-                        <span>Аз</span>
-                        <div class="legend-gradient"></div>
-                        <span>Көп</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats table -->
-            <div class="table-card">
-                <div class="table-card-header">
-                    <i class="fa-solid fa-table-list"></i> Студенттердің жалпы статистикасы
-                </div>
-                <table class="stats-table">
-                    <thead>
-                        <tr>
-                            <th>Студент</th>
-                            <th>Соңғы кіру</th>
-                            <th>Барлық сағат</th>
-                            <th>Сессия саны</th>
-                        </tr>
-                    </thead>
-                    <tbody id="statsTableBody">
-                        <tr><td colspan="4"><div class="empty-table">
-                            <i class="fa-solid fa-spinner fa-spin"></i>
-                            <span>Деректер жүктелуде...</span>
-                        </div></td></tr>
-                    </tbody>
-                </table>
             </div>
 
         </div>
-    </div>
-</main>
+    </main>
 
 <!-- ===== FOOTER ===== -->
 <footer>
@@ -206,12 +174,16 @@
                     // Синхронизируем в localStorage
                     const grouped = { students: [], teachers: [], admins: [] };
                     result.users.forEach(u => {
-                        const role = (u.role || 'student').toLowerCase();
+                        const role = (u.role || 'student').toLowerCase().trim();
                         if (grouped[role]) grouped[role].push(u);
-                        else grouped.students.push(u);
+                        else if (role === 'teacher') grouped.teachers.push(u);
+                        else if (role === 'admin') grouped.admins.push(u);
+                        else grouped.students.push(u); // Әдепкі бойынша студент
                     });
                     localStorage.setItem('mockUsers', JSON.stringify(grouped));
                     if (window.authServer) window.authServer.users = grouped;
+                    
+                    updateSyncStatus(true);
                     return grouped.students; // ТОЛЬКО студенты
                 }
             }
@@ -224,15 +196,36 @@
             const srv = window.authServer || window.AuthServer;
             if (srv && typeof srv.getAllStudents === 'function') {
                 const s = srv.getAllStudents();
-                if (s && s.length) return s;
+                if (s && s.length) { 
+                    updateSyncStatus(false, 'Локальді деректер қолданылуда'); 
+                    return s.filter(u => (u.role || 'student').toLowerCase().trim() === 'student'); 
+                }
             }
             const raw = localStorage.getItem('mockUsers');
             if (raw) {
                 const parsed = JSON.parse(raw);
+                updateSyncStatus(false, 'Локальді деректер қолданылуда');
                 return Array.isArray(parsed.students) ? parsed.students : [];
             }
         } catch (e) {}
+        updateSyncStatus(false, 'Деректер табылмады');
         return [];
+    }
+
+    // Синхронизация статусын жаңарту функциясы
+    function updateSyncStatus(success, text = 'Google Sheets-пен синхрондалды') {
+        const dot = document.getElementById('syncDot');
+        const txt = document.getElementById('syncText');
+        if (!dot || !txt) return;
+        
+        dot.classList.remove('loading');
+        if (success) {
+            dot.style.background = '#22c55e'; // жасыл нүкте
+            txt.textContent = text;
+        } else {
+            dot.style.background = '#f97316'; // қызғылт сары нүкте
+            txt.textContent = text;
+        }
     }
 
     // ─── 2. РЕАЛЬНЫЕ ЛОГИ — БЕЗ ГЕНЕРАЦИИ ФАЛЬШИВЫХ ─────────────────────────────
@@ -244,7 +237,7 @@
                 if (Array.isArray(parsed)) return parsed;
             }
         } catch(e) {}
-        return []; // Если логов нет — просто пусто, без выдумок
+        return [];
     }
 
     // ─── 3. РАСЧЁТЫ ──────────────────────────────────────────────────────────────
@@ -268,29 +261,25 @@
         return { labels: days, data: days.map(d => map[d] || 0) };
     }
 
-    function getActivityByHour(log) {
-        const counts = new Array(24).fill(0);
-        log.forEach(e => { if (e.loginTime) counts[new Date(e.loginTime).getHours()]++; });
-        return counts;
-    }
-
-    // ─── 4. КАРТОЧКИ — только по логам студентов ─────────────────────────────────
+    // ─── 4. КАРТОЧКИ — тек студенттердің ID-лері бойынша ───────────────────────────
     function updateSummaryStats(log, students) {
-        const studentIds = new Set(students.map(s => s.id));
+        // Рөлі тек студенттерді ғана сүзіп алу
+        const onlyStudents = students.filter(s => (s.role || 'student').toLowerCase().trim() === 'student');
+        const studentIds = new Set(onlyStudents.map(s => s.id));
         const sLog = log.filter(e => studentIds.has(e.userId));
 
-        document.getElementById('statTotalLogins').textContent = sLog.length;
+        document.getElementById('statLogins').textContent = sLog.length;
+        document.getElementById('statCount').textContent = onlyStudents.length;
+        if(document.getElementById('studentCountBadge')) {
+            document.getElementById('studentCountBadge').textContent = onlyStudents.length + ' студент';
+        }
 
         const totalMs = sLog.reduce((s,e) => s + ((e.logoutTime||0)-(e.loginTime||0)), 0);
-        document.getElementById('statTotalHours').textContent = (totalMs/3600000).toFixed(1);
+        document.getElementById('statHours').textContent = (totalMs/3600000).toFixed(1);
 
         const today = new Date(); today.setHours(0,0,0,0);
-        document.getElementById('statTodaySessions').textContent =
+        document.getElementById('statToday').textContent =
             sLog.filter(e => new Date(e.loginTime) >= today).length;
-
-        const withDur = sLog.filter(e => e.logoutTime > e.loginTime);
-        const avgMs = withDur.length ? withDur.reduce((s,e)=>s+(e.logoutTime-e.loginTime),0)/withDur.length : 0;
-        document.getElementById('statAvgSession').textContent = Math.round(avgMs/60000) + ' мин';
     }
 
     // ─── 5. ЦВЕТА ────────────────────────────────────────────────────────────────
@@ -305,10 +294,11 @@
 
     // ─── 6. ГРАФИК ВХОДОВ ────────────────────────────────────────────────────────
     function renderLoginChart(log, students) {
-        const studentIds = new Set(students.map(s => s.id));
+        const onlyStudents = students.filter(s => (s.role || 'student').toLowerCase().trim() === 'student');
+        const studentIds = new Set(onlyStudents.map(s => s.id));
         const { labels, data } = getActivityByDay(log.filter(e => studentIds.has(e.userId)));
         const c = getChartColors();
-        const canvas = document.getElementById('loginChart');
+        const canvas = document.getElementById('activityChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const gradient = ctx.createLinearGradient(0,0,0,240);
@@ -321,69 +311,42 @@
         });
     }
 
-    // ─── 7. ГРАФИК ЧАСОВ ПО СТУДЕНТАМ ────────────────────────────────────────────
-    function renderHoursChart(log, students) {
-        const c = getChartColors();
-        const canvas = document.getElementById('hoursChart');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const colors = ['rgba(59,130,246,0.8)','rgba(139,92,246,0.8)','rgba(34,197,94,0.8)','rgba(249,115,22,0.8)','rgba(236,72,153,0.8)','rgba(20,184,166,0.8)'];
-        new Chart(ctx, {
-            type: 'bar',
-            data: { labels: students.map(s => (s.name||s.id).split(' ')[0]), datasets: [{ label: 'Сағат', data: students.map(s => parseFloat(calcHoursSpent(s.id, log).toFixed(1))), backgroundColor: students.map((_,i) => colors[i % colors.length]), borderRadius: 8, borderSkipped: false }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: c.text, font: { size: 11 } } }, y: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 } }, beginAtZero: true } } }
-        });
-    }
-
-    // ─── 8. ТЕПЛОВАЯ КАРТА ───────────────────────────────────────────────────────
-    function renderActivityHeatmap(log, students) {
-        const studentIds = new Set(students.map(s => s.id));
-        const counts = getActivityByHour(log.filter(e => studentIds.has(e.userId)));
-        const maxVal = Math.max(...counts, 1);
-        const grid = document.getElementById('heatmapGrid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        grid.appendChild(Object.assign(document.createElement('div'), {className:'heatmap-label'}));
-        for (let h = 0; h < 24; h++) {
-            const el = document.createElement('div');
-            el.className = 'heatmap-hour-label';
-            el.textContent = h < 10 ? '0'+h : h;
-            grid.appendChild(el);
-        }
-        const rowLabel = document.createElement('div');
-        rowLabel.className = 'heatmap-label';
-        rowLabel.textContent = 'Кіру';
-        grid.appendChild(rowLabel);
-        for (let h = 0; h < 24; h++) {
-            const cell = document.createElement('div');
-            cell.className = 'heatmap-cell';
-            cell.style.background = `rgba(59,130,246,${0.06 + (counts[h]/maxVal) * 0.88})`;
-            cell.title = `${h}:00 — ${counts[h]} кіру`;
-            grid.appendChild(cell);
-        }
-    }
-
-    // ─── 9. ТАБЛИЦА СТУДЕНТОВ ────────────────────────────────────────────────────
+    // ─── 7. ТАБЛИЦА СТУДЕНТОВ — КЕСТЕДЕ ТЕК СТУДЕНТТЕРДІ КӨРСЕТУ ───────────────────
     function escHtml(str) {
         return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function renderStudentStats(log, students) {
-        const tbody = document.getElementById('statsTableBody');
+        const tbody = document.getElementById('tbody');
         if (!tbody) return;
 
-        if (!students.length) {
-            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-table">
+        // Қатаң түрде тек 'student' рөлі бар пайдаланушыларды сүземіз (Админ, Мұғалім өтпейді)
+        const onlyStudents = students.filter(s => {
+            const role = (s.role || 'student').toLowerCase().trim();
+            return role === 'student';
+        });
+
+        if (!onlyStudents.length) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty" style="text-align:center;padding:20px;">
                 <i class="fa-solid fa-users-slash"></i>
                 <span>Тіркелген студенттер жоқ</span>
             </div></td></tr>`;
+            
+            if(document.getElementById('studentCountBadge')) {
+                document.getElementById('studentCountBadge').textContent = '0 студент';
+            }
             return;
         }
 
-        const hoursMapped = students.map(s => calcHoursSpent(s.id, log) || 0);
+        // Санауышты нақты студенттер санына қайта жаңарту
+        if(document.getElementById('studentCountBadge')) {
+            document.getElementById('studentCountBadge').textContent = onlyStudents.length + ' студент';
+        }
+
+        const hoursMapped = onlyStudents.map(s => calcHoursSpent(s.id, log) || 0);
         const maxHours = Math.max(...hoursMapped, 0.1);
 
-        tbody.innerHTML = students.map((s, i) => {
+        tbody.innerHTML = onlyStudents.map((s, i) => {
             const sLog    = log.filter(e => e.userId === s.id);
             const hours   = hoursMapped[i];
             const pct     = ((hours / maxHours) * 100).toFixed(0);
@@ -405,26 +368,24 @@
                 </td>
                 <td>
                     <div style="display:flex;align-items:center;gap:8px;">
-                        <div style="flex-grow:1;height:6px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden;">
+                        <div style="flex-grow:1;width:70px;height:6px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden;">
                             <div style="width:${pct}%;height:100%;background:#3b82f6;border-radius:4px;"></div>
                         </div>
                         <span style="min-width:50px;text-align:right;font-weight:600;">${hours.toFixed(1)} сағ</span>
                     </div>
                 </td>
-                <td><span class="sessions-badge"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${sLog.length}</span></td>
+                <td><span class="sessions-badge" style="background:rgba(59,130,246,0.1);color:#3b82f6;padding:4px 8px;border-radius:12px;font-size:12px;font-weight:600;"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${sLog.length}</span></td>
             </tr>`;
         }).join('');
     }
 
-    // ─── 10. ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────────────────────────
+    // ─── 8. ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
         const students = await getStudents();
         const log      = loadLoginHistory();
 
         updateSummaryStats(log, students);
         renderLoginChart(log, students);
-        renderHoursChart(log, students);
-        renderActivityHeatmap(log, students);
         renderStudentStats(log, students);
     });
 </script>
