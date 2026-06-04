@@ -1,5 +1,5 @@
 // ============================================================
-//  UTILITIES
+//  КӨМЕКШІ ҚҰРАЛДАР (УТИЛИТАЛАР)
 // ============================================================
 function escapeHtml(str) {
     return String(str)
@@ -10,7 +10,7 @@ function escapeHtml(str) {
 }
 
 // ============================================================
-//  TAB SWITCHER
+//  ҚОЙЫНДЫЛАРДЫ АУЫСТЫРУ (ТАБТАР)
 // ============================================================
 function switchTab(name, event) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -37,31 +37,46 @@ function switchTab(name, event) {
 function switchTabByName(name) { switchTab(name); }
 
 // ============================================================
-//  ANTHROPIC API HELPER
+//  GEMINI API КӨМЕКШІСІ (Gemini 2.5 & JSON режиміне оңтайландырылған)
 // ============================================================
-async function callClaude(systemPrompt, userMessage) {
-    // API кілті тікелей жазылған (hardcoded)
-    const apiKey = "AQ.Ab8RN6I5krYawPZVafwRZXDR6YCN0DnX4BOhHH4TEEbmHGo83Q";
+async function callGemini(systemPrompt, userMessage) {
+    const apiKey = await window.getApiKey();
+    if (!apiKey) throw new Error("API кілті енгізілмеді!");
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            system_instruction: { parts: [{ text: systemPrompt }] },
-            contents: [{ role: "user", parts: [{ text: userMessage }] }]
-        })
-    });
+    // Жаңа жылдам gemini-2.5-flash моделін қолданамыз
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-    const data = await response.json();
-    if (!response.ok) {
-        throw new Error(data.error?.message || `HTTP қате: ${response.status}`);
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: [{ role: "user", parts: [{ text: userMessage }] }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            if (response.status === 400 || response.status === 403) {
+                localStorage.removeItem('gemini_api_key');
+            }
+            throw new Error(data.error?.message || `HTTP қате: ${response.status}`);
+        }
+
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+    } catch (error) {
+        console.error("Gemini API қатесі:", error);
+        throw error;
     }
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
-
 // ============================================================
-//  AI CODE CHECKER
+//  AI КОД ТАЛДАУШЫСЫ
 // ============================================================
 function clearEditor() {
     document.getElementById('codeInput').value = '';
@@ -71,7 +86,7 @@ function clearResult() {
     document.getElementById('aiResult').innerHTML = `
         <div class="result-empty">
             <i class="fa-solid fa-robot"></i>
-            <p>Кодыңды жазып, <strong>AI Тексеру</strong> батырмасын басыңыз</p>
+            <p>Кодыңызды жазып, <strong>AI арқылы тексеру</strong> батырмасын басыңыз</p>
         </div>`;
 }
 
@@ -81,34 +96,33 @@ async function runAICheck() {
 
     const btn = document.querySelector('#tab-checker .btn-primary');
     const origHtml = btn ? btn.innerHTML : '';
-    if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Тексерілуде...'; }
+    if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Талдау...'; }
 
     const resultEl = document.getElementById('aiResult');
-    resultEl.innerHTML = `<div class="loading-wrap"><div class="spinner"></div> AI кодты талдап жатыр...</div>`;
+    resultEl.innerHTML = `<div class="loading-wrap"><div class="spinner"></div> AI кодыңызды талдап жатыр...</div>`;
 
-    const systemPrompt = `Сен Python коды талдаушысысың. 
-Кодты тексеріп, JSON форматта қайтар (тек JSON, markdown жоқ):
+    const systemPrompt = `Сен Python бағдарламалау тілінің кәсіби талдаушысысың.
+Кодты тексеріп, нәтижені міндетті түрде қазақ тілінде, мына JSON форматында қайтар (ешқандай markdown белгілерінсіз, тек таза JSON):
 {
   "has_errors": true/false,
-  "errors": [{"line": "...", "description": "..."}],
-  "explanation": "Қысқаша түсіндіру (қазақша)",
-  "improved_code": "Жақсартылған код немесе бос жол",
-  "style_issues": ["стиль ескертпелері"],
-  "logic_explanation": "Кодтың логикасы 1-2 сөйлемде"
+  "errors": [{"line": "қатесі бар жол немесе код үзіндісі", "description": "қатенің қазақша түсіндірмесі"}],
+  "explanation": "Кодтың логикасы мен кемшіліктеріне қазақ тіліндегі қысқаша шолу",
+  "improved_code": "Оңтайландырылған немесе жақсартылған код нұсқасы (немесе бос жол)",
+  "style_issues": ["PEP 8 стилі бойынша ескертулер мен кеңестер"],
+  "logic_explanation": "Кодтың негізгі қызметін түсіндіретін 1-2 қазақша сөйлем"
 }`;
 
     try {
-        const raw = await callClaude(systemPrompt, `Мына Python кодын тексер:\n\`\`\`python\n${code}\n\`\`\``);
-        const cleaned = raw.replace(/```json\n?|```\n?/g, '').trim();
-        const result = JSON.parse(cleaned);
+        const raw = await callGemini(systemPrompt, `Мына Python кодын тексерші:\n\`\`\`python\n${code}\n\`\`\``);
+        const result = JSON.parse(raw);
         renderCheckerResult(result, code);
     } catch (e) {
-        console.error("AICheck Error:", e);
+        console.error("AICheck қатесі:", e);
         resultEl.innerHTML = `<div class="ai-result-block">
             <div class="ai-section">
-                <div class="ai-section-title"><i class="fa-solid fa-circle-exclamation"></i> Қате</div>
+                <div class="ai-section-title"><i class="fa-solid fa-circle-exclamation"></i> Қате орын алды</div>
                 <div class="error-tag" style="display:block;"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(e.message)}</div>
-                <p style="margin-top:10px; font-size:0.85rem; color:var(--text-secondary);">API кілтін немесе интернет байланысын тексеріңіз.</p>
+                <p style="margin-top:10px; font-size:0.85rem; color:var(--text-secondary);">API кілтін немесе интернет байланысын тексеріп көріңіз.</p>
             </div>
         </div>`;
     } finally {
@@ -125,11 +139,11 @@ function renderCheckerResult(r, originalCode) {
         <div class="ai-section-title"><i class="fa-solid fa-${r.has_errors ? 'bug' : 'circle-check'}"></i> Статус</div>
         <div class="${r.has_errors ? 'error-tag' : 'success-tag'}">
             <i class="fa-solid fa-${r.has_errors ? 'circle-xmark' : 'circle-check'}"></i>
-            ${r.has_errors ? 'Қателер табылды' : 'Код дұрыс жазылған!'}
+            ${r.has_errors ? 'Қателер немесе кемшіліктер табылды' : 'Код керемет жазылған! Қате жоқ.'}
         </div>
     </div>`;
 
-    // Ошибки
+    // Қателер
     if (r.errors && r.errors.length > 0) {
         html += `<div class="ai-section">
             <div class="ai-section-title"><i class="fa-solid fa-triangle-exclamation"></i> Қателер</div>
@@ -139,10 +153,10 @@ function renderCheckerResult(r, originalCode) {
         </div>`;
     }
 
-    // Объяснение
+    // Түсіндіру
     if (r.explanation) {
         html += `<div class="ai-section">
-            <div class="ai-section-title"><i class="fa-solid fa-book-open-reader"></i> Түсіндіру</div>
+            <div class="ai-section-title"><i class="fa-solid fa-book-open-reader"></i> Толық түсіндірме</div>
             <div class="explanation-box">${escapeHtml(r.explanation).replace(/`([^`]+)`/g, '<code>$1</code>')}</div>
         </div>`;
     }
@@ -150,7 +164,7 @@ function renderCheckerResult(r, originalCode) {
     // Логика
     if (r.logic_explanation) {
         html += `<div class="ai-section">
-            <div class="ai-section-title"><i class="fa-solid fa-diagram-project"></i> Логика</div>
+            <div class="ai-section-title"><i class="fa-solid fa-diagram-project"></i> Бағдарлама логикасы</div>
             <div class="explanation-box">${escapeHtml(r.logic_explanation)}</div>
         </div>`;
     }
@@ -158,16 +172,16 @@ function renderCheckerResult(r, originalCode) {
     // Стиль
     if (r.style_issues && r.style_issues.length > 0) {
         html += `<div class="ai-section">
-            <div class="ai-section-title"><i class="fa-solid fa-palette"></i> Стиль ескертпелері</div>
+            <div class="ai-section-title"><i class="fa-solid fa-palette"></i> PEP 8 стиль ескертулері</div>
             ${r.style_issues.map(s => `<div class="warning-tag" style="display:block; margin-bottom:6px;">${escapeHtml(s)}</div>`).join('')}
         </div>`;
     }
 
-    // Улучшенный код
+    // Жақсартылған код
     if (r.improved_code && r.improved_code.trim() && r.improved_code.trim() !== originalCode.trim()) {
         html += `<div class="ai-section">
             <div class="ai-section-title" style="justify-content:space-between;">
-                <span><i class="fa-solid fa-wand-magic-sparkles"></i> Жақсартылған код</span>
+                <span><i class="fa-solid fa-wand-magic-sparkles"></i> Оңтайландырылған код</span>
                 <button class="btn-sm btn-ghost" onclick="copyImprovedCode(this)" style="font-size:0.75rem; padding:4px 10px;">
                     <i class="fa-solid fa-copy"></i> Көшіру
                 </button>
@@ -190,7 +204,7 @@ function copyImprovedCode(btn) {
 }
 
 // ============================================================
-//  TASKS
+//  ТАПСЫРМАЛАР БАЗАСЫ (ҚАЗАҚ ТІЛІНДЕ)
 // ============================================================
 const defaultTasks = [
     // --- EASY (1-50) ---
@@ -236,19 +250,19 @@ const defaultTasks = [
     { id:40, level:'easy', title:'Тізімде бар ма?', desc:'Элемент тізімнің ішінде бар екенін тексер.', hint:'in операторы' },
     { id:41, level:'easy', title:'Санның тамыры', desc:'Берілген санның квадрат түбірін тап.', hint:'x ** 0.5 немесе math.sqrt()' },
     { id:42, level:'easy', title:'Жұп сандар тізімі', desc:'1-ден 20-ға дейінгі жұп сандарды шығар.', hint:'range(2, 21, 2)' },
-    { id:43, level:'easy', title:'Дауысты дыбыс', desc:'Әріптің дауысты екенін тексер.', hint:'char in "aeiou"' },
+    { id:43, level:'easy', title:'Дауысты дыбыс', desc:'Әріптің дауысты екенін тексер.', hint:'char in "aeiouәеёиоуыэюя"' },
     { id:44, level:'easy', title:'Тізімді тазарту', desc:'Тізім ішіндегі барлық элементтерді өшіру.', hint:'clear() әдісін қолдан' },
     { id:45, level:'easy', title:'Элемент индексі', desc:'Тізімдегі белгілі бір санның индексін тап.', hint:'index() әдісін қолдан' },
     { id:46, level:'easy', title:'Соңғы әріп', desc:'Сөздің ең соңғы әріпін қайтар.', hint:'word[-1]' },
     { id:47, level:'easy', title:'Сөздік жасау', desc:'Кілт пен мәні бар қарапайым сөздік жаса.', hint:'{"кілт": "мән"}' },
     { id:48, level:'easy', title:'Тізбекті қосу', desc:'Барлық 1-ден 10-ға дейінгі сандарды қос.', hint:'sum(range(1, 11))' },
-    { id:49, level:'easy', title:'Қатардан санды алу', desc:'Мәтіндегі "10" санын Integer-ге айналдыр.', hint:'int() функциясын қолдан' },
+    { id:49, level:'easy', title:'Қатардан санды алу', desc:'Мәтіндегі "10" саную Integer-ге айналдыр.', hint:'int() функциясын қолдан' },
     { id:50, level:'easy', title:'Барлығы дұрыс па?', desc:'Тізімдегі барлық мәндер True екенін тексер.', hint:'all() функциясын қолдан' },
 
     // --- MEDIUM (51-100) ---
     { id:51, level:'medium', title:'Palindrome тексеру', desc:'Берілген сөздің палиндром екенін тексер.', hint:'s == s[::-1]' },
     { id:52, level:'medium', title:'Жай сан (Prime)', desc:'Берілген санның жай сан екенін тексер.', hint:'2-ден sqrt(n)-ге дейін тексер' },
-    { id:53, level:'medium', title:'Fibonacci қатары', desc:'Fibonacci қатарының N-ші мүшесін қайтар.', hint:'Рекурсия немесе циклқолдан' },
+    { id:53, level:'medium', title:'Fibonacci қатары', desc:'Fibonacci қатарының N-ші мүшесін қайтар.', hint:'Рекурсия немесе цикл қолдан' },
     { id:54, level:'medium', title:'Факториал есептеу', desc:'Берілген санның факториалын тап.', hint:'math.factorial немесе цикл' },
     { id:55, level:'medium', title:'Дубликаттарды жою', desc:'Тізімдегі қайталанатын сандарды жой.', hint:'set() қолдан' },
     { id:56, level:'medium', title:'Сөздерді санау', desc:'Мәтінде неше сөз бар екенін анықта.', hint:'split() ұзындығын ал' },
@@ -256,7 +270,7 @@ const defaultTasks = [
     { id:58, level:'medium', title:'Анаграмма тексеру', desc:'Екі сөздің бір-біріне анаграмма екенін тексер.', hint:'sorted() қолданып салыстыр' },
     { id:59, level:'medium', title:'Сөзді кері айналдыру', desc:'Сөйлемдегі әр сөзді орнында кері жаз.', hint:'split() және [::-1]' },
     { id:60, level:'medium', title:'Екінші максимал', desc:'Тізімдегі екінші ең үлкен санды тап.', hint:'sorted() қолданып [-2] ал' },
-    { id:61, level:'medium', title:'Жиілікті санау', desc:'Әр элемент тізімде неше рет кездесетінін тап.', hint:'collections.Counter қолдан' },
+    { id:61, level:'medium', title:'Жиілікті санау', desc:'Әр элемент тізімде неше рет кездесетіны тауып бер.', hint:'collections.Counter қолдан' },
     { id:62, level:'medium', title:'Тек жұп индекстер', desc:'Тізімдегі тек жұп индекстегі элементтерді ал.', hint:'list[::2]' },
     { id:63, level:'medium', title:'Екі тізім қиылысуы', desc:'Екі тізімге ортақ элементтерді тап.', hint:'set(a) & set(b)' },
     { id:64, level:'medium', title:'Матрицаны транпозициялау', desc:'2D тізімді (матрицаны) аударыңыз.', hint:'zip(*matrix)' },
@@ -274,7 +288,7 @@ const defaultTasks = [
     { id:76, level:'medium', title:'Файл кеңейтімі', desc:'Файл атауынан оның кеңейтімін ал.', hint:'split(".")[-1]' },
     { id:77, level:'medium', title:'Медиана табу', desc:'Сұрыпталған тізімнің медианасын тап.', hint:'Ортасындағы индексті ал' },
     { id:78, level:'medium', title:'Элементтер көбейтіндісі', desc:'Тізімдегі барлық сандардың көбейтіндісін есепте.', hint:'math.prod немесе цикл' },
-    { id:79, level:'medium', title:'Сөздерді сұрыптау', desc:'Мәтіндегі сөздерді алфавит бойынша сұрыпта.', hint:'split() және sort()' },
+    { id:79, level:'medium', title:'Сөздерді сұрыптау', desc:'Мәтіндеге сөздерді алфавит бойынша сұрыпта.', hint:'split() және sort()' },
     { id:80, level:'medium', title:'Циклмен жылжыту', desc:'Тізім элементтерін K қадам оңға жылжыт (Rotate).', hint:'list[-k:] + list[:-k]' },
     { id:81, level:'medium', title:'Сөздіктегі мәндер қосындысы', desc:'Сөздіктегі барлық сандық мәндерді қос.', hint:'sum(dict.values())' },
     { id:82, level:'medium', title:'Біріктірілген сөздік', desc:'Екі сөздікті ортақ кілттермен біріктір.', hint:'{**d1, **d2}' },
@@ -284,7 +298,7 @@ const defaultTasks = [
     { id:86, level:'medium', title:'Арнайы символдар', desc:'Жолдан барлық пунктуация белгілерін өшір.', hint:'isalnum() немесе regex' },
     { id:87, level:'medium', title:'Изоморфты сөздер', desc:'Екі сөз изоморфты ма (белгілерді ауыстыруға бола ма).', hint:'Екі жақты сөздік тексеру' },
     { id:88, level:'medium', title:'Жолды қысу', desc:'"aabb" дегенді "a2b2" деп өзгерт.', hint:'Алдыңғы таңбаны есте сақтап, сана' },
-    { id:89, level:'medium', title:'Нөлдерді соңына жылжыту', desc:'Барлық басқа сандардың ретін сақтап нөлдерді соңына апар.', hint:'Нөл еместерді тіркеп, қалғанын нөлмен толтыр' },
+    { id:89, level:'medium', title:'Нөлдерді соңына жылжыту', desc:'Bareliq basqa sandardın retin saqtap nolderdi sonyna apar.', hint:'Нөл еместерді тіркеп, қалғанын нөлмен толтыр' },
     { id:90, level:'medium', title:'Көпретті ауыстыру', desc:'Сөйлемдегі бірнеше сөзді бірден алмастыр.', hint:'replace() немесе regex қолдан' },
     { id:91, level:'medium', title:'Базалық конвертация', desc:'Кез келген N базадан 10 базаға өт.', hint:'int("str", base)' },
     { id:92, level:'medium', title:'Массив ішіндегі жұптар', desc:'Қосындысы K болатын сандар жұбын тап.', hint:'Сөздік (Hash map) қолдан' },
@@ -294,7 +308,7 @@ const defaultTasks = [
     { id:96, level:'medium', title:'Екі массивтің айырмасы', desc:'AinB және BinA элементтерін тап.', hint:'set(A) ^ set(B)' },
     { id:97, level:'medium', title:'Аралас типті сорттау', desc:'Сандар мен сөздерді бөлек сұрыптап, қайта біріктір.', hint:'filter() және sort()' },
     { id:98, level:'medium', title:'HTML тегтерін жою', desc:'Мәтін ішінен барлық HTML тегтерін алып таста.', hint:'Regex: <[^>]*>' },
-    { id:99, level:'medium', title:'Боулинг ұпайы', desc:'Қатардағы ұпайлардың қосындысын есепте.', hint:'Тізбек бойынша логикалық шарттар жаз' },
+    { id:99, level:'medium', title:'Боулинг ұпайы', desc:'Қатардағы ұпайлардың қосындысын есепте.', hint:'Тіжебк бойынша логикалық шарттар жаз' },
     { id:100, level:'medium', title:'Күнтізбе күні', desc:'Күн, ай, жыл берілгенде оның апта күнін тап.', hint:'datetime модулін қолдан' },
     
     // --- HARD (101-150) ---
@@ -302,7 +316,7 @@ const defaultTasks = [
     { id:102, level:'hard', title:'BFS граф іздеу', desc:'Кеңдік бойынша графты аралау.', hint:'collections.deque кезек құрылымын қолдан' },
     { id:103, level:'hard', title:'DFS граф іздеу', desc:'Тереңдік бойынша графты аралау.', hint:'Рекурсия немесе Stack қолдан' },
     { id:104, level:'hard', title:'Бинарлық іздеу (Binary Search)', desc:'Сұрыпталған тізімнен O(log n) уақытта ізде.', hint:'Ортаны (mid) тауып, екі жаққа бөл' },
-    { id:105, level:'hard', title:'JSON Parser', desc:'JSON форматындағы жолды Python сөздігіне айналдыр.', hint:'json модулінсіз 문자열 분석를 жаса' },
+    { id:105, level:'hard', title:'JSON Parser', desc:'JSON форматындағы жолды Python сөздігіне айналдыр.', hint:'json модулінсіз талдау жаса' },
     { id:106, level:'hard', title:'Валидті жақшалар', desc:'()[]{} жақшаларының дұрыс жабылғанын тексер.', hint:'Stack (Тізім) құрылымын пайдалан' },
     { id:107, level:'hard', title:'Ең үлкен ішкі қосынды', desc:'Kadane алгоритмін пайдаланып ең үлкен қосындыны тап.', hint:'Ағымдағы және жалпы максимумды сақта' },
     { id:108, level:'hard', title:'Судоку валидатор', desc:'9x9 Судоку кестесінің шарттарын (жол, баған, 3x3) тексер.', hint:'set() қолданып қайталануды болдырма' },
@@ -310,7 +324,7 @@ const defaultTasks = [
     { id:110, level:'hard', title:'N-Ханым есебі (N-Queens)', desc:'N өлшемді тақтаға N ханымды қауіпсіз орналастыр.', hint:'Backtracking (шегіну) алгоритмін жаз' },
     { id:111, level:'hard', title:'LIS (Longest Increasing Subsequence)', desc:'Ең ұзын өспелі ішкі тізбектің ұзындығын тап.', hint:'Динамикалық программалау (O(n^2) не O(n log n))' },
     { id:112, level:'hard', title:'LRU кэш құру', desc:'Least Recently Used (LRU) кэш сыныбын жаз.', hint:'OrderedDict немесе Hash Map + Doubly Linked List' },
-    { id:113, level:'hard', title:'Циклды тізім', desc:'Байланысқан тізімде (Linked List) цикл бар жоғын анықта.', hint:'Floyd\'s Cycle Finding (қанден мен тасбақа)' },
+    { id:113, level:'hard', title:'Циклды тізім', desc:'Байланысқан тізімде (Linked List) цикл бар жоғын анықта.', hint:'Floyd\'s Cycle Finding (қоян мен тасбақа)' },
     { id:114, level:'hard', title:'BST тексеру', desc:'Бинарлы ағаштың дұрыс іздеу ағашы екенін тексер.', hint:'Мәндердің min және max ауқымын бақыла' },
     { id:115, level:'hard', title:'Сөз баспалдағы (Word Ladder)', desc:'Бір сөзден екінші сөзге өту үшін қысқа жол тап.', hint:'Граф пен Кеңдікке іздеу (BFS)' },
     { id:116, level:'hard', title:'Топологиялық сұрыптау', desc:'Бағытталған графты (DAG) топологиялық түрде сұрыпта.', hint:'Kahn алгоритмі немесе DFS' },
@@ -320,7 +334,7 @@ const defaultTasks = [
     { id:120, level:'hard', title:'Магнит және темір', desc:'Графтағы циклдарды тауып, жоя алатын алгоритм жаз.', hint:'DFS кезінде түстермен (ақ, сұр, қара) бояу' },
     { id:121, level:'hard', title:'Медиана (Екі сұрыпталған)', desc:'Екі сұрыпталған массивтің медианасын O(log(m+n)) тап.', hint:'Екі массивте де бинарлық іздеу жасау' },
     { id:122, level:'hard', title:'Sudoku шешуші', desc:'Бос 9x9 судоку кестесін толтыратын бағдарлама жаз.', hint:'Backtracking арқылы бос ұяшықтарды сынап көру' },
-    { id:123, level:'hard', title:'Форд-Фалкерсон', desc:'Графтағы максималды ағынды есепте (Max Flow).', hint:'Қалдық граф және BFS (Edmonds-Karp)' },
+    { id:123, level:'hard', title:'Форд-Фалкерсон', desc:'Графтағы maximaldy agyndy есепте (Max Flow).', hint:'Қалдық граф және BFS (Edmonds-Karp)' },
     { id:124, level:'hard', title:'Эдит қашықтығы', desc:'Бір сөзді екіншіге ауыстырудың ең аз қадамын тап.', hint:'Levenshtein distance (DP)' },
     { id:125, level:'hard', title:'Регулярлы өрнек парсері', desc:'"." және "*" таңбаларын қолдайтын қарапайым regex жаз.', hint:'Рекурсия немесе 2D DP кестесі' },
     { id:126, level:'hard', title:'Аралдар саны', desc:'2D тордағы 1-лер (жер) тобының (аралдар) санын сана.', hint:'DFS немесе BFS арқылы аралап өту' },
@@ -347,7 +361,7 @@ const defaultTasks = [
     { id:147, level:'hard', title:'Математикалық өрнек Parser', desc:'"3 + 5 * (2 - 8)" сияқты жолды есептейтін бағдарлама.', hint:'Shunting Yard алгоритмі және Stack' },
     { id:148, level:'hard', title:'Эйлер циклі', desc:'Графта барлық қабырғаларды дәл бір рет өтетін жолды тап.', hint:'Hierholzer алгоритмі' },
     { id:149, level:'hard', title:'Жалған монета табу', desc:'N монета ішінен жалған монетаны таразы көмегімен O(log N).', hint:'Үшке бөліп тексеру (Ternary Search)' },
-    { id:150, level:'hard', title:'Көкжиек (Skyline problem)', desc:'Биік ғимараттардың көрінісінде контур сызығын есепте.', hint:'Оқиғалар тізімі (Sweep Line) және Max Heap' },
+    { id:150, level:'hard', title:'Көкжиек (Skyline problem)', desc:'Биік ғимараттардың көрінісінде контур сызығын есепте.', hint:'Оқиғалар тізімі (Sweep Line) ...' },
 ];
 
 let currentFilter = 'all';
@@ -369,7 +383,7 @@ function renderTasks(tasks) {
     const badgeMap = { easy: 'badge-easy', medium: 'badge-medium', hard: 'badge-hard' };
 
     if (filtered.length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:40px;">Тапсырмалар жоқ</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:40px;">Тапсырмалар табылмады</div>`;
         return;
     }
 
@@ -414,20 +428,20 @@ async function generateMoreTasks(event) {
         btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Жасалуда...';
     }
 
-    const systemPrompt = `Сен Python тапсырмалар генераторысысың.
-JSON форматта 6 жаңа тапсырма қайтар (тек JSON, markdown жоқ):
-[{"id":100,"level":"easy/medium/hard","title":"...","desc":"...","hint":"..."}]
-4 easy, 4 medium, 4 hard. Қазақша. Тек Python бойынша.`;
+    const systemPrompt = `Сен Python тапсырмалар генераторысың.
+Нәтижені міндетті түрде қазақ тілінде, мына JSON форматында қайтар (ешқандай markdown белгілерінсіз, тек таза JSON):
+[{"id":100,"level":"easy/medium/hard","title":"Тапсырма атауы","desc":"Сипаттамасы қазақша","hint":"Кеңес қазақша"}]
+Тізімде 12 жаңа бірегей тапсырма болуы тиіс (4 easy, 4 medium, 4 hard). Тек Python тақырыбына арналған.`;
 
     try {
-        const raw = await callClaude(systemPrompt, 'Python бойынша 12 жаңа тапсырма жасашы');
-        const cleaned = raw.replace(/```json\n?|```\n?/g, '').trim();
-        const newTasks = JSON.parse(cleaned);
+        // callClaude орнына callGemini қолданамыз!
+        const raw = await callGemini(systemPrompt, 'Python бағдарламалау бойынша 12 жаңа тапсырма жасап берші.');
+        const newTasks = JSON.parse(raw);
         allTasks = newTasks.map((t, i) => ({ ...t, id: 100 + i }));
         currentFilter = 'all';
         document.querySelectorAll('.filter-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
         renderTasks(allTasks);
-        showToast('Жаңа тапсырмалар жүктелді!', 'success');
+        showToast('Жаңа тапсырмалар сәтті жүктелді!', 'success');
     } catch (e) {
         showToast('Тапсырма жасау қатесі: ' + e.message, 'error');
     } finally {
@@ -439,7 +453,7 @@ JSON форматта 6 жаңа тапсырма қайтар (тек JSON, mar
 }
 
 // ============================================================
-//  HINTS
+//  КЕҢЕСТЕР МЕН СҰРАҚТАР (HINTS)
 // ============================================================
 async function getHint() {
     const question = document.getElementById('hintInput').value.trim();
@@ -448,13 +462,14 @@ async function getHint() {
     const resultEl = document.getElementById('hintResult');
     resultEl.innerHTML = `<div class="loading-wrap"><div class="spinner"></div> AI кеңес дайындап жатыр...</div>`;
 
-    const systemPrompt = `Сен Python оқытушысысың. Толық жауап БЕРМЕ.
-Тек бағыт-бағдар бер. Бір нақты кеңес немесе сілтеме бер.
-Мысалы: "len() функциясын қарастыр", "цикл ішіндегі шарт туралы ойлан".
-Жауабың 2-4 сөйлемнен аспасын. Қазақша жаз.`;
+    const systemPrompt = `Сен Python бағдарламалау пәнінің тәжірибелі оқытушысысың. Студентке ешқашан дайын шешімді немесе кодты КӨРСЕТПЕ.
+Тек бағыт-бағдар бер. Оны дұрыс алгоритмге немесе пайдалы функция/әдіске итермеле.
+Мысалы: "len() функциясын қарап көр", "цикл ішіндегі тоқтау шарты туралы ойлан".
+Жауабыңды қазақ тілінде сыпайы, қысқа және нұсқа етіп (2-4 сөйлемнен асырмай) жаз.`;
 
     try {
-        const hint = await callClaude(systemPrompt, question);
+        // callClaude орнына callGemini қолданамыз!
+        const hint = await callGemini(systemPrompt, question);
         resultEl.innerHTML = `
             <div class="hint-bubble ai-result-block">
                 <div class="hint-avatar"><i class="fa-solid fa-robot"></i></div>
@@ -466,13 +481,9 @@ async function getHint() {
 }
 
 // ============================================================
-//  PYTHON COMPILER (Piston API)
+//  ОНЛАЙН-КОМПИЛЯТОР PYTHON (Piston API мысалдары)
 // ============================================================
-// compilerExamples.js
 const compilerExamples = [
-    // ==========================================
-    // БАЗАЛЫҚ ЖӘНЕ НЕГІЗГІ МЫСАЛДАР (1-50)
-    // ==========================================
     `# 1. Сәлем әлем
 print("Сәлем, Әлем!")`,
 
@@ -499,1158 +510,307 @@ def fact(n):
     return 1 if n <= 1 else n * fact(n-1)
 print("5! =", fact(5))`,
 
-    `# 6. Тізім (List) құру
+    `# 6. Тізіммен (List) жұмыс
 fruits = ["Алма", "Алмұрт", "Банан"]
 fruits.append("Шие")
 for f in fruits:
     print(f)`,
 
-    `# 7. List Comprehension (Қысқаша тізім)
+    `# 7. List Comprehension (Қысқаша тізімдер)
 squares = [x*x for x in range(1, 11)]
 print("1-ден 10-ға дейінгі квадраттар:", squares)`,
 
-    `# 8. Фильтрация (Жұп сандар)
+    `# 8. Жұп сандарды сүзу
 nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 evens = [x for x in nums if x % 2 == 0]
 print("Жұп сандар:", evens)`,
 
-    `# 9. Сөздік (Dictionary) қолдану
+    `# 9. Сөздіктермен жұмыс (Dictionary)
 student = {"аты": "Арман", "жасы": 16, "пәні": "Информатика"}
 for key, value in student.items():
     print(key, "->", value)`,
 
-    `# 10. Жиын (Set) - қайталанбайтын элементтер
+    `# 10. Жиындар (Set) - бірегей мәндер
 numbers = [1, 1, 2, 2, 3, 4, 4, 5]
 unique_nums = set(numbers)
 print("Бірегей сандар:", unique_nums)`,
 
-    `# 11. Сөздің ұзындығы
-message = "Python бағдарламалау тілі"
-print("Ұзындығы:", len(message), "әріп")`,
+    `# 11. Мәтін ұзындығы мен әдістері
+text = "python бағдарламалау тілі"
+print("Ұзындығы:", len(text))
+print("Бас әріппен:", text.capitalize())
+print("Ауыстыру:", text.replace("python", "Python"))`,
 
-    `# 12. Тізімді кері айналдыру
-my_list = [10, 20, 30, 40]
-my_list.reverse()
-print("Кері тізім:", my_list)`,
+    `# 12. Екі айнымалының мәнін алмастыру
+x, y = 5, 10
+x, y = y, x
+print(f"x = {x}, y = {y}")`,
 
-    `# 13. Жолды кесу (Slicing)
-text = "Жасанды Интеллект"
-print("Алғашқы сөз:", text[:7])`,
+    `# 13. Жолдарды форматтау (f-string)
+name = "Әлия"
+age = 20
+print(f"Сәлем, менің атым {name}, жасым {age}-да.")`,
 
-    `# 14. Функция құру
-def greet(name="Дос"):
-    print("Сәлем,", name)
+    `# 14. Тізімді кесу (Slicing)
+numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+print("Алғашқы үш:", numbers[:3])
+print("Соңғы екі:", numbers[-2:])
+print("Қадаммен (2):", numbers[::2])`,
 
-greet("Арман")
-greet()`,
+    `# 15. Текшелермен (Tuple) жұмыс
+point = (10, 20)
+print("X координат:", point[0])
+print("Y координат:", point[1])`,
 
-    `# 15. Lambda (Анонимді) функция
-add = lambda x, y: x + y
-print("3 + 7 =", add(3, 7))`,
-
-    `# 16. Map функциясы
-nums = [1, 2, 3, 4]
-doubled = list(map(lambda x: x*2, nums))
-print("Екі еселенген:", doubled)`,
-
-    `# 17. Filter функциясы
-vowels = "аәеёиоөұүыі"
-def is_vowel(c):
-    return c.lower() in vowels
-text = "бағдарламалау"
-print("Дауыстылар:", list(filter(is_vowel, text)))`,
-
-    `# 18. Көпіршік сұрыптау (Bubble Sort)
-arr = [64, 34, 25, 12, 22, 11, 90]
-for i in range(len(arr)):
-    for j in range(0, len(arr)-i-1):
-        if arr[j] > arr[j+1]:
-            arr[j], arr[j+1] = arr[j+1], arr[j]
-print("Сұрыпталған:", arr)`,
-
-    `# 19. Бинарлық іздеу
-def binary_search(arr, val):
-    l, r = 0, len(arr)-1
-    while l <= r:
-        mid = (l + r) // 2
-        if arr[mid] == val: return mid
-        elif arr[mid] < val: l = mid + 1
-        else: r = mid - 1
-    return -1
-print("Индекс:", binary_search([1, 3, 5, 7, 9], 7))`,
-
-    `# 20. Максимум мен минимум
-scores = [45, 90, 88, 12, 59]
-print("Ең үлкен:", max(scores))
-print("Ең кіші:", min(scores))`,
-
-    `# 21. Класс (OOP)
-class Animal:
-    def __init__(self, name):
-        self.name = name
-    def speak(self):
-        print(self.name, "дыбыс шығарады")
-
-cat = Animal("Мысық")
-cat.speak()`,
-
-    `# 22. Мұрагерлік (Inheritance)
-class Dog(Animal):
-    def speak(self):
-        print(self.name, "үреді: 'Ау-ау!'")
-
-dog = Dog("Ақтөс")
-dog.speak()`,
-
-    `# 23. math модулі
-import math
-print("Пи мәні:", math.pi)
-print("16-ның квадрат түбірі:", math.sqrt(16))`,
-
-    `# 24. random модулі
-import random
-print("Кездейсоқ сан:", random.randint(1, 10))
-print("Таңдау:", random.choice(["Тас", "Қайшы", "Қағаз"]))`,
-
-    `# 25. datetime модулі
-from datetime import datetime
-now = datetime.now()
-print("Қазіргі уақыт:", now.strftime("%H:%M:%S"))`,
-
-    `# 26. Текше (Tuple) қолдану
-coordinates = (10, 20)
-print("X координат:", coordinates[0])
-print("Y координат:", coordinates[1])`,
-
-    `# 27. Сандарды айырбастау (Swap)
-a, b = 5, 10
-a, b = b, a
-print("a =", a, "b =", b)`,
-
-    `# 28. Файл жазу/оқу (Симуляция)
-file_content = "Бірінші жол\\nЕкінші жол"
-lines = file_content.split("\\n")
-for line in lines:
-    print("Оқылды:", line)`,
-
-    `# 29. Try-Except (Қатені ұстау)
-try:
-    x = 10 / 0
-except ZeroDivisionError:
-    print("Нөлге бөлуге болмайды!")`,
-
-    `# 30. Жолдарды пішімдеу (Format)
-name = "Ернұр"
-age = 18
-print("Менің атым {}, жасым {}".format(name, age))`,
-
-    `# 31. Yield (Генератор)
-def count_up_to(n):
-    for i in range(1, n+1):
-        yield i
-
-for num in count_up_to(5):
-    print("Генератор:", num)`,
-
-    `# 32. Жай сан тексеру (Prime)
-def is_prime(n):
-    if n < 2: return False
-    for i in range(2, int(n**0.5)+1):
-        if n % i == 0: return False
+    `# 16. Жай санды анықтау алгоритмі
+def is_prime(num):
+    if num < 2: return False
+    for i in range(2, int(num**0.5) + 1):
+        if num % i == 0: return False
     return True
 print("17 жай сан ба?", is_prime(17))`,
 
-    `# 33. Көпөлшемді тізім (Matrix)
-matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-for row in matrix:
-    for val in row:
-        print(val, end=" ")
-    print()`,
-
-    `# 34. Жол ішінде іздеу
-text = "Жақсы код шағын әрі анық болады"
-if "код" in text:
-    print("Сөз табылды!")`,
-
-    `# 35. zip функциясы
-names = ["Али", "Диас", "Марлен"]
-scores = [95, 87, 80]
-for n, s in zip(names, scores):
-    print(n, "->", s)`,
-
-    `# 36. Санды сұрыптау (Custom sort)
-words = ["банан", "алма", "шие", "апельсин"]
-words.sort(key=len)
-print("Ұзындығы бойынша:", words)`,
-
-    `# 37. join әдісі
-parts = ["Python", "өте", "керемет"]
-sentence = " ".join(parts)
-print("Толық сөйлем:", sentence)`,
-
-    `# 38. eval қолдану
-expression = "3 * 4 + 5"
-result = eval(expression)
-print(expression, "=", result)`,
-
-    `# 39. args және kwargs
-def magic(*args, **kwargs):
-    print("Аргументтер:", args)
-    print("Кілтті аргументтер:", kwargs)
-magic(1, 2, 3, a="A", b="B")`,
-
-    `# 40. Жиілікті санау
-text = "алма банан алма шие"
-words = text.split()
-counts = {w: words.count(w) for w in set(words)}
-print("Жиілік:", counts)`,
-
-    `# 41. Матрицаны транспозициялау
-matrix = [[1, 2], [3, 4]]
-transposed = list(zip(*matrix))
-print("Аударылған:", transposed)`,
-
-    `# 42. Анонимді айнымалы (_)
-for _ in range(3):
-    print("Бұл 3 рет шығады")`,
-
-    `# 43. Any және All
-bool_list = [True, False, True]
-print("Кем дегенде біреуі True?", any(bool_list))
-print("Барлығы True ма?", all(bool_list))`,
-
-    `# 44. Жолдағы әріптерді санау
-import collections
-message = "бағдарламалау"
-counter = collections.Counter(message)
-print("Әріптер санағы:", dict(counter))`,
-
-    `# 45. Бір жолдық шарт (Ternary)
-age = 20
-status = "Ересек" if age >= 18 else "Адам"
-print("Статус:", status)`,
-
-    `# 46. Хэш (Hash) мәні
-print("Сөзінің хэші:", hash("Python"))`,
-
-    `# 47. Type hint (Типті көрсету)
-def add_nums(a: int, b: int) -> int:
-    return a + b
-print(add_nums(5, 10))`,
-
-    `# 48. Enumerate қолдану
-fruits = ["Алма", "Алмұрт", "Манго"]
-for index, fruit in enumerate(fruits):
-    print(index, "-", fruit)`,
-
-    `# 49. Тізбектелген шарттар
-x = 5
-if 1 < x < 10:
-    print("x 1 мен 10 аралығында")`,
-
-    `# 50. Сөздікті әдепкі мәнмен (get)
-data = {"a": 1}
-print("b мәні:", data.get("b", 0))`,
-
-    // ==========================================
-    // СТАНДАРТТЫ АМАЛДАР ЖӘНЕ МӘТІНДЕР (51-90)
-    // ==========================================
-    `# 51. Жолдың регистрін өзгерту
-text = "Python Тілі"
-print("Үлкен әріп:", text.upper())
-print("Кіші әріп:", text.lower())
-print("Ауыстыру:", text.swapcase())`,
-
-    `# 52. Бас әріптерді түзету
-title = "жасанды интеллект және робототехника"
-print("Бас әріппен:", title.title())
-print("Сөйлем басы:", title.capitalize())`,
-
-    `# 53. Жолдың басы мен соңын тексеру
-filename = "main.py"
-print(".py-мен аяқтала ма?", filename.endswith(".py"))
-print("main-нен бастала ма?", filename.startswith("main"))`,
-
-    `# 54. Мәтін ішіндегі сөзді алмастыру
-text = "Мен Java тілін үйреніп жүрмін"
-new_text = text.replace("Java", "Python")
-print(new_text)`,
-
-    `# 55. Жолдағы бос орындарды тазалау
-text = "   артық бос орындар   "
-print("Тазаланған:", text.strip())`,
-
-    `# 56. Сан ба әлде әріп пе тексеру
-num_str = "12345"
-alpha_str = "Python"
-print("Тек сан ба?", num_str.isdigit())
-print("Тек әріп пе?", alpha_str.isalpha())`,
-
-    `# 57. Мәтінді тізімге бөлу (Split)
-text = "арман,марат,әлия"
-names_list = text.split(",")
-print("Тізім:", names_list)`,
-
-    `# 58. Мәтінді оңға/солға теңестіру
-word = "Сәлем"
-print(word.center(20, "*"))`,
-
-    `# 59. Көп жолды мәтін құру
-multiline = """Бұл
-көп жолдан тұратын
-мәтін мысалы"""
-print(multiline)`,
-
-    `# 60. Мәтін ішіндегі сөздің индексі
-text = "Бағдарламалау өте қызық"
-print("қызық сөзінің индексі:", text.find("қызық"))`,
-
-    `# 61. f-string арқылы пішімдеу
-language = "Python"
-version = 3.11
-print(f"Мен {language} {version} нұсқасын қолданамын")`,
-
-    `# 62. Тізімнің көшірмесін жасау
-original = [1, 2, 3]
-copy_list = original.copy()
-copy_list.append(4)
-print("Түпнұсқа:", original)
-print("Көшірме:", copy_list)`,
-
-    `# 63. Екі тізімді біріктіру (extend)
-list1 = [1, 2]
-list2 = [3, 4]
-list1.extend(list2)
-print("Біріккен тізім:", list1)`,
-
-    `# 64. Элементтің тізімдегі жиілігі
-nums = [1, 2, 2, 3, 3, 3, 4]
-print("3 санының саны:", nums.count(3))`,
-
-    `# 65. Тізім ішінен элементті өшіру
-cars = ["Toyota", "BMW", "Audi"]
-cars.remove("BMW")
-print(cars)`,
-
-    `# 66. Индекс бойынша өшіру (pop)
-items = ["алма", "алмұрт", "банан"]
-removed = items.pop(1)
-print("Өшірілді:", removed)
-print("Қалғаны:", items)`,
-
-    `# 67. Тізімді тазалау (clear)
-data = [10, 20, 30]
-data.clear()
-print("Тазаланған тізім:", data)`,
-
-    `# 68. Элементті нақты индекске қосу
-nums = [1, 2, 4, 5]
-nums.insert(2, 3)
-print(nums)`,
-
-    `# 69. Тізімнің ең кіші элементінің индексі
-nums = [40, 10, 30, 20]
-min_index = nums.index(min(nums))
-print("Ең кіші санның индексі:", min_index)`,
-
-    `# 70. Сөздіктің тек кілттерін алу
-user = {"id": 1, "name": "Erlan", "role": "admin"}
-print("Кілттер:", list(user.keys()))
-print("Мәндер:", list(user.values()))`,
-
-    // ==========================================
-    // МАТЕМАТИКА ЖӘНЕ САНДАР (71-90)
-    // ==========================================
-    `# 71. Санның абсолютті мәні (Модуль)
-print("|-5| =", abs(-5))`,
-
-    `# 72. Дәрежелеу (pow)
-print("2-нің 5 дәрежесі:", pow(2, 5))`,
-
-    `# 73. Санды дөңгелектеу
-print("3.14159 ->", round(3.14159, 2))
-print("2.7 ->", round(2.7))`,
-
-    `# 74. Тізімдегі сандардың қосындысы
-scores = [10, 20, 30, 40]
-print("Қосынды:", sum(scores))`,
-
-    `# 75. Көбейтіндіні табу (math.prod)
-import math
-nums = [2, 3, 4]
-print("Көбейтінді:", math.prod(nums))`,
-
-    `# 76. Ең үлкен ортақ бөлгіш (ЕҮОБ / НОД)
-import math
-print("ЕҮОБ(24, 36) =", math.gcd(24, 36))`,
-
-    `# 77. Ең кіші ортақ еселік (ЕКОЕ / НОК)
-import math
-print("ЕКОЕ(12, 18) =", math.lcm(12, 18))`,
-
-    `# 78. Төмен және жоғары дөңгелектеу
-import math
-print("Жоғары:", math.ceil(4.1))
-print("Төмен:", math.floor(4.9))`,
-
-    `# 79. Логарифм есептеу
-import math
-print("log2(8) =", math.log2(8))`,
-
-    `# 80. Санның бөлшек бөлігін алып тастау
-import math
-num = 12.34
-print("Бүтін бөлігі:", math.trunc(num))`,
-
-    `# 81. Радианды градусқа айналдыру
-import math
-print("pi/2 градуста:", math.degrees(math.pi / 2))`,
-
-    `# 82. Кездейсоқ нақты сан (float)
+    `# 17. Кездейсоқ сандар генерациясы
 import random
-print("0 мен 1 арасы:", random.random())
-print("1.5 пен 5.5 арасы:", random.uniform(1.5, 5.5))`,
+print("1 мен 100 арасындағы сан:", random.randint(1, 100))
+items = ["Алма", "Алмұрт", "Банан"]
+print("Кездейсоқ таңдау:", random.choice(items))`,
 
-    `# 83. Тізімді кездейсоқ араластыру (shuffle)
-import random
-cards = ["Тұз", "Король", "Дама", "Валет"]
-random.shuffle(cards)
-print("Араластырылған:", cards)`,
+    `# 18. Уақыт пен дата (datetime)
+from datetime import datetime
+now = datetime.now()
+print("Қазіргі толық уақыт:", now)
+print("Форматталған күн:", now.strftime("%d-%m-%Y %H:%M:%S"))`,
 
-    `# 84. Тізімнен бірнеше кездейсоқ элемент алу
-import random
-prizes = ["Телефон", "Ноутбук", "Сағат", "Құлаққап"]
-winners = random.sample(prizes, k=2)
-print("Ұтыстар:", winners)`,
+    `# 19. Қателіктерді өңдеу (try-except)
+try:
+    result = 10 / 0
+except ZeroDivisionError:
+    result = "Нөлге бөлуге болмайды!"
+print("Нәтиже:", result)`,
 
-    `# 85. Екілік жүйеге айналдыру (Binary)
-num = 45
-print("Екілік код:", bin(num))`,
+    `# 20. Lambda (Анонимді функция)
+square = lambda x: x ** 2
+print("5-тің квадраты:", square(5))
+multiply = lambda a, b: a * b
+print("3 * 4 =", multiply(3, 4))`,
 
-    `# 86. Сегіздік және он алтылық жүйе
-num = 255
-print("Сегіздік:", oct(num))
-print("Он алтылық:", hex(num))`,
+    `# 21. Map функциясымен тізімді түрлендіру
+nums = [1, 2, 3, 4, 5]
+squared_nums = list(map(lambda x: x**2, nums))
+print("Квадратталған тізім:", squared_nums)`,
 
-    `# 87. Комплексті сандар
-z = 3 + 4j
-print("Нақты бөлігі:", z.real)
-print("Жорамал бөлігі:", z.imag)`,
+    `# 22. Filter функциясымен жұмыс
+ages = [12, 18, 15, 22, 30, 17]
+adults = list(filter(lambda x: x >= 18, ages))
+print("Кәмелетке толғандар:", adults)`,
 
-    `# 88. Санның таңбасын анықтау (copysign)
-import math
-print(math.copysign(1, -15))`,
+    `# 23. Enumerate қолдану (Индекс пен мән алу)
+languages = ["Python", "Java", "C++"]
+for index, lang in enumerate(languages, start=1):
+    print(f"{index}. {lang}")`,
 
-    `# 89. Дивизия және қалдық бір уақытта (divmod)
-quotient, remainder = divmod(23, 5)
-print("Бөлінді:", quotient, "Қалдық:", remainder)`,
+    `# 24. Zip функциясымен параллельді цикл
+names = ["Али", "Дана", "Серік"]
+scores = [85, 92, 78]
+for name, score in zip(names, scores):
+    print(f"{name} -> {score} ұпай")`,
 
-    `# 90. Сандар тізбегінің орташа мәні
-nums = [10, 20, 30, 40, 50]
-mean = sum(nums) / len(nums)
-print("Орташа мән:", mean)`,
+    `# 25. Тізімнің көшірмесін жасау (Deep vs Shallow)
+import copy
+original = [[1, 2], [3, 4]]
+shallow = original.copy()
+deep = copy.deepcopy(original)
+original[0][0] = 99
+print("Таяз көшірме (shallow):", shallow)
+print("Терең көшірме (deep):", deep)`,
 
-    // ==========================================
-    // СЕНІМДІ ТҮСІНІКТЕР ЖӘНЕ ЖИНАҚТАР (91-120)
-    // ==========================================
-    `# 91. Сөздікті біріктіру (Python 3.9+)
-dict1 = {'a': 1, 'b': 2}
-dict2 = {'b': 3, 'c': 4}
-merged = dict1 | dict2
-print("Біріккен сөздік:", merged)`,
+    `# 26. Класс және Объект (OOP негіздері)
+class Car:
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+    def get_info(self):
+        return f"{self.brand} {self.model}"
 
-    `# 92. Жиындардың қиылысуы (Intersection)
-setA = {1, 2, 3, 4}
-setB = {3, 4, 5, 6}
-print("Қиылысуы:", setA.intersection(setB))`,
+my_car = Car("Toyota", "Camry")
+print("Көлік туралы ақпарат:", my_car.get_info())`,
 
-    `# 93. Жиындардың бірігуі (Union)
-setA = {1, 2}
-setB = {3, 4}
-print("Бірігуі:", setA.union(setB))`,
+    `# 27. Класс мұрагерлігі (Inheritance)
+class Animal:
+    def speak(self): pass
 
-    `# 94. Жиындардың айырмашылығы (Difference)
-setA = {1, 2, 3}
-setB = {3, 4, 5}
-print("Тек A-да бар:", setA.difference(setB))`,
+class Dog(Animal):
+    def speak(self): return "Ау-ау!"
 
-    `# 95. Симметриялық айырмашылық
-setA = {1, 2, 3}
-setB = {3, 4, 5}
-print("Ортақ еместері:", setA.symmetric_difference(setB))`,
+class Cat(Animal):
+    def speak(self): return "Мияу!"
 
-    `# 96. Ішкі жиынды тексеру (issubset)
-setA = {1, 2}
-setB = {1, 2, 3, 4}
-print("A жиыны B-ның ішінде ме?", setA.issubset(setB))`,
+dog, cat = Dog(), Cat()
+print("Ит дыбысы:", dog.speak())
+print("Мысық дыбысы:", cat.speak())`,
 
-    `# 97. Өзгермейтін жиын (Frozenset)
-fs = frozenset([1, 2, 3, 3])
-print("Өзгермейтін жиын:", fs)`,
+    `# 28. Файл жазу және оқу (Симуляция)
+# with операторы арқылы жұмыс істеу мысалы
+file_content = "Python үйрену өте қызықты!\\nБұл екінші жол."
+print("Файлға жазылатын мәтін:")
+print(file_content)`,
 
-    `# 98. Тізімдегі элементтерді топтау (Defaultdict)
+    ` ============================================================
+#  ЖЕТІЛДІРІЛГЕН PYTHON МҮМКІНДІКТЕРІ (29-50)
+# ============================================================`,
+
+    `# 29. Көпіршікті сұрыптау (Bubble Sort)
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+print("Bubble Sort нәтижесі:", bubble_sort([64, 34, 25, 12, 22, 11, 90]))`,
+
+    `# 30. Бинарлық іздеу алгоритмі (Binary Search)
+def binary_search(arr, target):
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target: return mid
+        elif arr[mid] < target: low = mid + 1
+        else: high = mid - 1
+    return -1
+nums = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+print("Индексі:", binary_search(nums, 23))`,
+
+    `# 31. Декоратор құру және қолдану
+def my_decorator(func):
+    def wrapper():
+        print("[Декоратор]: Функция басталды")
+        func()
+        print("[Декоратор]: Функция аяқталды")
+    return wrapper
+
+@my_decorator
+def say_hello():
+    print("Сәлем, Әлем!")
+
+say_hello()`,
+
+    `# 32. Жалпақ тізім жасау (Flatten Nested List)
+nested_list = [[1, 2, 3], [4, 5], [6, 7, 8]]
+flat_list = [item for sublist in nested_list for item in sublist]
+print("Жалпақ тізім:", flat_list)`,
+
+    `# 33. Сөз жиілігін есептеу (Counter)
+from collections import Counter
+text = "алма банан алма шие банан алма"
+word_counts = Counter(text.split())
+print("Сөздер жиілігі:", dict(word_counts))`,
+
+    `# 34. Генераторлар (Yield операторы)
+def count_up_to(n):
+    count = 1
+    while count <= n:
+        yield count
+        count += 1
+counter = count_up_to(5)
+for num in counter:
+    print("Генератор саны:", num)`,
+
+    `# 35. any() және all() функциялары
+nums1 = [0, False, 5, 0]
+nums2 = [1, 3, 5, 7]
+print("Кем дегенде біреуі шындық па?", any(nums1))
+print("Барлығы шындық па?", all(nums2))`,
+
+    `# 36. Матрицаны транспозициялау (Transposing a Matrix)
+matrix = [[1, 2, 3], [4, 5, 6]]
+transposed = [list(row) for row in zip(*matrix)]
+print("Транспозицияланған матрица:", transposed)`,
+
+    `# 37. Сөздікті мәндері бойынша сұрыптау
+scores = {"Әлішер": 88, "Марат": 95, "Гүлім": 78, "Айша": 92}
+sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+print("Сұрыпталған рейтинг:", sorted_scores)`,
+
+    `# 38. Жиындар арасындағы айырмашылық пен бірігу (Set operations)
+set_a = {1, 2, 3, 4}
+set_b = {3, 4, 5, 6}
+print("Бірігуі (Union):", set_a | set_b)
+print("Қиылысуы (Intersection):", set_a & set_b)
+print("Айырмашылығы (Difference):", set_a - set_b)`,
+
+    `# 39. Тұрақты немесе өзгермейтін жиын (Frozenset)
+frozen = frozenset([1, 2, 3, 4])
+try:
+    frozen.add(5)
+except AttributeError:
+    print("Қате: frozenset жиынын өзгерту мүмкін емес!")`,
+
+    `# 40. Namedtuple (Атаулы кортеждермен жұмыс)
+from collections import namedtuple
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(15, 25)
+print(f"Нүкте координаталары: X={p.x}, Y={p.y}")`,
+
+    `# 41. Орташа жұмыс істеу уақытын өлшеу (time)
+import time
+start_time = time.time()
+# Уақыт алатын операция
+sum(range(1000000))
+end_time = time.time()
+print(f"Орындау уақыты: {end_time - start_time:.6f} секунд")`,
+
+    `# 42. defaultdict қолдану (collections)
 from collections import defaultdict
 grouped = defaultdict(list)
 grouped['жұп'].append(2)
+grouped['жұп'].append(4)
 grouped['тақ'].append(1)
-print(dict(grouped))`,
-
-    `# 99. Тұрақты кезек (Deque)
-from collections import deque
-queue = deque([1, 2, 3])
-queue.append(4)
-queue.appendleft(0)
-print("Кезек:", queue)`,
-
-    `# 100. Идентификаторды тексеру (is операторы)
-a = [1, 2, 3]
-b = a
-c = [1, 2, 3]
-print("a-мен b бір объект пе?", a is b)
-print("a-мен c бір объект пе?", a is c)`,
-
-    `# 101. Сөздікті мәндері бойынша сорттау
-scores = {"Әли": 85, "Дана": 95, "Bauryzhan": 90}
-sorted_scores = dict(sorted(scores.items(), key=lambda item: item[1]))
-print("Сұрыпталған ұпайлар:", sorted_scores)`,
-
-    `# 102. Тізімді қадаммен кесу (Slicing step)
-nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-print("Әрбір екінші сан:", nums[::2])`,
-
-    `# 103. Нағыз терең көшірме (deepcopy)
-import copy
-matrix = [[1, 2], [3, 4]]
-deep_matrix = copy.deepcopy(matrix)
-deep_matrix[0][0] = 99
-print("Түпнұсқа өзгерген жоқ:", matrix)`,
-
-    `# 104. Тізімнен элементті мәні бойынша іздеп өшіру
-words = ["хобби", "код", "хобби"]
-while "хобби" in words:
-    words.remove("хобби")
-print(words)`,
-
-    `# 105. Кортеж ішіндегі элементті санау
-tpl = (1, 2, 3, 1, 1)
-print("1 саны неше рет кездесті:", tpl.count(1))`,
-
-    `# 106. Namedtuple қолдану (Атаулы кортеж)
-from collections import namedtuple
-Point = namedtuple('Point', ['x', 'y'])
-p = Point(10, 20)
-print(f"Нүкте: X={p.x}, Y={p.y}")`,
-
-    `# 107. Сөздіктен элементті өшіріп, мәнін алу
-data = {"A": 100, "B": 200}
-val = data.pop("A")
-print("Өшірілген мән:", val)
-print("Қалған сөздік:", data)`,
-
-    `# 108. Сөздіктің ішін тазарту
-data = {"а": 1, "б": 2}
-data.clear()
-print("Бос сөздік:", data)`,
-
-    `# 109. Екі жиынның ортақ элементі жоқ екенін тексеру
-setA = {1, 2}
-setB = {3, 4}
-print("Ортақ элементтері жоқ па?", setA.isdisjoint(setB))`,
-
-    `# 110. Сөздікті жаңарту (update)
-info = {"аты": "Сәкен"}
-info.update({"жасы": 25, "қала": "Алматы"})
-print(info)`,
-
-    `# 111. Тізімнен None мәндерін тазалау
-data = [1, None, 2, None, 3]
-clean_data = [x for x in data if x is not None]
-print(clean_data)`,
-
-    `# 112. Бірнеше сөздікті бір циклде оқу (ChainMap)
-from collections import ChainMap
-dict1 = {'жаңалықтар': 1}
-dict2 = {'спорт': 2}
-combined = ChainMap(dict1, dict2)
-print(combined['спорт'])`,
-
-    `# 113. Тізімді белгілі бір өлшемге бөлу
-nums = [1, 2, 3, 4, 5, 6]
-size = 2
-chunks = [nums[i:i + size] for i in range(0, len(nums), size)]
-print("Бөліктер:", chunks)`,
-
-    `# 114. Сөздіктен максималды мәні бар кілтті табу
-stats = {'Атырау': 32, 'Астана': 15, 'Шымкент': 40}
-max_key = max(stats, key=stats.get)
-print("Ең үлкен мәні бар қала:", max_key)`,
-
-    `# 115. Тізім элементтерін индекспен біріктіріп мәтін жасау
-items = ['Кабель', 'Тышқан', 'Пернетақта']
-result = ", ".join([f"{i+1}. {item}" for i, item in enumerate(items)])
-print(result)`,
-
-    `# 116. Сөздік ішіндегі сөздікті оқу
-users = {"id1": {"name": "Asel", "age": 20}}
-print(users["id1"]["name"])`,
-
-    `# 117. Тізімдегі элементтердің орындарын ауыстыру
-arr = [10, 20, 30]
-arr[0], arr[2] = arr[2], arr[0]
-print("Ауысқан соң:", arr)`,
-
-    `# 118. Бос мәндерді тексеру
-empty_list = []
-if not empty_list:
-    print("Тізім бос!")`,
-
-    `# 119. Мәтінді таңбалар тізіміне айналдыру
-word = "Код"
-chars = list(word)
-print(chars)`,
-
-    `# 120. Тізімнің соңғы N элементін алу
-nums = [1, 2, 3, 4, 5, 6, 7]
-print("Соңғы 3 элемент:", nums[-3:])`,
-
-    // ==========================================
-    // ФУНКЦИЯЛАР ЖӘНЕ АЛГОРИТМДЕР (121-160)
-    // ==========================================
-    `# 121. Қарапайым калькулятор функциясы
-def calc(a, b, op):
-    if op == '+': return a + b
-    elif op == '-': return a - b
-    elif op == '*': return a * b
-    elif op == '/': return a / b if b != 0 else "Қате!"
-print("Нәтиже:", calc(10, 2, '*'))`,
-
-    `# 122. Санның цифрларының қосындысы
-def sum_digits(n):
-    return sum(int(d) for d in str(n))
-print("1234-тің цифрлар қосындысы:", sum_digits(1234))`,
-
-    `# 123. Екі тізімнің ортақ элементтерін табу
-list1 = [1, 2, 3, 4]
-list2 = [3, 4, 5, 6]
-common = [x for x in list1 if x in list2]
-print("Ортақ элементтер:", common)`,
-
-    `# 124. Палиндром сандарды тексеру
-def is_palindrome_num(n):
-    return str(n) == str(n)[::-1]
-print("121 палиндром ба?", is_palindrome_num(121))`,
-
-    `# 125. Тізімдегі элементтердің көбейтіндісі (Итерация)
-def multiply_list(nums):
-    res = 1
-    for x in nums: res *= x
-    return res
-print("Көбейтінді:", multiply_list([2, 3, 5]))`,
-
-    `# 126. Температураны Цельсийден Фаренгейтке айналдыру
-def c_to_f(celsius):
-    return (celsius * 9/5) + 32
-print("25°C Фаренгейтте:", c_to_f(25))`,
-
-    `# 127. Үш санның максимумум табу
-def max_of_three(a, b, c):
-    return max(a, b, c)
-print("Максимум:", max_of_three(12, 45, 7))`,
-
-    `# 128. Жолдағы бос орындар санын есептеу
-text = "Бұл сөйлемде қанша бос орын бар?"
-print("Бос орындар саны:", text.count(" "))`,
-
-    `# 129. Сызықтық іздеу (Linear Search)
-def linear_search(arr, target):
-    for i in range(len(arr)):
-        if arr[i] == target: return i
-    return -1
-print("Индекс:", linear_search([5, 3, 8, 2], 8))`,
-
-    `# 130. Тізімнің медианасын табу
-def find_median(nums):
-    s = sorted(nums)
-    n = len(s)
-    mid = n // 2
-    return (s[mid] if n % 2 != 0 else (s[mid-1] + s[mid]) / 2)
-print("Медиана:", find_median([4, 1, 3, 2, 5]))`,
-
-    `# 131. Көбейту кестесін шығару (Бір санға)
-num = 5
-for i in range(1, 11):
-    print(f"{num} x {i} = {num*i}")`,
-
-    `# 132. Жылдың кібісе жыл екенін тексеру (Leap year)
-def is_leap_year(year):
-    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-print("2024 кібісе жыл ма?", is_leap_year(2024))`,
-
-    `# 133. Мәтіндегі дауыссыз дыбыстарды санау
-text = "Сәлем"
-vowels = "аәеёиоөұүыіАӘЕЁИОӨҰҮЫІ"
-consonants_count = sum(1 for c in text if c.isalpha() and c not in vowels)
-print("Дауыссыз әріптер саны:", consonants_count)`,
-
-    `# 134. Санның дәрежесін рекурсиямен табу
-def power_rec(base, exp):
-    return 1 if exp == 0 else base * power_rec(base, exp - 1)
-print("2^4 =", power_rec(2, 4))`,
-
-    `# 135. Тізімді оңға жылжыту (Rotate list)
-nums = [1, 2, 3, 4, 5]
-shift = 1
-rotated = nums[-shift:] + nums[:-shift]
-print("Жылжытылған тізім:", rotated)`,
-
-    `# 136. Екі сөздің изоморфты екенін тексеру
-def is_isomorphic(s, t):
-    return len(set(s)) == len(set(t)) == len(set(zip(s, t)))
-print("egg мен add изоморфты ма?", is_isomorphic("egg", "add"))`,
-
-    `# 137. Санның толық квадрат екенін тексеру
-import math
-def is_perfect_square(n):
-    return math.isqrt(n) ** 2 == n
-print("25 толық квадрат па?", is_perfect_square(25))`,
-
-    `# 138. Кездейсоқ құпия сөз генераторы
-import random
-import string
-def gen_password(length):
-    chars = string.ascii_letters + string.digits
-    return "".join(random.choice(chars) for _ in range(length))
-print("Құпия сөз:", gen_password(8))`,
-
-    `# 139. Армстронг санын тексеру
-def is_armstrong(n):
-    digits = [int(d) for d in str(n)]
-    return sum(d**len(digits) for d in digits) == n
-print("153 Армстронг саны ма?", is_armstrong(153))`,
-
-    `# 140. Тізімдегі екінші ең үлкен санды табу
-nums = [10, 45, 45, 20, 30]
-unique_nums = list(set(nums))
-unique_nums.sort()
-print("Екінші ең үлкен сан:", unique_nums[-2])`,
-
-    `# 141. Жолдан барлық сандарды өшіру
-text = "Python3.11 және AI2026"
-clean_text = "".join([c for c in text if not c.isdigit()])
-print("Таза мәтін:", clean_text)`,
-
-    `# 142. Санның келесі жай санын табу
-def next_prime(n):
-    def is_p(x):
-        return x > 1 and all(x % i != 0 for i in range(2, int(x**0.5)+1))
-    num = n + 1
-    while not is_p(num): num += 1
-    return num
-print("20-дан кейінгі жай сан:", next_prime(20))`,
-
-    `# 143. Екі сөздікті біріктіру (Ескі әдіс)
-d1 = {'x': 10}
-d2 = {'y': 20}
-res = {**d1, **d2}
-print(res)`,
-
-    `# 144. Тізімді флаттендеу (Бір өлшемге келтіру)
-nested = [[1, 2], [3, 4], [5]]
-flat = [item for sublist in nested for item in sublist]
-print("Жалпақ тізім:", flat)`,
-
-    `# 145. Мәтіндегі ең ұзын сөзді табу
-sentence = "Бағдарламалау тілін үйрену болашаққа жол ашады"
-words = sentence.split()
-longest = max(words, key=len)
-print("Ең ұзын сөз:", longest)`,
-
-    `# 146. Кезектес қайталануларды жою
-nums = [1, 1, 2, 2, 3, 1, 1]
-import itertools
-res = [k for k, g in itertools.groupby(nums)]
-print("Қайталанбас тізбек:", res)`,
-
-    `# 147. Байттарға кодтау және декодтау
-text = "Привет, дүние!"
-encoded = text.encode('utf-8')
-print("Байттар:", encoded)
-print("Декодталған:", encoded.decode('utf-8'))`,
-
-    `# 148. Текшелерді (tuples) сөздікке айналдыру
-pairs = [("алма", 5), ("банан", 3)]
-d = dict(pairs)
-print("Сөздік:", d)`,
-
-    `# 149. Тізімнің барлық комбинацияларын алу
-import itertools
-nums = [1, 2, 3]
-perms = list(itertools.permutations(nums))
-print("Ауыстырулар саны:", len(perms))`,
-
-    `# 150. Санның кемел сан (Perfect number) екенін тексеру
-def is_perfect(n):
-    return sum(i for i in range(1, n) if n % i == 0) == n
-print("6 кемел сан ба?", is_perfect(6))`,
-
-    // ==========================================
-    // ОБЪЕКТІГЕ БАҒЫТТАЛҒАН БАҒДАРЛАМАЛАУ (ООП) (151-170)
-    // ==========================================
-    `# 151. Класс әдісі және статикалық әдіс
-class MathUtils:
-    @staticmethod
-    def add(a, b): return a + b
-print("Статикалық қосу:", MathUtils.add(5, 7))`,
-
-    `# 152. Объектіні мәтін ретінде көрсету (__str__)
-class Person:
-    def __init__(self, name): self.name = name
-    def __str__(self): return f"Адамның аты: {self.name}"
-p = Person("Данияр")
-print(p)`,
-
-    `# 153. Класс ішіндегі инкапсуляция (Жасырын айнымалы)
-class Account:
-    def __init__(self, money):
-        self.__balance = money
-    def get_balance(self): return self.__balance
-acc = Account(5000)
-print("Баланс:", acc.get_balance())`,
-
-    `# 154. Полиморфизм мысалы
-class Cat:
-    def sound(self): return "Мияу"
-class Dog:
-    def sound(self): return "Ау-ау"
-def make_sound(animal_obj):
-    print(animal_obj.sound())
-make_sound(Cat())
-make_sound(Dog())`,
-
-    `# 155. Класс қасиеті (Property getter/setter)
-class Celsius:
-    def __init__(self, temp=0): self._temp = temp
-    @property
-    def temp(self): return self._temp
-    @temp.setter
-    def temp(self, val): self._temp = val
-t = Celsius(25)
-t.temp = 30
-print("Температура:", t.temp)`,
-
-    `# 156. Класс мұрагерлігінде super() қолдану
-class Parent:
-    def __init__(self): print("Әкесі класы")
-class Child(Parent):
-    def __init__(self):
-        super().__init__()
-        print("Баласы класы")
-ch = Child()`,
-
-    `# 157. Класс даналарының санын санау
-class Item:
-    count = 0
-    def __init__(self): Item.count += 1
-a, b, c = Item(), Item(), Item()
-print("Жалпы объект саны:", Item.count)`,
-
-    `# 158. Абстрактілі класс (abc модулі)
-from abc import ABC, abstractmethod
-class Vehicle(ABC):
-    @abstractmethod
-    def start(self): pass
-class Car(Vehicle):
-    def start(self): print("Мәшіні от алды")
-Car().start()`,
-
-    `# 159. __len__ сиқырлы әдісін теңшеу
-class CustomGroup:
-    def __init__(self, items): self.items = items
-    def __len__(self): return len(self.items)
-group = CustomGroup(['A', 'B', 'C'])
-print("Топ ұзындығы:", len(group))`,
-
-    `# 160. Объектілерді салыстыру (__eq__)
-class Box:
-    def __init__(self, size): self.size = size
-    def __eq__(self, other): return self.size == other.size
-print(Box(10) == Box(10))`,
-
-    `# 161. Массив сияқты индекспен оқу (__getitem__)
-class Playlist:
-    def __init__(self): self.songs = ["Өлең 1", "Өлең 2"]
-    def __getitem__(self, index): return self.songs[index]
-p = Playlist()
-print("Бірінші өлең:", p[0])`,
-
-    `# 162. Класс ішіндегі өзгермейтін айнымалылар (Slots)
-class LightPoint:
-    __slots__ = ['x', 'y']
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-lp = LightPoint(1, 2)
-print("Нүкте:", lp.x, lp.y)`,
-
-    `# 163. Дата кластар (dataclass)
-from dataclasses import dataclass
-@dataclass
-class Book:
-    title: str
-    price: float
-b = Book("Python негіздері", 4500.0)
-print(b)`,
-
-    `# 164. Singleton паттернінің қарапайым мысалы
-class Singleton:
-    _instance = None
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-s1 = Singleton()
-s2 = Singleton()
-print("Екеуі бір объект пе?", s1 is s2)`,
-
-    `# 165. Класс нұсқасын тексеру (isinstance)
-class Alpha: pass
-obj = Alpha()
-print("obj Альфа класына жата ма?", isinstance(obj, Alpha))`,
-
-    `# 166. Ішкі класс (Inner class)
-class Outer:
-    def __init__(self): self.inner = self.Inner()
-    class Inner:
-        def show(self): return "Ішкі класс"
-print(Outer().inner.show())`,
-
-    `# 167. Объект атрибуты бар ма екенін тексеру (hasattr)
-class User:
-    def __init__(self): self.name = "Марат"
-u = User()
-print("name атрибуты бар ма?", hasattr(u, "name"))
-print("age атрибуты бар ма?", hasattr(u, "age"))`,
-
-    `# 168. Атрибут мәнін динамикалық алу (getattr)
-class Bot:
-    def __init__(self): self.status = "Активті"
-b = Bot()
-print(getattr(b, "status"))`,
-
-    `# 169. Атрибут мәнін өзгерту (setattr)
-class Configuration: pass
-cfg = Configuration()
-setattr(cfg, "theme", "dark")
-print(cfg.theme)`,
-
-    `# 170. Кластың барлық қасиеттерін сөздік ретінде көру
-class Test:
-    def __init__(self):
-        self.a = 1
-        self.b = 2
-t = Test()
-print(t.__dict__)`,
-
-    // ==========================================
-    // КҮРДЕЛІ ЖӘНЕ ІШКІ МҮМКІНДІКТЕР (171-200)
-    // ==========================================
-    `# 171. Декоратор функция құру
-def my_decorator(func):
-    def wrapper():
-        print("[Басталды]")
-        func()
-        print("[Аяқталды]")
-    return wrapper
-@my_decorator
-def say_hello(): print("Сәлем!")
-say_hello()`,
-
-    `# 172. Жұмыс істеу уақытын өлшейтін декоратор
-import time
-def timer_dec(func):
-    def wrapper(*args, **kwargs):
-        t1 = time.time()
-        res = func(*args, **kwargs)
-        print(f"Уақыт: {time.time()-t1:.4f} сек")
-        return res
-    return wrapper
-@timer_dec
-def waste_time(): sum(range(1000000))
-waste_time()`,
-
-    `# 173. Функция нәтижесін кэштеу (lru_cache)
-from functools import lru_cache
-@lru_cache(maxsize=None)
-def slow_fib(n):
-    return n if n < 2 else slow_fib(n-1) + slow_fib(n-2)
-print("Фибоначчи(30):", slow_fib(30))`,
-
-    `# 174. Контекст менеджер (with операторы мысалы)
-class ManagedFile:
-    def __enter__(self):
-        print("Ресурстар ашылды")
-        return self
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        print("Ресурстар жабылды")
-f = ManagedFile()
-with f: print("Жұмыс ітеп жатыр")`,
-
-    `# 175. Итератор құру (__iter__, __next__)
-class MyNumbers:
-    def __iter__(self):
-        self.a = 1
-        return self
-    def __next__(self):
-        if self.a <= 3:
-            x = self.a
-            self.a += 1
-            return x
-        else: raise StopIteration
-for x in MyNumbers(): print("Итерация:", x)`,
-
-    `# 176. f-string ішінде есептеулер жүргізу
-x = 10
-print(f"{x} санының квадраты {x**2}-қа тең")`,
-
-    `# 177. itertools.cycle қолданып шексіз цикл жасау
-import itertools
-count = 0
-for item in itertools.cycle(['А', 'Б']):
-    if count > 3: break
-    print("Цикл элементі:", item)
-    count += 1`,
-
-    `# 178. itertools.product арқылы декарттық көбейтінді
-import itertools
-A = [1, 2]
-B = ['X', 'Y']
-print("Декарттық көбейтінді:", list(itertools.product(A, B)))`,
-
-    `# 179. Екі тізімді айырмашылығы бойынша теңестіру
-def diff(li1, li2):
-    return list(set(li1) - set(li2))
-print("Айырмашылық:", diff([1, 2, 3], [2, 4]))`,
-
-    `# 180. Мәтінді жасырын ASCII кодтарға ауыстыру
-text = "ABC"
-codes = [ord(c) for c in text]
-print("Кодтар:", codes)
-back_text = "".join(chr(c) for c in codes)
-print("Қайтадан мәтін:", back_text)`,
-
-    `# 181. Тұрақты сөздік (MappingProxyType)
-from types import MappingProxyType
-writable = {"база": "активті"}
-read_only = MappingProxyType(writable)
-print("Оқу:", read_only["база"])`,
-
-    `# 182. Ондаған мәндерді бірден тексеру (any)
-urls = ["image.png", "script.js", "style.css"]
-has_images = any(u.endswith(".png") for u in urls)
-print("Тізімде сурет бар ма?", has_images)`,
-
-    `# 183. Декораторға аргумент жіберу
-def repeat(n):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            for _ in range(n): func(*args, **kwargs)
-        return wrapper
-    return decorator
-@repeat(3)
-def greet(): print("Сәлем!")
-greet()`,
-
-    `# 184. Пайыздық көрсеткіш пішімі
-ratio = 0.756
-print(f"Прогресс: {ratio:.1%}")`,
-
-    `# 185. sys.getsizeof арқылы жад көлемін тексеру
-import sys
-empty_list = []
-print("Бос тізім жадта алатын орны (байт):", sys.getsizeof(empty_list))`,
-
-    `# 186. inspect модулімен функция параметрлерін көру
-import inspect
-def simple_func(a, b=10): pass
-print("Параметрлері:", inspect.signature(simple_func))`,
-
-    `# 187. Жолды сөздерге бөліп, кері ретпен жинау
-sentence = "Код жазу өнер"
-reversed_sentence = " ".join(sentence.split()[::-1])
-print(reversed_sentence)`,
-
-    `# 188. Логикалық мәндерді бүтін сан ретінде қосу
-bools = [True, False, True, True]
-print("True мәндерінің саны:", sum(bools))`,
-
-    `# 189. Тізімнен ең жиі кездесетін элементті табу
-nums = [1, 3, 3, 3, 2, 1, 1, 3]
-most_frequent = max(set(nums), key=nums.count)
-print("Ең жиі сан:", most_frequent)`,
-
-    `# 190. Мәтін ішіндегі тек сандарды қосу
-import re
-text = "Алма бағасы 500 теңге, алмұрт 700 теңге"
-prices = [int(s) for s in re.findall(r'\\d+', text)]
-print("Жалпы сомма:", sum(prices))`,
-
-    `# 191. Мәтінді Base64 кодына кодтау
-import base64
-message = "Сәлем"
-encoded = base64.b64encode(message.encode('utf-8'))
-print("Base64 код:", encoded)`,
-
-    `# 192. Жолдардың ұқсастығын тексеру (difflib)
-import difflib
-s1 = "Python тілі"
-s2 = "Pyton тілі"
-ratio = difflib.SequenceMatcher(None, s1, s2).ratio()
-print(f"Ұқсастық пайызы: {ratio:.1%}")`,
-
-    `# 193. uuid модулі арқылы бірегей ID жасау
-import uuid
-print("Генерацияланған ID:", uuid.uuid4())`,
-
-    `# 194. JSON мәтінді Python сөздігіне айналдыру
-import json
-json_data = '{"name": "Eldar", "age": 22}'
-data = json.loads(json_data)
-print("Аты:", data["name"])`,
-
-    `# 195. Сөздікті әдеми форматта шығару (pprint)
-import pprint
-complex_data = {"сыныптар": [{"A": [1, 2, 3]}, {"B": [4, 5, 6]}]}
-pprint.pprint(complex_data, width=20)`,
-
-    `# 196. Тек қана позициялық аргументтер кілті (/)
-def only_positional(a, b, /):
-    print(a, b)
-only_positional(1, 2)`,
-
-    `# 197. Тек кілтті аргументтер қабылдау (*)
-def only_kwargs(*, name):
-    print("Аты:", name)
-only_kwargs(name="Әнуар")`,
-
-    `# 198. partial функциясын қолдану
-from functools import partial
-def multiply(x, y): return x * y
-double = partial(multiply, 2)
-print("Екі еселеу:", double(5))`,
-
-    `# 199. Тізімнен кездейсоқ элементті салмағына қарай таңдау
-import random
-elements = ['Алма', 'Банан']
-result = random.choices(elements, weights=[90, 10], k=5)
-print("Таңдалғандар:", result)`,
-
-    `# 200. Фибоначчи қатарын генератормен құру (Жад үнемдеу)
-def fib_gen(n):
-    a, b = 0, 1
-    for _ in range(n):
-        yield a
-        a, b = b, a + b
-print("Алғашқы 5 Фибоначчи саны:", list(fib_gen(5)))`
+print("Топтастырылған сөздік:", dict(grouped))`,
+
+    `# 43. args және kwargs (Функцияға шексіз аргументтер жіберу)
+def print_args(*args, **kwargs):
+    print("Позициялық аргументтер:", args)
+    print("Кілттік аргументтер:", kwargs)
+print_args(1, 2, 3, аты="Серік", жасы=22)`,
+
+    `# 44. Жолдардағы ASCII кодтары мен символдар
+print("A-ның коды:", ord('A'))
+print("65-кодтағы символ:", chr(65))`,
+
+    `# 45. eval() функциясымен математикалық өрнектерді есептеу
+expression = "3 * (5 + 2) - 10"
+print(f"Математикалық есептеу: {expression} =", eval(expression))`,
+
+    `# 46. Массивтен екінші ең үлкен санды табу (Second Largest)
+def find_second_largest(arr):
+    unique_nums = list(set(arr))
+    if len(unique_nums) < 2: return "Тізімде жеткілікті элемент жоқ"
+    unique_nums.sort()
+    return unique_nums[-2]
+print("Екінші ең үлкен сан:", find_second_largest([10, 20, 20, 4, 15, 3]))`,
+
+    `# 47. Күрделі сөздіктен деректерді қауіпсіз оқу (.get)
+user_profile = {"name": "Ернұр", "settings": {"theme": "dark"}}
+theme = user_profile.get("settings", {}).get("theme", "light")
+print("Баптау тақырыбы (Theme):", theme)`,
+
+    `# 48. Тізім элементтерін қосып мәтін жасау (.join)
+words_list = ["Python", "бағдарламалау", "тілі"]
+sentence = " ".join(words_list)
+print("Жинақталған сөйлем:", sentence)`,
+
+    `# 49. Қарапайым рекурсиямен Fibonacci санын табу
+def recursive_fib(n):
+    if n <= 1: return n
+    return recursive_fib(n-1) + recursive_fib(n-2)
+print("Рекурсиялық Fibonacci (6-мүшесі):", recursive_fib(6))`,
+
+    `# 50. Тізімдегі None мәндерін сүзу (None Removal)
+raw_data = [1, None, 2, 3, None, 4]
+clean_data = [x for x in raw_data if x is not None]
+print("Тазартылған деректер:", clean_data)`
 ];
 
 function loadExample() {
@@ -1662,7 +822,7 @@ function clearOutput() {
     document.getElementById('compilerOutput').innerHTML = `
         <div class="result-empty" style="min-height:320px;">
             <i class="fa-solid fa-terminal"></i>
-            <p>Кодты іске қосу үшін ▶ батырманы басыңыз</p>
+            <p>Кодты іске қосу үшін ▶ батырмасын басыңыз</p>
         </div>`;
     document.getElementById('runStats').style.display = 'none';
 }
@@ -1670,14 +830,14 @@ function clearOutput() {
 async function runCode() {
     const code = document.getElementById('compilerCode').value.trim();
     const stdin = document.getElementById('compilerInput').value;
-    if (!code) { showToast('Кодыңды жаз!', 'warning'); return; }
+    if (!code) { showToast('Кодыңызды жазыңыз!', 'warning'); return; }
 
     const runBtn = document.querySelector('#tab-compiler .btn-primary');
     const origHtml = runBtn ? runBtn.innerHTML : '';
     if (runBtn) { runBtn.disabled = true; runBtn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Орындалуда...'; }
 
     const outputEl = document.getElementById('compilerOutput');
-    outputEl.innerHTML = `<div class="loading-wrap" style="padding:20px;"><div class="spinner"></div> Орындалуда...</div>`;
+    outputEl.innerHTML = `<div class="loading-wrap" style="padding:20px;"><div class="spinner"></div> Код орындалып жатыр...</div>`;
     document.getElementById('runStats').style.display = 'none';
 
     const startTime = Date.now();
@@ -1710,12 +870,12 @@ async function runCode() {
                 stdin: stdin || ''
             })
         });
-        if (!res.ok) throw new Error('Piston API v2 қате: ' + res.status);
+        if (!res.ok) throw new Error('Piston API v2 қатесі: ' + res.status);
         const data = await res.json();
         const run = data.run || data;
         renderOutput(run.stdout || '', run.stderr || '', typeof run.code === 'number' ? run.code : 0, run.memory);
     } catch (e) {
-        // Fallback v1
+        // Резервтік API v1 шақыруы
         try {
             const res2 = await fetch('https://emkc.org/api/v1/piston/execute', {
                 method: 'POST',
@@ -1726,7 +886,7 @@ async function runCode() {
             renderOutput(data2.output || data2.stdout || '', data2.stderr || '', 0, null);
         } catch (e2) {
             outputEl.innerHTML = `<div class="output-terminal" style="min-height:280px; margin:0; border-radius:0;">
-                <span class="out-error">❌ Қате: ${escapeHtml(e.message)}\n\n💡 Интернет байланысын тексер немесе VPN қолдан.</span>
+                <span class="out-error">❌ Орындау қатесі: ${escapeHtml(e.message)}\n\n💡 Интернетті тексеріп, қайта байқап көріңіз.</span>
             </div>`;
             document.getElementById('runStats').style.display = 'none';
         }
@@ -1736,7 +896,7 @@ async function runCode() {
 }
 
 // ============================================================
-//  TOAST NOTIFICATIONS
+//  ХАБАРЛАМАЛАР ЖҮЙЕСІ (TOASTS)
 // ============================================================
 function showToast(msg, type = 'info') {
     let container = document.getElementById('toastContainer');
