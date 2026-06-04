@@ -197,15 +197,12 @@
 <script src="../js/dashboard.js"></script>
 <script>
 
-    // ─── 1. ПОЛУЧЕНИЕ ТОЛЬКО СТУДЕНТОВ — СНАЧАЛА ИЗ GOOGLE SHEETS ────────────────
+    // ─── 1. ТОЛЬКО СТУДЕНТЫ ИЗ GOOGLE SHEETS ─────────────────────────────────────
     async function getStudents() {
-        // Пробуем Google Sheets
         try {
             if (typeof getAllUsersFromSheets === 'function') {
                 const result = await getAllUsersFromSheets();
                 if (result && result.success && Array.isArray(result.users) && result.users.length > 0) {
-                    console.log('✅ Google Sheets: получено', result.users.length, 'пользователей');
-
                     // Синхронизируем в localStorage
                     const grouped = { students: [], teachers: [], admins: [] };
                     result.users.forEach(u => {
@@ -215,53 +212,46 @@
                     });
                     localStorage.setItem('mockUsers', JSON.stringify(grouped));
                     if (window.authServer) window.authServer.users = grouped;
-
-                    // Возвращаем ТОЛЬКО студентов
-                    return grouped.students;
+                    return grouped.students; // ТОЛЬКО студенты
                 }
             }
         } catch (e) {
-            console.warn('⚠️ Google Sheets недоступен, берём из localStorage:', e.message);
+            console.warn('Google Sheets недоступен:', e.message);
         }
 
         // Fallback — localStorage, только студенты
-        let students = [];
         try {
             const srv = window.authServer || window.AuthServer;
             if (srv && typeof srv.getAllStudents === 'function') {
-                students = srv.getAllStudents();
+                const s = srv.getAllStudents();
+                if (s && s.length) return s;
             }
-            if (!students || !students.length) {
-                const raw = localStorage.getItem('mockUsers');
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    students = Array.isArray(parsed.students) ? parsed.students : [];
-                }
-            }
-        } catch (e) {
-            console.error('Ошибка localStorage:', e);
-        }
-        return Array.isArray(students) ? students : [];
-    }
-
-    // ─── 2. ЗАГРУЗКА ИСТОРИИ ВХОДОВ ──────────────────────────────────────────────
-    function loadLoginHistory() {
-        const raw = localStorage.getItem('userLoginLog');
-        if (raw) {
-            try {
+            const raw = localStorage.getItem('mockUsers');
+            if (raw) {
                 const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-            } catch(e) {}
-        }
+                return Array.isArray(parsed.students) ? parsed.students : [];
+            }
+        } catch (e) {}
         return [];
     }
 
-    // ─── 3. ВСПОМОГАТЕЛЬНЫЕ РАСЧЁТЫ ──────────────────────────────────────────────
+    // ─── 2. РЕАЛЬНЫЕ ЛОГИ — БЕЗ ГЕНЕРАЦИИ ФАЛЬШИВЫХ ─────────────────────────────
+    function loadLoginHistory() {
+        try {
+            const raw = localStorage.getItem('userLoginLog');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) return parsed;
+            }
+        } catch(e) {}
+        return []; // Если логов нет — просто пусто, без выдумок
+    }
+
+    // ─── 3. РАСЧЁТЫ ──────────────────────────────────────────────────────────────
     function calcHoursSpent(userId, log) {
         return log
             .filter(e => e.userId === userId && e.loginTime && e.logoutTime)
-            .reduce((sum, e) => sum + (e.logoutTime - e.loginTime), 0)
-            / 3600000;
+            .reduce((sum, e) => sum + (e.logoutTime - e.loginTime), 0) / 3600000;
     }
 
     function getActivityByDay(log) {
@@ -280,48 +270,43 @@
 
     function getActivityByHour(log) {
         const counts = new Array(24).fill(0);
-        log.forEach(e => {
-            if (e.loginTime) counts[new Date(e.loginTime).getHours()]++;
-        });
+        log.forEach(e => { if (e.loginTime) counts[new Date(e.loginTime).getHours()]++; });
         return counts;
     }
 
-    // ─── 4. КАРТОЧКИ СТАТИСТИКИ (считаем только по логам студентов) ──────────────
+    // ─── 4. КАРТОЧКИ — только по логам студентов ─────────────────────────────────
     function updateSummaryStats(log, students) {
-        // Фильтруем логи только по ID студентов
         const studentIds = new Set(students.map(s => s.id));
-        const studentLog = log.filter(e => studentIds.has(e.userId));
+        const sLog = log.filter(e => studentIds.has(e.userId));
 
-        document.getElementById('statTotalLogins').textContent = studentLog.length;
+        document.getElementById('statTotalLogins').textContent = sLog.length;
 
-        const totalMs = studentLog.reduce((s,e) => s + ((e.logoutTime||0)-(e.loginTime||0)), 0);
+        const totalMs = sLog.reduce((s,e) => s + ((e.logoutTime||0)-(e.loginTime||0)), 0);
         document.getElementById('statTotalHours').textContent = (totalMs/3600000).toFixed(1);
 
         const today = new Date(); today.setHours(0,0,0,0);
         document.getElementById('statTodaySessions').textContent =
-            studentLog.filter(e => new Date(e.loginTime) >= today).length;
+            sLog.filter(e => new Date(e.loginTime) >= today).length;
 
-        const withDur = studentLog.filter(e => e.loginTime && e.logoutTime && e.logoutTime > e.loginTime);
+        const withDur = sLog.filter(e => e.logoutTime > e.loginTime);
         const avgMs = withDur.length ? withDur.reduce((s,e)=>s+(e.logoutTime-e.loginTime),0)/withDur.length : 0;
         document.getElementById('statAvgSession').textContent = Math.round(avgMs/60000) + ' мин';
     }
 
-    // ─── 5. ЦВЕТА ГРАФИКОВ ───────────────────────────────────────────────────────
+    // ─── 5. ЦВЕТА ────────────────────────────────────────────────────────────────
     function getChartColors() {
         const isDark = document.body.classList.contains('dark-mode');
         return {
-            text:   isDark ? '#a1a1aa' : '#475569',
-            grid:   isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
-            accent: '#3b82f6',
-            accent2:'#8b5cf6',
+            text: isDark ? '#a1a1aa' : '#475569',
+            grid: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+            accent: '#3b82f6', accent2: '#8b5cf6'
         };
     }
 
-    // ─── 6. ГРАФИК ВХОДОВ (LINE) ──────────────────────────────────────────────────
+    // ─── 6. ГРАФИК ВХОДОВ ────────────────────────────────────────────────────────
     function renderLoginChart(log, students) {
         const studentIds = new Set(students.map(s => s.id));
-        const studentLog = log.filter(e => studentIds.has(e.userId));
-        const { labels, data } = getActivityByDay(studentLog);
+        const { labels, data } = getActivityByDay(log.filter(e => studentIds.has(e.userId)));
         const c = getChartColors();
         const canvas = document.getElementById('loginChart');
         if (!canvas) return;
@@ -336,29 +321,26 @@
         });
     }
 
-    // ─── 7. ГРАФИК ЧАСОВ ПО СТУДЕНТАМ (BAR) ──────────────────────────────────────
+    // ─── 7. ГРАФИК ЧАСОВ ПО СТУДЕНТАМ ────────────────────────────────────────────
     function renderHoursChart(log, students) {
         const c = getChartColors();
         const canvas = document.getElementById('hoursChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        const labels = students.map(s => (s.name||s.id).split(' ')[0]);
-        const data   = students.map(s => parseFloat(calcHoursSpent(s.id, log).toFixed(1)));
         const colors = ['rgba(59,130,246,0.8)','rgba(139,92,246,0.8)','rgba(34,197,94,0.8)','rgba(249,115,22,0.8)','rgba(236,72,153,0.8)','rgba(20,184,166,0.8)'];
         new Chart(ctx, {
             type: 'bar',
-            data: { labels, datasets: [{ label: 'Сағат', data, backgroundColor: students.map((_,i) => colors[i % colors.length]), borderRadius: 8, borderSkipped: false }] },
+            data: { labels: students.map(s => (s.name||s.id).split(' ')[0]), datasets: [{ label: 'Сағат', data: students.map(s => parseFloat(calcHoursSpent(s.id, log).toFixed(1))), backgroundColor: students.map((_,i) => colors[i % colors.length]), borderRadius: 8, borderSkipped: false }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: c.text, font: { size: 11 } } }, y: { grid: { color: c.grid }, ticks: { color: c.text, font: { size: 11 } }, beginAtZero: true } } }
         });
     }
 
-    // ─── 8. ТЕПЛОВАЯ КАРТА (только логи студентов) ───────────────────────────────
+    // ─── 8. ТЕПЛОВАЯ КАРТА ───────────────────────────────────────────────────────
     function renderActivityHeatmap(log, students) {
         const studentIds = new Set(students.map(s => s.id));
-        const studentLog = log.filter(e => studentIds.has(e.userId));
-        const counts = getActivityByHour(studentLog);
+        const counts = getActivityByHour(log.filter(e => studentIds.has(e.userId)));
         const maxVal = Math.max(...counts, 1);
-        const grid   = document.getElementById('heatmapGrid');
+        const grid = document.getElementById('heatmapGrid');
         if (!grid) return;
         grid.innerHTML = '';
         grid.appendChild(Object.assign(document.createElement('div'), {className:'heatmap-label'}));
@@ -373,44 +355,48 @@
         rowLabel.textContent = 'Кіру';
         grid.appendChild(rowLabel);
         for (let h = 0; h < 24; h++) {
-            const intensity = counts[h] / maxVal;
             const cell = document.createElement('div');
             cell.className = 'heatmap-cell';
-            cell.style.background = `rgba(59,130,246,${0.06 + intensity * 0.88})`;
+            cell.style.background = `rgba(59,130,246,${0.06 + (counts[h]/maxVal) * 0.88})`;
             cell.title = `${h}:00 — ${counts[h]} кіру`;
             grid.appendChild(cell);
         }
     }
 
     // ─── 9. ТАБЛИЦА СТУДЕНТОВ ────────────────────────────────────────────────────
+    function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
     function renderStudentStats(log, students) {
         const tbody = document.getElementById('statsTableBody');
         if (!tbody) return;
-        if (!students || !students.length) {
+
+        if (!students.length) {
             tbody.innerHTML = `<tr><td colspan="4"><div class="empty-table">
                 <i class="fa-solid fa-users-slash"></i>
-                <span>Тіркелген студенттер жоқ. Студент рөлінде тіркелу қажет.</span>
-                </div></td></tr>`;
+                <span>Тіркелген студенттер жоқ</span>
+            </div></td></tr>`;
             return;
         }
+
         const hoursMapped = students.map(s => calcHoursSpent(s.id, log) || 0);
         const maxHours = Math.max(...hoursMapped, 0.1);
-        tbody.innerHTML = students.map((s, index) => {
-            const studentLog = log.filter(e => e.userId === s.id);
-            const sessions   = studentLog.length;
-            const hours      = hoursMapped[index];
-            const pct        = ((hours / maxHours) * 100).toFixed(0);
-            const lastEntry  = [...studentLog].sort((a,b) => b.loginTime - a.loginTime)[0];
-            const lastDate   = lastEntry
-                ? new Date(lastEntry.loginTime).toLocaleDateString('kk-KZ', {year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})
+
+        tbody.innerHTML = students.map((s, i) => {
+            const sLog    = log.filter(e => e.userId === s.id);
+            const hours   = hoursMapped[i];
+            const pct     = ((hours / maxHours) * 100).toFixed(0);
+            const last    = [...sLog].sort((a,b) => b.loginTime - a.loginTime)[0];
+            const lastDate = last
+                ? new Date(last.loginTime).toLocaleDateString('kk-KZ', {year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})
                 : null;
-            const initials = (s.name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-            return `
-            <tr>
+            const initials = (s.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+            return `<tr>
                 <td>
-                    <div class="user-cell" style="display:flex;align-items:center;gap:10px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
                         <div style="background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:12px;font-weight:600;">${initials}</div>
-                        <div style="font-weight:500;">${escHtml(s.name || s.id)}</div>
+                        <span style="font-weight:500;">${escHtml(s.name||s.id)}</span>
                     </div>
                 </td>
                 <td>${lastDate
@@ -425,22 +411,13 @@
                         <span style="min-width:50px;text-align:right;font-weight:600;">${hours.toFixed(1)} сағ</span>
                     </div>
                 </td>
-                <td><span class="sessions-badge"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${sessions}</span></td>
+                <td><span class="sessions-badge"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${sLog.length}</span></td>
             </tr>`;
         }).join('');
     }
 
-    // ─── 10. БЕЗОПАСНЫЙ HTML ─────────────────────────────────────────────────────
-    function escHtml(str) {
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    // ─── 11. ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────────────────────────
+    // ─── 10. ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
-        // Спиннер пока грузим
-        document.getElementById('statsTableBody').innerHTML =
-            `<tr><td colspan="4"><div class="empty-table"><i class="fa-solid fa-spinner fa-spin"></i><span>Деректер жүктелуде...</span></div></td></tr>`;
-
         const students = await getStudents();
         const log      = loadLoginHistory();
 
