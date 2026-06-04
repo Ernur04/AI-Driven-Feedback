@@ -40,7 +40,17 @@ function switchTabByName(name) { switchTab(name); }
 //  ANTHROPIC API HELPER
 // ============================================================
 async function callClaude(systemPrompt, userMessage) {
-    const apiKey = await window.getApiKey();
+    // getApiKey modal арқылы немесе localStorage-дан алу
+    let apiKey;
+    if (typeof window.getApiKey === 'function') {
+        apiKey = await window.getApiKey();
+    } else {
+        apiKey = localStorage.getItem('gemini_api_key');
+        if (!apiKey) {
+            apiKey = prompt('Gemini API кілтін енгіз (aistudio.google.com/apikey):');
+            if (apiKey) localStorage.setItem('gemini_api_key', apiKey.trim());
+        }
+    }
     if (!apiKey) throw new Error("API кілті енгізілмеді!");
 
     try {

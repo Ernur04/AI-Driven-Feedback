@@ -441,7 +441,17 @@ async function sendMessage(event) {
     showTypingIndicator();
 
     try {
-        const apiKey = await window.getApiKey();
+        // getApiKey modal арқылы немесе localStorage fallback
+        let apiKey;
+        if (typeof window.getApiKey === 'function') {
+            apiKey = await window.getApiKey();
+        } else {
+            apiKey = localStorage.getItem('gemini_api_key');
+            if (!apiKey) {
+                apiKey = prompt('Gemini API кілтін енгіз (aistudio.google.com/apikey):');
+                if (apiKey) localStorage.setItem('gemini_api_key', apiKey.trim());
+            }
+        }
         if (!apiKey) {
             removeTypingIndicator();
             setLoading(false);
