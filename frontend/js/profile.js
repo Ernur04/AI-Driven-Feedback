@@ -58,10 +58,11 @@ function updateUserProfile(userData) {
     let linksHtml = '';
     if (userData.role === 'admin') {
       linksHtml += `<a href="${basePath}admin-panel.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-gauge"></i> Профиль</a>`;
-      linksHtml += `<a href="${basePath}admin-users.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Пайдаланушылар</a>`;
+      linksHtml += `<a href="${basePath}admin-users.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Пайдаланушылар тізімі</a>`;
+      linksHtml += `<a href="${basePath}admin-line.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-chart-line"></i> Статистика</a>`;
     } else if (userData.role === 'teacher') {
       linksHtml += `<a href="${basePath}teacher-monitor.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-user-shield"></i> Профиль</a>`;
-      linksHtml += `<a href="${basePath}teacher-students.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Студенттер</a>`;
+      linksHtml += `<a href="${basePath}teacher-students.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Студенттер тізімі</a>`;
       linksHtml += `<a href="${basePath}teacher-analytics.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-chart-line"></i> Аналитика</a>`;
     } else {
       linksHtml += `<a href="${basePath}student-profile.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-user"></i> Профиль</a>`;
