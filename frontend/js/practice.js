@@ -39,7 +39,7 @@ function switchTabByName(name) { switchTab(name); }
 // ============================================================
 //  ANTHROPIC API HELPER
 // ============================================================
-async function callClaude(systemPrompt, userMessage) {
+async function callGemini(systemPrompt, userMessage) {
     // getApiKey modal арқылы немесе localStorage-дан алу
     let apiKey;
     if (typeof window.getApiKey === 'function') {
@@ -54,7 +54,8 @@ async function callClaude(systemPrompt, userMessage) {
     if (!apiKey) throw new Error("API кілті енгізілмеді!");
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        // ӨЗГЕРТІЛДІ: Модель gemini-2.0-flash орнына тұрақты әрі тегін gemini-1.5-flash қойылды
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
