@@ -218,7 +218,8 @@
 ========================================================================= */
 .stats-counter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    /* Задаем 2 колонки равной ширины, вместо 4 */
+    grid-template-columns: repeat(2, 1fr); 
     gap: 20px;
 }
 
@@ -300,14 +301,14 @@
 ========================================================================= */
 .charts-main-layout {
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
+    /* Создаем 2 равные колонки для нижнего ряда */
+    grid-template-columns: repeat(2, 1fr); 
     gap: 25px;
 }
 
-.charts-side-group {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+/* Главный секрет: растягиваем верхний график на обе колонки */
+.charts-main-layout .large-chart {
+    grid-column: 1 / -1; 
 }
 
 .chart-container.glass-premium {
@@ -357,12 +358,12 @@
 .chart-wrapper {
     position: relative;
     width: 100%;
-    height: 280px; /* Барлық сызықтық және бағандық графиктерге ортақ тең биіктік */
+    height: 280px; /* Оптимальная высота для графиков */
 }
 
 /* Шеңберлік (Pie) график өлшемін шектеу */
 .chart-wrapper.pie-wrapper {
-    height: 220px;
+    height: 280px; /* Выравниваем по высоте с багганым графиком */
     display: flex;
     justify-content: center;
     align-items: center;
