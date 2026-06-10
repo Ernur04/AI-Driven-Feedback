@@ -62,7 +62,7 @@ async function callGemini(systemPrompt, userMessage) {
         const data = await response.json();
         
         if (!response.ok) {
-            if (response.status === 400 || response.status === 403) {
+            if (response.status === 400 || response.status === 401 || response.status === 403) {
                 localStorage.removeItem('gemini_api_key');
             }
             throw new Error(data.error?.message || `HTTP қате: ${response.status}`);
