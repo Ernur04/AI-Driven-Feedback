@@ -54,10 +54,14 @@ AI-Driven Feedback/
 │   │   ├── auth.js                  # Логика входа и регистрации
 │   │   ├── mock-auth.js             # Демо-аутентификация для тестирования
 │   │   ├── server-demo.js           # Демо-данные и тестовые пользователи
+│   │   ├── forgot-password.js       # Логика страницы восстановления пароля
 │   │   ├── chat.js                  # AI-чатбот (toggleChat, sendMessage)
 │   │   ├── practice.js              # Логика практики и онлайн-компилятора
 │   │   ├── profile.js               # Управление профилем пользователя
 │   │   ├── dashboard.js             # Функционал личных кабинетов
+│   │   ├── admin-line.js            # Логика графиков аналитики (админа)
+│   │   ├── teacher-students.js      # Управление списком студентов (препода)
+│   │   ├── teacher-analytics.js     # Графики активности студентов (препода)
 │   │   ├── copy-code.js             # Копирование фрагментов кода
 │   │   ├── theme.js                 # Переключение темы (Light / Dark)
 │   │   └── search.js                # Поиск по справочнику
@@ -65,6 +69,7 @@ AI-Driven Feedback/
 │   └── pages/                       # Страницы приложения
 │       ├── login.html               # Страница входа
 │       ├── register.html            # Страница регистрации
+│       ├── forgot-password.html     # Страница восстановления пароля
 │       ├── student-profile.html     # Личный кабинет студента
 │       ├── teacher-monitor.html     # Кабинет преподавателя
 │       ├── teacher-students.html    # Список студентов (преподаватель)
