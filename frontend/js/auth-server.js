@@ -32,7 +32,7 @@ class MockAuthServer {
                     id: 'admin_1',
                     name: 'Admin',
                     email: 'admin@example.com',
-                    password: 'admin123',
+                    password: 'admin2004',
                     role: 'admin',
                     avatar: '../logo/default-user.png',
                     registeredAt: new Date().toISOString(),

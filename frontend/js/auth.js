@@ -129,6 +129,8 @@ function handleLogout() {
 }
 
 function loadUserProfile() {
+    // Если profile.js уже загрузил профиль — не дублируем
+    if (window._profileAlreadyLoaded) return;
     const userData = authServer.getCurrentUser();
     if (userData && typeof updateUserProfile === 'function') {
         updateUserProfile(userData);

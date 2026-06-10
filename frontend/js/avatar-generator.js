@@ -58,18 +58,48 @@ function createAvatarHTML(name, className = 'avatar-small') {
 }
 
 /*
- * Заменяет элемент (в т.ч. <img>) новым <div>-аватаром.
- * Используй для profileAvatarBig и userAvatar (они <img> в HTML).
+ * Обновляет элемент аватара на месте, без удаления из DOM.
+ * Если элемент — <img>, заменяет его на <div> один раз.
+ * Если уже <div>, просто обновляет стили и текст (без мерцания).
  */
 function replaceAvatarElement(elementId, name, className) {
-    const el = document.getElementById(elementId);
+    let el = document.getElementById(elementId);
     if (!el) return;
-    const html = createAvatarHTML(name, className);
-    const tmp  = document.createElement('div');
-    tmp.innerHTML = html;
-    const newEl = tmp.firstElementChild;
-    el.parentNode.replaceChild(newEl, el);
-    newEl.id = elementId; // сохраняем id
+
+    const initials = getInitials(name);
+    const colors   = getAvatarColors(name);
+    const sizeMap = {
+        'avatar-small': { size: '36px',  font: '13px' },
+        'avatar':       { size: '42px',  font: '15px' },
+        'avatar-large': { size: '90px',  font: '32px' },
+    };
+    const { size, font } = sizeMap[className] || { size: '36px', font: '13px' };
+
+    // Если элемент ещё <img>, преобразуем в <div> один раз
+    if (el.tagName === 'IMG') {
+        const newEl = document.createElement('div');
+        newEl.id = elementId;
+        el.parentNode.replaceChild(newEl, el);
+        el = newEl;
+    }
+
+    // Обновляем на месте — без удаления из DOM
+    el.className = className;
+    el.textContent = initials;
+    el.title = name;
+    el.style.backgroundColor = colors.bg;
+    el.style.color = colors.text;
+    el.style.display = 'inline-flex';
+    el.style.alignItems = 'center';
+    el.style.justifyContent = 'center';
+    el.style.borderRadius = '50%';
+    el.style.fontWeight = '700';
+    el.style.fontSize = font;
+    el.style.flexShrink = '0';
+    el.style.width = size;
+    el.style.height = size;
+    el.style.boxSizing = 'border-box';
+    el.style.lineHeight = '1';
 }
 
 function updateAvatarElement(element, name) {

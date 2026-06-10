@@ -13,17 +13,22 @@ function updateUserProfile(userData) {
   // ── Аватарки ──────────────────────────────────────────────────────────────
   if (userData.name) {
 
-    // 1. Маленькая иконка в хедере — это <div>, используем innerHTML
+    // 1. Маленькая иконка в хедере — обновляем на месте (без мерцания)
     const smallAvatarEl = document.getElementById('userAvatarSmall');
     if (smallAvatarEl) {
-      smallAvatarEl.innerHTML = createAvatarHTML(userData.name, 'avatar-small');
+      const initials = getInitials(userData.name);
+      const colors   = getAvatarColors(userData.name);
+      smallAvatarEl.textContent = initials;
+      smallAvatarEl.style.backgroundColor = colors.bg;
+      smallAvatarEl.style.color = colors.text;
       smallAvatarEl.style.display = 'flex';
+      smallAvatarEl.title = userData.name;
     }
 
-    // 2. Аватарка в дропдауне — это <img>, заменяем через replaceAvatarElement
+    // 2. Аватарка в дропдауне — обновляем на месте через replaceAvatarElement
     replaceAvatarElement('userAvatar', userData.name, 'avatar');
 
-    // 3. Большая аватарка в сайдбаре — тоже <img>, заменяем
+    // 3. Большая аватарка в сайдбаре — тоже обновляем на месте
     replaceAvatarElement('profileAvatarBig', userData.name, 'avatar-large');
   }
 
@@ -48,28 +53,37 @@ function updateUserProfile(userData) {
   // ── Динамические ссылки меню по роли ──────────────────────────────────────
   const profileMenu = document.querySelector('.profile-menu');
   if (profileMenu) {
-    const oldBtnProfile = document.getElementById('btnProfile');
-    if (oldBtnProfile) oldBtnProfile.remove();
-    document.querySelectorAll('.dynamic-role-link').forEach(el => el.remove());
-
-    const isSubPage = window.location.pathname.includes('/pages/');
-    const basePath  = isSubPage ? '' : 'pages/';
-
-    let linksHtml = '';
-    if (userData.role === 'admin') {
-      linksHtml += `<a href="${basePath}admin-panel.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-gauge"></i> Профиль</a>`;
-      linksHtml += `<a href="${basePath}admin-users.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Пайдаланушылар тізімі</a>`;
-      linksHtml += `<a href="${basePath}admin-line.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-chart-line"></i> Статистика</a>`;
-    } else if (userData.role === 'teacher') {
-      linksHtml += `<a href="${basePath}teacher-monitor.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-user-shield"></i> Профиль</a>`;
-      linksHtml += `<a href="${basePath}teacher-students.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Студенттер тізімі</a>`;
-      linksHtml += `<a href="${basePath}teacher-analytics.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-chart-line"></i> Аналитика</a>`;
+    // Проверяем, нужно ли обновлять ссылки (если роль не изменилась — пропускаем)
+    const existingLinks = document.querySelectorAll('.dynamic-role-link');
+    const currentRoleAttr = profileMenu.getAttribute('data-current-role');
+    if (currentRoleAttr === userData.role && existingLinks.length > 0) {
+      // Ссылки уже созданы для этой роли — ничего не делаем
     } else {
-      linksHtml += `<a href="${basePath}student-profile.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-user"></i> Профиль</a>`;
-    }
+      const oldBtnProfile = document.getElementById('btnProfile');
+      if (oldBtnProfile) oldBtnProfile.remove();
+      existingLinks.forEach(el => el.remove());
 
-    const logoutBtn = document.getElementById('btnLogout');
-    if (logoutBtn) logoutBtn.insertAdjacentHTML('beforebegin', linksHtml);
+      profileMenu.setAttribute('data-current-role', userData.role);
+
+      const isSubPage = window.location.pathname.includes('/pages/');
+      const basePath  = isSubPage ? '' : 'pages/';
+
+      let linksHtml = '';
+      if (userData.role === 'admin') {
+        linksHtml += `<a href="${basePath}admin-panel.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-gauge"></i> Профиль</a>`;
+        linksHtml += `<a href="${basePath}admin-users.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Пайдаланушылар тізімі</a>`;
+        linksHtml += `<a href="${basePath}admin-line.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-chart-line"></i> Статистика</a>`;
+      } else if (userData.role === 'teacher') {
+        linksHtml += `<a href="${basePath}teacher-monitor.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-user-shield"></i> Профиль</a>`;
+        linksHtml += `<a href="${basePath}teacher-students.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-users"></i> Студенттер тізімі</a>`;
+        linksHtml += `<a href="${basePath}teacher-analytics.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-chart-line"></i> Аналитика</a>`;
+      } else {
+        linksHtml += `<a href="${basePath}student-profile.html" class="profile-btn dynamic-role-link" style="text-decoration:none;display:flex;align-items:center;gap:10px;"><i class="fa-solid fa-user"></i> Профиль</a>`;
+      }
+
+      const logoutBtn = document.getElementById('btnLogout');
+      if (logoutBtn) logoutBtn.insertAdjacentHTML('beforebegin', linksHtml);
+    }
   }
 }
 
@@ -248,12 +262,33 @@ function setupProfileFormSubmit() {
 }
 
 // Загрузка профиля
+// Загрузка профиля (Сразу при чтении скрипта, чтобы избежать мигания/FOUC)
+// Выполняем проверку localStorage немедленно
+(function() {
+    try {
+        const savedProfileStr = localStorage.getItem("userProfile");
+        if (savedProfileStr) {
+            // Если есть в localStorage, прячем кнопки входа до полной загрузки,
+            // чтобы не было мигания (FOUC)
+            const style = document.createElement('style');
+            style.innerHTML = '#authButtons { display: none !important; } #userProfileWrapper { display: flex !important; }';
+            document.head.appendChild(style);
+        }
+    } catch (e) {}
+})();
+
+// Когда DOM готов
+document.addEventListener("DOMContentLoaded", function() {
+    const savedProfileStr = localStorage.getItem("userProfile");
+    if (savedProfileStr) {
+        const savedProfile = JSON.parse(savedProfileStr);
+        updateUserProfile(savedProfile);
+    }
+});
+
+// Дополнительная загрузка по window.load (Формы, Sheets и т.д.)
 window.addEventListener("load", function() {
-  const savedProfileStr = localStorage.getItem("userProfile");
-  if (savedProfileStr) {
-      const savedProfile = JSON.parse(savedProfileStr);
-      updateUserProfile(savedProfile);
-  }
+  window._profileAlreadyLoaded = true; // Флаг чтобы auth.js не дублировал
   fillProfileForm();
   setupProfileFormSubmit();
 });
