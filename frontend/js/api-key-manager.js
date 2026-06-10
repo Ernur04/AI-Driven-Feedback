@@ -77,12 +77,26 @@
 
     let _resolve = null;
 
-    // API кілтін қайтарады: уақытша хардкодталған кілт
+    // API кілтін қайтарады: localStorage-дан немесе modal арқылы
     window.getApiKey = function() {
         return new Promise((resolve) => {
-            // Уақытша барлық қолданушылар үшін ашық кілт (GitHub бұғаттағышын айналып өту үшін бөлінген)
-            const tempKey = "AQ.Ab8RN6" + "I5krYawPZ" + "VafwRZX" + "DR6YCN0DnX4" + "BOhHH4" + "TEEbmHGo83Q";
-            resolve(tempKey);
+            const saved = localStorage.getItem('gemini_api_key');
+            if (saved) return resolve(saved);
+
+            _resolve = resolve;
+            const modal = document.getElementById('apiKeyModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    const inp = document.getElementById('apiKeyInput');
+                    if (inp) inp.focus();
+                }, 100);
+            } else {
+                // Fallback если DOM ещё не готов
+                const key = prompt("Gemini API кілтін енгіз:");
+                if (key) localStorage.setItem('gemini_api_key', key.trim());
+                resolve(key ? key.trim() : null);
+            }
         });
     };
 
